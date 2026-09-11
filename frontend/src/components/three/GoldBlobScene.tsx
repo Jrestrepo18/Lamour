@@ -101,8 +101,11 @@ function ScrollParallax({
       },
     });
 
+    // Negative Y-rotation turns the figure toward the viewer's left as the
+    // user scrolls down. Sign flip is the only thing to touch if this reads
+    // backwards once you see it live.
     gsap.to(groupRef.current.rotation, {
-      y: 0.9,
+      y: -0.9,
       ease: "none",
       scrollTrigger: {
         trigger: triggerRef.current,
