@@ -75,15 +75,23 @@ export function Header() {
                 key={link.href}
                 href={link.href}
                 className={clsx(
-                  "relative text-sm transition-colors",
+                  "group relative text-sm transition-colors",
                   lightText ? (active ? "text-ink" : "text-ink-soft hover:text-ink") : active ? "text-ivory" : "text-ivory/70 hover:text-ivory",
                 )}
               >
                 {link.label}
-                {active && (
+                {active ? (
                   <motion.span
                     layoutId="nav-active"
                     className={clsx("absolute -bottom-1.5 left-0 right-0 h-px", lightText ? "bg-terracotta" : "bg-gold")}
+                  />
+                ) : (
+                  <span
+                    aria-hidden
+                    className={clsx(
+                      "absolute -bottom-1.5 left-0 right-0 h-px origin-center scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100",
+                      lightText ? "bg-ink-soft/50" : "bg-ivory/50",
+                    )}
                   />
                 )}
               </Link>

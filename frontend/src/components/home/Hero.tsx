@@ -49,6 +49,16 @@ export function Hero() {
         <Hero3D triggerRef={sectionRef} />
       </div>
 
+      {/* Cinematic vignette: edges settle toward espresso instead of staying flat all the way to the
+          frame, so the scene reads as a lit space with depth rather than a sticker pasted on a gradient. */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 70% at 50% 45%, transparent 45%, rgba(20,13,8,0.16) 100%)",
+        }}
+      />
+
       <motion.div
         variants={container}
         initial="hidden"

@@ -12,11 +12,20 @@ export function ServiceCard({ service, tone = "light" }: { service: Service; ton
     <Link
       href={`/reservar?service=${service.slug}`}
       className={clsx(
-        "group grid grid-cols-1 items-start gap-3 border-b py-8 transition-colors duration-300 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-6",
+        "group relative grid grid-cols-1 items-start gap-3 border-b py-8 transition-colors duration-300 sm:grid-cols-[1fr_auto] sm:items-center sm:gap-6",
         dark ? "border-ivory/10 hover:bg-white/[0.03]" : "border-ink/10 hover:bg-terracotta/[0.04]",
       )}
     >
-      <div className="px-1">
+      {/* Reading-indicator bar: grows from the middle on hover, like a wine-list row lighting up. */}
+      <span
+        aria-hidden
+        className={clsx(
+          "absolute left-0 top-1/2 h-0 w-[3px] -translate-y-1/2 transition-all duration-500 ease-out group-hover:h-2/3",
+          dark ? "bg-champagne" : "bg-terracotta",
+        )}
+      />
+
+      <div className="px-1 transition-transform duration-300 group-hover:translate-x-1.5">
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3
             className={clsx(
