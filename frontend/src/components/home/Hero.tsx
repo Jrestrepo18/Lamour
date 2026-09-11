@@ -68,7 +68,13 @@ export function Hero() {
               </h1>
 
               <motion.div variants={fadeUp} className="shrink-0">
-                <CrescentMoon className="h-12 w-12 text-gold sm:h-24 sm:w-24 lg:h-36 lg:w-36" />
+                {/* Sized off the same vw+vh-aware token as the headline, not fixed breakpoints — so on a
+                    short-but-wide window it shrinks together with the text instead of staying pinned at
+                    its largest size and forcing the row taller than the headline needs. */}
+                <CrescentMoon
+                  className="text-gold"
+                  style={{ height: "calc(var(--text-display) * 1.35)", width: "calc(var(--text-display) * 1.35)" }}
+                />
               </motion.div>
             </div>
 

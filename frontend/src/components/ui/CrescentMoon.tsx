@@ -1,6 +1,7 @@
 "use client";
 
 import { motion, type Variants } from "framer-motion";
+import type { CSSProperties } from "react";
 
 const draw: Variants = {
   hidden: { pathLength: 0, opacity: 0 },
@@ -13,9 +14,9 @@ const draw: Variants = {
  * Motion stagger container it's placed in (no own initial/animate), so it
  * can join an existing orchestrated sequence as one more staggered child.
  */
-export function CrescentMoon({ className }: { className?: string }) {
+export function CrescentMoon({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
-    <motion.svg viewBox="0 0 100 100" fill="none" className={className} aria-hidden>
+    <motion.svg viewBox="0 0 100 100" fill="none" className={className} style={style} aria-hidden>
       <motion.path
         d="M52,6 A46,46 0 1,0 52,94 A34,34 0 1,1 52,6 Z"
         stroke="currentColor"
