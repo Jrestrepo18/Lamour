@@ -7,3 +7,8 @@ obj/
 *.db-wal
 .env.local
 
+# Raw 3D asset exports (96MB source zip + unpacked GLBs) — only the
+# compressed, web-ready output in frontend/public/models/ is committed.
+.scratch-3d/
+*.zip
+
