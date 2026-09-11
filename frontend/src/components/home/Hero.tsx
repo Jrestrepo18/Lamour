@@ -38,7 +38,7 @@ export function Hero() {
       className="relative min-h-screen overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk"
     >
       {/* Soft breathing light behind the piece — warmth, not drama */}
-      <div className="pointer-events-none absolute right-[6%] top-1/2 h-[34rem] w-[34rem] -translate-y-1/2 rounded-full bg-gold/20 blur-[140px]" />
+      <div className="pointer-events-none absolute right-[10%] top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full bg-gold/25 blur-[120px]" />
 
       {/* The "full-bleed image": a slow, breathing 3D piece, parallaxed by GSAP as the page scrolls past. */}
       <div className="absolute inset-0">
@@ -68,7 +68,7 @@ export function Hero() {
               </h1>
 
               <motion.div variants={fadeUp} className="shrink-0">
-                <CrescentMoon className="h-14 w-14 text-gold sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
+                <CrescentMoon className="h-20 w-20 text-gold sm:h-28 sm:w-28 lg:h-36 lg:w-36" />
               </motion.div>
             </div>
 
