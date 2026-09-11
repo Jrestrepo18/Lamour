@@ -49,7 +49,7 @@ export function Hero() {
         variants={container}
         initial="hidden"
         animate="show"
-        className="relative z-10 flex min-h-dvh flex-col justify-center pt-20 pb-8 sm:pt-24 sm:pb-16"
+        className="relative z-10 flex min-h-dvh flex-col justify-center pt-20 pb-20 sm:pt-24 sm:pb-28"
       >
         <Container>
           <div className="max-w-3xl">
@@ -96,7 +96,7 @@ export function Hero() {
           </div>
         </Container>
 
-        <Container className="mt-auto flex flex-wrap items-end justify-between gap-4 pt-8 sm:gap-6 sm:pt-16">
+        <Container className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 pb-6 sm:gap-6 sm:pb-10">
           <motion.div variants={fadeUp} className="text-label flex items-center gap-2 font-medium text-ink-soft/70">
             <MapPin size={13} className="text-gold" />
             Medellín y su área metropolitana
