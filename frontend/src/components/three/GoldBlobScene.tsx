@@ -3,56 +3,78 @@
 import { Suspense, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles } from "@react-three/drei";
-import { MathUtils, type Group, type Mesh } from "three";
+import { MathUtils, type Group } from "three";
 import { gsap } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 
-// Radius 1.4 at this camera distance/fov (5.5 units, fov 45 → ~2.28 half-height
-// at that depth) fills roughly 60% of the frame — a dominant presence with
-// room to spare before the camera would sit inside it. The 2.6 scale from
-// two iterations ago put the camera almost inside the sphere, rendering it
-// as a flat color fill instead of a round object; 0.95 was a safe but
-// timid overcorrection. This is the deliberate "large but still round" size.
-const BASE_SCALE = 1.4;
+// Calibrated so the whole figure spans roughly 55-60% of the frame height at
+// this camera distance (5.5 units, fov 45) — dominant but comfortably inside
+// the frustum, not the "camera sitting inside the object" bug from earlier.
+const SCALE = 1.4;
 
 /**
- * "Quietud": a smooth, matte sculptural form — carved stone, not a glowing
- * gem. Barely any pulse (a form named "stillness" shouldn't visibly
- * breathe); what little motion remains is a near-imperceptible rotation and
- * float, so it reads as present and real rather than static, without
- * undercutting the calm the name promises.
+ * A faceless, abstract meditating silhouette — head + seated body built from
+ * two primitives, no religious iconography (no ushnisha, no robe detail, no
+ * mudra hands, no face). Reads as "figure in stillness" without being a
+ * statue of anyone specific. A slight distort softens the geometric
+ * primitives into something more hand-formed than CAD-perfect.
  */
-function StoneForm() {
-  const meshRef = useRef<Mesh>(null);
+function MeditatingForm() {
+  const groupRef = useRef<Group>(null);
 
   useFrame((_, delta) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.y += delta * 0.018;
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y += delta * 0.02;
   });
 
   return (
-    <Float speed={0.5} rotationIntensity={0.06} floatIntensity={0.3}>
-      <mesh ref={meshRef} scale={BASE_SCALE}>
-        <icosahedronGeometry args={[1, 32]} />
-        <MeshDistortMaterial color="#e6dfd3" roughness={0.82} metalness={0.08} distort={0.1} speed={0.35} />
-      </mesh>
+    <Float speed={0.55} rotationIntensity={0.06} floatIntensity={0.35}>
+      <group ref={groupRef} scale={SCALE}>
+        {/* Seated body: wide at the base (crossed legs), tapering to the shoulders */}
+        <mesh position={[0, -0.05, 0]}>
+          <coneGeometry args={[0.82, 1.05, 48]} />
+          <MeshDistortMaterial
+            color="#e8d8b0"
+            emissive="#d4af37"
+            emissiveIntensity={0.35}
+            roughness={0.4}
+            metalness={0.18}
+            distort={0.08}
+            speed={0.3}
+          />
+        </mesh>
+        {/* Head */}
+        <mesh position={[0, 0.75, 0]}>
+          <sphereGeometry args={[0.33, 48, 48]} />
+          <MeshDistortMaterial
+            color="#e8d8b0"
+            emissive="#d4af37"
+            emissiveIntensity={0.35}
+            roughness={0.4}
+            metalness={0.18}
+            distort={0.1}
+            speed={0.3}
+          />
+        </mesh>
+      </group>
     </Float>
   );
 }
 
 /**
- * Warm studio-photography lighting: one dominant key light raking across the
- * surface (the source of the light-to-shadow gradient that makes it read as
- * carved stone), a dim warm fill so shadows don't go fully black, and a
- * soft rim to separate the form from the background.
+ * Warm key light for a real light-to-shadow gradient across the form, plus a
+ * light positioned behind it (relative to the camera) so its edge catches a
+ * soft glow — the "astral / luminous silhouette" quality that a flat, evenly
+ * lit render can't produce.
  */
 function Rig() {
   return (
     <>
-      <ambientLight intensity={0.38} color="#fdfbf7" />
-      <directionalLight position={[4, 3.5, 3.5]} intensity={2.4} color="#fdfbf7" />
-      <pointLight position={[-3, -1.5, 1]} intensity={0.45} color="#c9a15a" />
-      <pointLight position={[0.5, -0.5, -3]} intensity={0.6} color="#e8d8b0" />
+      <ambientLight intensity={0.3} color="#fdfbf7" />
+      <directionalLight position={[3.5, 3.5, 3]} intensity={2} color="#fdfbf7" />
+      <pointLight position={[-2.5, -1, 1.5]} intensity={0.4} color="#c9a15a" />
+      {/* Rim/back light: behind the figure, facing the camera, for the glowing edge */}
+      <pointLight position={[1.5, 0.5, -3.5]} intensity={1.4} color="#d4af37" />
     </>
   );
 }
@@ -66,8 +88,8 @@ function PointerTilt({ groupRef }: { groupRef: RefObject<Group | null> }) {
   useFrame((state) => {
     if (!groupRef.current) return;
     const { x, y } = state.pointer;
-    groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, x * 0.22, 0.04);
-    groupRef.current.rotation.x = MathUtils.lerp(groupRef.current.rotation.x, -y * 0.13, 0.04);
+    groupRef.current.rotation.y = MathUtils.lerp(groupRef.current.rotation.y, x * 0.2, 0.04);
+    groupRef.current.rotation.x = MathUtils.lerp(groupRef.current.rotation.x, -y * 0.12, 0.04);
   });
 
   return null;
@@ -117,12 +139,12 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
     >
       <Suspense fallback={null}>
         {/* Outer group: scroll parallax only, in world space. */}
-        <group ref={groupRef} position={[1.7, -0.15, 0]}>
+        <group ref={groupRef} position={[1.6, -0.35, 0]}>
           {/* Inner group: pointer tilt, isolated so it doesn't fight the scroll tween. */}
           <group ref={tiltRef}>
             <Rig />
-            <StoneForm />
-            <Sparkles count={35} scale={4.5} size={1.6} speed={0.08} color="#e8d8b0" opacity={0.35} />
+            <MeditatingForm />
+            <Sparkles count={90} scale={6} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
           </group>
         </group>
       </Suspense>
