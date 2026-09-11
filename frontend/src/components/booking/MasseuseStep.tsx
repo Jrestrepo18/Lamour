@@ -28,7 +28,7 @@ export function MasseuseStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl italic text-ink">
+      <h2 className="font-serif text-2xl text-ink">
         {needsTwo ? "Elige tus dos masajistas" : "Elige tu masajista"}
       </h2>
       <p className="mt-1 text-sm text-ink-soft">
@@ -58,7 +58,7 @@ export function MasseuseStep({
                   isPrimary ? "border-gold bg-gold/5" : "border-silk hover:border-gold/40",
                 )}
               >
-                <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl italic text-gold-dark">
+                <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl text-gold-dark">
                   {initials(m.stageName)}
                   {isPrimary && (
                     <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-ivory">
@@ -66,7 +66,7 @@ export function MasseuseStep({
                     </span>
                   )}
                 </span>
-                <span className="mt-2 font-serif text-sm italic text-ink">{m.stageName}</span>
+                <span className="mt-2 font-serif text-sm text-ink">{m.stageName}</span>
               </button>
             );
           })}
@@ -93,7 +93,7 @@ export function MasseuseStep({
                     isSecondary ? "border-gold bg-gold/5" : "border-silk hover:border-gold/40",
                   )}
                 >
-                  <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl italic text-gold-dark">
+                  <span className="relative flex h-14 w-14 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl text-gold-dark">
                     {initials(m.stageName)}
                     {isSecondary && (
                       <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-gold text-ivory">
@@ -101,7 +101,7 @@ export function MasseuseStep({
                       </span>
                     )}
                   </span>
-                  <span className="mt-2 font-serif text-sm italic text-ink">{m.stageName}</span>
+                  <span className="mt-2 font-serif text-sm text-ink">{m.stageName}</span>
                 </button>
               );
             })}

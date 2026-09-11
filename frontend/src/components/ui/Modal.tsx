@@ -25,7 +25,7 @@ export function Modal({
       <button aria-hidden tabIndex={-1} className="absolute inset-0 cursor-default" onClick={onClose} />
       <div className="relative w-full max-w-lg rounded-2xl border border-silk bg-ivory p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="mb-5 flex items-center justify-between">
-          <h2 className="font-serif text-xl italic text-ink">{title}</h2>
+          <h2 className="font-serif text-xl text-ink">{title}</h2>
           <button
             type="button"
             onClick={onClose}

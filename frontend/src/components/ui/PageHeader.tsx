@@ -22,7 +22,7 @@ export function PageHeader({
     >
       <span
         aria-hidden
-        className="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-serif text-[22vw] italic leading-none text-ivory/[0.03] sm:text-[13vw]"
+        className="pointer-events-none absolute -bottom-6 left-1/2 -translate-x-1/2 select-none whitespace-nowrap font-serif text-[22vw] leading-none text-ivory/[0.03] sm:text-[13vw]"
       >
         {title}
       </span>
@@ -31,7 +31,7 @@ export function PageHeader({
       <Container className="relative z-10">
         <Reveal from="left">
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.4em] text-gold">{eyebrow}</p>
-          <h1 className="font-serif text-5xl italic leading-[0.95] text-ivory text-balance sm:text-7xl">{title}</h1>
+          <h1 className="font-serif text-5xl leading-[0.95] text-ivory text-balance sm:text-7xl">{title}</h1>
         </Reveal>
         {description && (
           <Reveal delay={0.15} className="mt-6 max-w-lg">

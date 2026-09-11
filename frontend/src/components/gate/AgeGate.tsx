@@ -27,7 +27,7 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
       >
         {declined ? (
           <>
-            <h1 className="font-serif text-2xl italic text-ivory">Acceso restringido</h1>
+            <h1 className="font-serif text-2xl text-ivory">Acceso restringido</h1>
             <p className="mt-4 text-sm leading-relaxed text-ivory/60">
               Este sitio contiene información sobre servicios exclusivos para personas mayores de edad. Si no
               cumples este requisito, te pedimos abandonar la página.
@@ -38,7 +38,7 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-gold">
               <ShieldCheck size={26} strokeWidth={1.5} />
             </span>
-            <h1 className="mt-5 font-serif text-2xl italic text-ivory">Confirmación de edad</h1>
+            <h1 className="mt-5 font-serif text-2xl text-ivory">Confirmación de edad</h1>
             <p className="mt-4 text-sm leading-relaxed text-ivory/65">
               El contenido de <strong className="text-ivory">L&apos;AMOUR — Estética y Sentidos</strong> incluye
               servicios de naturaleza sensorial e íntima, dirigidos exclusivamente a personas mayores de 18 años.

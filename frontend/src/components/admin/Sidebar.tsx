@@ -24,7 +24,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
   return (
     <aside className="flex w-64 shrink-0 flex-col border-r border-ivory/10 bg-ink px-4 py-8">
       <div className="px-2">
-        <span className="font-serif text-xl italic text-ivory">L&apos;AMOUR</span>
+        <span className="font-serif text-xl text-ivory">L&apos;AMOUR</span>
         <p className="text-[0.6rem] font-sans uppercase tracking-[0.3em] text-gold">Admin</p>
       </div>
 

@@ -14,7 +14,7 @@ export function Preloader() {
         initial={{ opacity: 0, letterSpacing: "0.1em" }}
         animate={{ opacity: 1, letterSpacing: "0.02em" }}
         transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-        className="font-serif text-4xl italic text-ivory sm:text-5xl"
+        className="font-serif text-4xl text-ivory sm:text-5xl"
       >
         L&apos;AMOUR
       </motion.span>

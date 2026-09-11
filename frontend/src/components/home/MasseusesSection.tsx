@@ -23,12 +23,12 @@ export function MasseusesSection({ masseuses }: { masseuses: Masseuse[] }) {
                 href={`/reservar?masseuse=${m.id}`}
                 className="group grid grid-cols-1 items-center gap-6 border-b border-ink/10 py-10 transition-colors hover:bg-terracotta/[0.04] sm:grid-cols-[auto_1fr_auto] lg:py-12"
               >
-                <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-3xl italic text-gold-dark transition-transform duration-300 group-hover:scale-105">
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-3xl text-gold-dark transition-transform duration-300 group-hover:scale-105">
                   {initials(m.stageName)}
                 </span>
 
                 <div>
-                  <h3 className="font-serif text-2xl italic text-ink transition-colors group-hover:text-terracotta sm:text-3xl">
+                  <h3 className="font-serif text-2xl text-ink transition-colors group-hover:text-terracotta sm:text-3xl">
                     {m.stageName}
                   </h3>
                   {m.bio && <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink-soft">{m.bio}</p>}

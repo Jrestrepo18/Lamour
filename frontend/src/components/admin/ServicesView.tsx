@@ -151,7 +151,7 @@ export function ServicesView({ token }: { token: string }) {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl italic text-ink">Servicios</h1>
+          <h1 className="font-serif text-2xl text-ink">Servicios</h1>
           <p className="text-sm text-ink-soft">Crea, edita precios y desactiva servicios al instante.</p>
         </div>
         <Button size="md" onClick={openNew} disabled={categories.length === 0}>
@@ -188,7 +188,7 @@ export function ServicesView({ token }: { token: string }) {
           <tbody className="divide-y divide-silk">
             {services?.map((s) => (
               <tr key={s.id} className="bg-white/50">
-                <td className="px-4 py-3 font-serif italic text-ink">{s.name}</td>
+                <td className="px-4 py-3 font-serif text-ink">{s.name}</td>
                 <td className="px-4 py-3 text-ink-soft">
                   {categories.find((c) => c.id === s.serviceCategoryId)?.name ?? "—"}
                 </td>

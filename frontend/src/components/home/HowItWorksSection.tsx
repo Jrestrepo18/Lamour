@@ -26,7 +26,7 @@ export function HowItWorksSection() {
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold-dark">
                   <step.icon size={26} strokeWidth={1.5} />
                 </div>
-                <span className="mt-4 font-serif text-sm italic text-gold-dark">Paso {i + 1}</span>
+                <span className="mt-4 font-serif text-sm text-gold-dark">Paso {i + 1}</span>
                 <h3 className="mt-1 font-serif text-lg text-ink">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.text}</p>
               </div>

@@ -27,7 +27,7 @@ export function SectionHeading({
       )}
       <h2
         className={clsx(
-          "font-serif text-3xl italic sm:text-4xl text-balance",
+          "font-serif text-3xl sm:text-4xl text-balance",
           light ? "text-ivory" : "text-ink",
         )}
       >

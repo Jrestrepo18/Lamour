@@ -93,7 +93,7 @@ export function MasseusesView({ token }: { token: string }) {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl italic text-ink">Masajistas</h1>
+          <h1 className="font-serif text-2xl text-ink">Masajistas</h1>
           <p className="text-sm text-ink-soft">Administra quién aparece disponible en la web pública.</p>
         </div>
         <Button size="md" onClick={openNew}>
@@ -120,7 +120,7 @@ export function MasseusesView({ token }: { token: string }) {
           <div key={m.id} className="rounded-2xl border border-silk bg-white/60 p-5">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-serif text-lg italic text-ink">{m.stageName}</p>
+                <p className="font-serif text-lg text-ink">{m.stageName}</p>
                 <p className="text-xs text-ink-soft">{m.whatsAppNumber}</p>
               </div>
               <span

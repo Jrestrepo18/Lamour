@@ -17,7 +17,7 @@ export function Footer() {
     <footer id="contacto" className="bg-ink text-ivory">
       <Container className="grid gap-10 py-16 sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <span className="font-serif text-2xl italic text-ivory">L&apos;AMOUR</span>
+          <span className="font-serif text-2xl text-ivory">L&apos;AMOUR</span>
           <p className="mt-1 text-[0.65rem] font-sans uppercase tracking-[0.35em] text-champagne">
             Estética y Sentidos
           </p>

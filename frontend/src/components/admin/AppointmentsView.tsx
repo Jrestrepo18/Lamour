@@ -65,7 +65,7 @@ export function AppointmentsView({ token }: { token: string }) {
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl italic text-ink">Citas</h1>
+          <h1 className="font-serif text-2xl text-ink">Citas</h1>
           <p className="text-sm text-ink-soft">Gestiona las reservas y confirma la asignación a cada masajista.</p>
         </div>
         <button
@@ -117,7 +117,7 @@ export function AppointmentsView({ token }: { token: string }) {
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-serif text-lg italic text-ink">{a.serviceName}</p>
+                  <p className="font-serif text-lg text-ink">{a.serviceName}</p>
                   <StatusBadge status={a.status} />
                 </div>
                 <p className="mt-1 text-sm capitalize text-ink-soft">

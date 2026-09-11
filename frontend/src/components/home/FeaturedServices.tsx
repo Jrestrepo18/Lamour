@@ -14,7 +14,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-ink/10 pb-10">
           <Reveal from="left">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-terracotta">Lo más pedido</p>
-            <h2 className="font-serif text-4xl italic leading-[1.05] text-ink sm:text-5xl">Rituales destacados</h2>
+            <h2 className="font-serif text-4xl leading-[1.05] text-ink sm:text-5xl">Rituales destacados</h2>
           </Reveal>
           <Reveal from="right" delay={0.1}>
             <Link
@@ -34,8 +34,8 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                 href={`/reservar?service=${service.slug}`}
                 className="group block border-t border-ink/10 py-8 transition-colors sm:border-t-0 sm:py-10"
               >
-                <span className="font-serif text-sm italic text-gold">0{i + 1}</span>
-                <h3 className="mt-3 font-serif text-2xl italic text-ink transition-colors group-hover:text-terracotta">
+                <span className="font-serif text-sm text-gold">0{i + 1}</span>
+                <h3 className="mt-3 font-serif text-2xl text-ink transition-colors group-hover:text-terracotta">
                   {service.name}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-ink-soft">{service.shortDescription}</p>

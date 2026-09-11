@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowUpRight, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Hero3D } from "@/components/three/Hero3D";
 
@@ -15,12 +15,12 @@ import { Hero3D } from "@/components/three/Hero3D";
  */
 const container: Variants = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.14, delayChildren: 0.2 } },
+  show: { transition: { staggerChildren: 0.13, delayChildren: 0.2 } },
 };
 
 const revealLine: Variants = {
   hidden: { y: "100%" },
-  show: { y: "0%", transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } },
+  show: { y: "0%", transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
 };
 
 const fadeUp: Variants = {
@@ -44,7 +44,7 @@ export function Hero() {
       </div>
 
       {/* Scrim so the text column stays legible over the piece */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-espresso via-espresso/75 to-espresso/10" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-espresso via-espresso/70 to-espresso/5" />
 
       <motion.div
         variants={container}
@@ -53,18 +53,18 @@ export function Hero() {
         className="relative z-10 flex min-h-screen flex-col justify-center pt-24 pb-16"
       >
         <Container>
-          <div className="max-w-2xl">
+          <div className="max-w-3xl">
             <motion.div variants={drawLine} className="mb-8 h-px w-16 origin-left bg-gold" />
 
-            <h1 className="text-display font-serif italic text-ivory">
+            <h1 className="text-display font-serif font-bold text-ivory">
               <span className="block overflow-hidden">
                 <motion.span variants={revealLine} className="block">
                   estética
                 </motion.span>
               </span>
               <span className="block overflow-hidden">
-                <motion.span variants={revealLine} className="block font-bold not-italic uppercase text-gold">
-                  Y sentidos
+                <motion.span variants={revealLine} className="block uppercase text-gold">
+                  y sentidos
                 </motion.span>
               </span>
             </h1>
@@ -74,20 +74,21 @@ export function Hero() {
               espacio.
             </motion.p>
 
-            <motion.div variants={fadeUp} className="mt-9">
-              <Link
-                href="/reservar"
-                className="text-body group inline-flex items-center gap-2 text-ivory transition-colors hover:text-gold"
-              >
-                reserva tu ritual
-                <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1.5" />
+            <motion.div variants={fadeUp} className="mt-10">
+              <Link href="/reservar" className="group inline-flex items-center gap-4">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold text-espresso transition-transform duration-300 group-hover:scale-105">
+                  <ArrowUpRight size={22} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </span>
+                <span className="rounded-full border border-ivory/25 py-4 pl-6 pr-7 font-semibold text-ivory transition-colors duration-300 group-hover:border-gold group-hover:text-gold">
+                  reservar mi experiencia
+                </span>
               </Link>
             </motion.div>
           </div>
         </Container>
 
         <Container className="mt-auto pt-16">
-          <motion.div variants={fadeUp} className="text-label flex items-center gap-2 text-ivory/40">
+          <motion.div variants={fadeUp} className="text-label flex items-center gap-2 font-medium text-ivory/40">
             <MapPin size={13} className="text-gold" />
             Medellín y su área metropolitana
           </motion.div>

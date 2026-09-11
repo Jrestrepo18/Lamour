@@ -33,7 +33,7 @@ export function DetailsStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl italic text-ink">Tus datos</h2>
+      <h2 className="font-serif text-2xl text-ink">Tus datos</h2>
       <p className="mt-1 text-sm text-ink-soft">Necesitamos esta información para confirmar tu cita a domicilio.</p>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">

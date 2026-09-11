@@ -54,7 +54,7 @@ export function Header() {
         )}
       >
         <Link href="/" className="flex flex-col leading-none">
-          <span className={clsx("font-serif text-xl italic tracking-wide transition-colors", scrolled ? "text-ink" : "text-ivory")}>
+          <span className={clsx("font-serif text-xl tracking-wide transition-colors", scrolled ? "text-ink" : "text-ivory")}>
             L&apos;AMOUR
           </span>
           {!scrolled && (

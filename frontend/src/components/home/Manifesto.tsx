@@ -9,7 +9,7 @@ export function Manifesto() {
           <p className="text-xs font-semibold uppercase tracking-[0.4em] text-terracotta">Nuestra filosofía</p>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="mt-6 font-serif text-3xl italic leading-[1.25] text-ink text-balance sm:text-5xl sm:leading-[1.2]">
+          <p className="mt-6 font-serif text-3xl leading-[1.25] text-ink text-balance sm:text-5xl sm:leading-[1.2]">
             Creemos en la pausa. En el contacto consciente. En regalarte, sin salir de casa, una experiencia
             que despierta <span className="text-terracotta">cada sentido.</span>
           </p>

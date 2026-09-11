@@ -21,7 +21,7 @@ export function CategorySection({
         <div className="grid grid-cols-1 gap-8 border-b border-ink/10 pb-10 lg:grid-cols-[1.6fr_1fr] lg:items-end lg:gap-16">
           <Reveal from="left">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-terracotta">{eyebrow}</p>
-            <h2 className="font-serif text-4xl italic leading-[1.05] text-ink text-balance sm:text-6xl">
+            <h2 className="font-serif text-4xl leading-[1.05] text-ink text-balance sm:text-6xl">
               {category.name}
             </h2>
           </Reveal>

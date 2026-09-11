@@ -20,7 +20,7 @@ export function ServiceCard({ service, tone = "light" }: { service: Service; ton
         <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
           <h3
             className={clsx(
-              "font-serif text-2xl italic transition-colors sm:text-[1.75rem]",
+              "font-serif text-2xl transition-colors sm:text-[1.75rem]",
               dark ? "text-ivory group-hover:text-champagne" : "text-ink group-hover:text-terracotta",
             )}
           >
@@ -38,7 +38,7 @@ export function ServiceCard({ service, tone = "light" }: { service: Service; ton
         </p>
 
         {service.highlights.length > 0 && (
-          <p className={clsx("mt-2 text-xs italic", dark ? "text-ivory/35" : "text-ink-soft/70")}>
+          <p className={clsx("mt-2 text-xs", dark ? "text-ivory/35" : "text-ink-soft/70")}>
             {service.highlights.slice(0, 2).join(" · ")}
           </p>
         )}

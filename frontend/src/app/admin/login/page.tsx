@@ -39,7 +39,7 @@ export default function AdminLoginPage() {
           <span className="flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-gold">
             <Lock size={24} />
           </span>
-          <h1 className="mt-4 font-serif text-2xl italic text-ivory">L&apos;AMOUR Admin</h1>
+          <h1 className="mt-4 font-serif text-2xl text-ivory">L&apos;AMOUR Admin</h1>
           <p className="mt-1 text-xs text-ivory/50">Panel de administración</p>
         </div>
 

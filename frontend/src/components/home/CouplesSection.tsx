@@ -18,7 +18,7 @@ export function CouplesSection({ category }: { category: ServiceCategory }) {
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-champagne">
               Experiencias en Pareja
             </p>
-            <h2 className="font-serif text-4xl italic leading-[1.05] text-ivory text-balance sm:text-6xl">
+            <h2 className="font-serif text-4xl leading-[1.05] text-ivory text-balance sm:text-6xl">
               {category.name}
             </h2>
           </Reveal>
@@ -37,7 +37,7 @@ export function CouplesSection({ category }: { category: ServiceCategory }) {
                   <Eye size={20} />
                   <span className="text-xs font-semibold uppercase tracking-[0.3em]">El Arte de Mirar</span>
                 </div>
-                <h3 className="font-serif text-3xl italic text-ivory sm:text-4xl">{voyerista.name}</h3>
+                <h3 className="font-serif text-3xl text-ivory sm:text-4xl">{voyerista.name}</h3>
                 <p className="text-sm leading-relaxed text-ivory/65">
                   Conexión a través de los sentidos: uno de los dos se entrega por completo a la relajación
                   mientras el otro observa cada movimiento, alimentando la fantasía y la complicidad de la

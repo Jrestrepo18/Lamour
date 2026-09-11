@@ -9,7 +9,7 @@ export function FinalCta() {
       <Container className="relative text-center">
         <Reveal>
           <p className="text-xs font-sans font-semibold uppercase tracking-[0.35em] text-gold">Tu momento te espera</p>
-          <h2 className="mx-auto mt-4 max-w-2xl font-serif text-3xl italic text-ivory sm:text-4xl">
+          <h2 className="mx-auto mt-4 max-w-2xl font-serif text-3xl text-ivory sm:text-4xl">
             Regálate una pausa. Regálate L&apos;AMOUR.
           </h2>
           <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-ivory/60">

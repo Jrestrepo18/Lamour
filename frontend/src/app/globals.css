@@ -36,7 +36,8 @@
   --color-terracotta: var(--color-terracotta);
   --color-terracotta-dark: var(--color-terracotta-dark);
 
-  --font-serif: var(--font-bodoni);
+  /* Una sola familia a distintos pesos — ver nota en layout.tsx */
+  --font-serif: var(--font-general-sans);
   --font-sans: var(--font-general-sans);
 
   /* Fase 0 — escala bipolar: 4 escalones, sin tamaños intermedios tibios */

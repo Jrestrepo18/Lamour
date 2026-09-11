@@ -20,7 +20,7 @@ export function ServiceStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl italic text-ink">Elige tu servicio</h2>
+      <h2 className="font-serif text-2xl text-ink">Elige tu servicio</h2>
       <p className="mt-1 text-sm text-ink-soft">Selecciona la experiencia que deseas vivir.</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
@@ -61,7 +61,7 @@ export function ServiceStep({
               )}
             >
               <div className="flex items-start justify-between gap-2">
-                <h3 className="font-serif text-lg italic text-ink">{service.name}</h3>
+                <h3 className="font-serif text-lg text-ink">{service.name}</h3>
                 {isSelected && (
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-gold text-ivory">
                     <Check size={13} />

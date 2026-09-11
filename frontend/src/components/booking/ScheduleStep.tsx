@@ -77,7 +77,7 @@ export function ScheduleStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl italic text-ink">Elige tu horario</h2>
+      <h2 className="font-serif text-2xl text-ink">Elige tu horario</h2>
       <p className="mt-1 text-sm text-ink-soft">Disponibilidad en tiempo real, sin cruces de agenda.</p>
 
       {service.allowsExtraTime && (

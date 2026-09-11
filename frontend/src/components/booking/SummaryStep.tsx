@@ -29,7 +29,7 @@ export function SummaryStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl italic text-ink">Confirma tu experiencia</h2>
+      <h2 className="font-serif text-2xl text-ink">Confirma tu experiencia</h2>
       <p className="mt-1 text-sm text-ink-soft">Revisa los detalles antes de enviar tu solicitud de reserva.</p>
 
       <div className="mt-6 space-y-4 rounded-2xl border border-silk bg-white/60 p-6">
@@ -37,7 +37,7 @@ export function SummaryStep({
           <div className="flex items-start gap-3">
             <Sparkles size={18} className="mt-0.5 shrink-0 text-gold" />
             <div>
-              <p className="font-serif text-lg italic text-ink">{service.name}</p>
+              <p className="font-serif text-lg text-ink">{service.name}</p>
               <p className="text-xs text-ink-soft">{formatDuration(duration)}</p>
             </div>
           </div>
