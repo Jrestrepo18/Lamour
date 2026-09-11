@@ -90,10 +90,18 @@ export function Hero() {
           </div>
         </Container>
 
-        <Container className="mt-auto pt-16">
+        <Container className="mt-auto flex flex-wrap items-end justify-between gap-6 pt-16">
           <motion.div variants={fadeUp} className="text-label flex items-center gap-2 font-medium text-ink-soft/70">
             <MapPin size={13} className="text-gold" />
             Medellín y su área metropolitana
+          </motion.div>
+
+          <motion.div variants={fadeUp} className="max-w-[14rem] text-right">
+            <p className="text-label font-medium uppercase tracking-wider text-gold">¿Qué transmite esto?</p>
+            <p className="mt-1 font-serif text-lg font-semibold text-ink">Quietud</p>
+            <p className="text-label mt-1 leading-relaxed text-ink-soft/75">
+              Presencia sin prisa. Calma que se siente antes del primer contacto.
+            </p>
           </motion.div>
         </Container>
       </motion.div>
