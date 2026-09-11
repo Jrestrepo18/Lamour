@@ -1,0 +1,94 @@
+@import "tailwindcss";
+@import "lenis/dist/lenis.css";
+
+:root {
+  /* L'AMOUR — Estética y Sentidos: paleta oficial de marca (obligatoria) */
+  --color-ivory: #fdfbf7; /* Marfil — fondo general */
+  --color-silk: #e6dfd3; /* Beige seda — superficies y secciones alternas */
+  --color-champagne: #e8d8b0; /* Oro champagne — acentos suaves, degradados */
+  --color-gold: #d4af37; /* Oro esculpido — CTAs, bordes, detalles. NUNCA texto de cuerpo/botón sobre fondo claro (falla AA) */
+
+  /* Fase 0 — los dos tonos propuestos y aprobados, misma familia cálida (monocromía estricta) */
+  --color-ink: #2b2019; /* Café molido — texto sobre superficies claras */
+  --color-espresso: #140d08; /* Ébano cálido — fondo de secciones de contraste */
+  --color-ink-soft: #6b5a4a; /* Tinta suavizada para texto secundario */
+
+  /**
+   * Tokens heredados de la sesión anterior (pre-Fase 0). Se quedan definidos
+   * a propósito para que las secciones que Fase 2 todavía no ha tocado no se
+   * rompan visualmente. Cada uno se retira cuando su sección se reconstruye
+   * — no antes — siguiendo el criterio de "una sección a la vez".
+   */
+  --color-gold-dark: #b3901f;
+  --color-terracotta: #a5502a;
+  --color-terracotta-dark: #7c3b1e;
+}
+
+@theme inline {
+  --color-ivory: var(--color-ivory);
+  --color-silk: var(--color-silk);
+  --color-champagne: var(--color-champagne);
+  --color-gold: var(--color-gold);
+  --color-ink: var(--color-ink);
+  --color-ink-soft: var(--color-ink-soft);
+  --color-espresso: var(--color-espresso);
+  --color-gold-dark: var(--color-gold-dark);
+  --color-terracotta: var(--color-terracotta);
+  --color-terracotta-dark: var(--color-terracotta-dark);
+
+  --font-serif: var(--font-bodoni);
+  --font-sans: var(--font-general-sans);
+
+  --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-shimmer: shimmer 2.5s linear infinite;
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(28px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-gold);
+  color: var(--color-espresso);
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+/* Thin gold scrollbar to match the brand instead of the browser default */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ivory);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-champagne);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
