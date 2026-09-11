@@ -47,7 +47,7 @@
    * inflaba el texto igual que una pantalla alta, empujando el CTA fuera
    * del viewport. Combinar ambas dimensiones evita ese desborde.
    */
-  --text-display: clamp(2.75rem, 3vw + 3.5vh, 7.5rem);
+  --text-display: clamp(3rem, 3.2vw + 3.7vh, 8rem);
   --text-display--line-height: 0.9;
   --text-heading: clamp(1.75rem, 1.2rem + 2.2vw, 3rem);
   --text-heading--line-height: 1.05;
