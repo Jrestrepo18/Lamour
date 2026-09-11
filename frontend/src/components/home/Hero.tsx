@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { CrescentMoon } from "@/components/ui/CrescentMoon";
 import { Hero3D } from "@/components/three/Hero3D";
 
 /**
@@ -26,11 +27,6 @@ const revealLine: Variants = {
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
-};
-
-const drawLine: Variants = {
-  hidden: { scaleX: 0 },
-  show: { scaleX: 1, transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } },
 };
 
 export function Hero() {
@@ -57,20 +53,24 @@ export function Hero() {
       >
         <Container>
           <div className="max-w-3xl">
-            <motion.div variants={drawLine} className="mb-8 h-px w-16 origin-left bg-gold" />
+            <div className="flex items-center gap-5 sm:gap-7">
+              <motion.div variants={fadeUp} className="shrink-0">
+                <CrescentMoon className="h-14 w-14 text-gold sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
+              </motion.div>
 
-            <h1 className="text-display font-serif font-bold">
-              <span className="block overflow-hidden">
-                <motion.span variants={revealLine} className="block text-ink-soft">
-                  estética
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden">
-                <motion.span variants={revealLine} className="block uppercase text-ink">
-                  y sentidos
-                </motion.span>
-              </span>
-            </h1>
+              <h1 className="text-display font-serif font-bold">
+                <span className="block overflow-hidden">
+                  <motion.span variants={revealLine} className="block text-ink-soft">
+                    estética
+                  </motion.span>
+                </span>
+                <span className="block overflow-hidden">
+                  <motion.span variants={revealLine} className="block uppercase text-ink">
+                    y sentidos
+                  </motion.span>
+                </span>
+              </h1>
+            </div>
 
             <motion.p variants={fadeUp} className="text-body mt-9 max-w-md text-ink-soft">
               Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu
