@@ -4,7 +4,7 @@ import { Suspense, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sparkles, useGLTF } from "@react-three/drei";
 import { MathUtils, type Group } from "three";
-import { gsap } from "@/lib/gsap";
+import { ScrollTrigger } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 
 const MODEL_URL = "/models/hero-figure.glb";
@@ -89,29 +89,22 @@ function ScrollParallax({
 }) {
   useGsapContext(() => {
     if (!groupRef.current || !triggerRef.current) return;
+    const group = groupRef.current;
 
-    gsap.to(groupRef.current.position, {
-      y: -0.9,
-      ease: "none",
-      scrollTrigger: {
-        trigger: triggerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
-      },
-    });
-
+    // One ScrollTrigger driving both properties directly off scroll progress
+    // (0 -> 1), instead of two separate gsap.to() tweens each spinning up
+    // their own ScrollTrigger on the same trigger/start/end — that duplicate
+    // setup was the bug: the rotation one wasn't reliably taking effect.
     // Negative Y-rotation turns the figure toward the viewer's left as the
-    // user scrolls down. Sign flip is the only thing to touch if this reads
-    // backwards once you see it live.
-    gsap.to(groupRef.current.rotation, {
-      y: -0.9,
-      ease: "none",
-      scrollTrigger: {
-        trigger: triggerRef.current,
-        start: "top top",
-        end: "bottom top",
-        scrub: true,
+    // user scrolls down; flip the sign here if it reads backwards live.
+    ScrollTrigger.create({
+      trigger: triggerRef.current,
+      start: "top top",
+      end: "bottom top",
+      scrub: true,
+      onUpdate: (self) => {
+        group.position.y = -0.9 * self.progress;
+        group.rotation.y = -0.9 * self.progress;
       },
     });
   }, []);
