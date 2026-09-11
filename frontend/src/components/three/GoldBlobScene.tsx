@@ -3,14 +3,11 @@
 import { Suspense, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Sparkles } from "@react-three/drei";
-import { DoubleSide, type Group, type Mesh, type MeshBasicMaterial } from "three";
+import type { Group, Mesh } from "three";
 import { gsap } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 
 const BASE_SCALE = 2.6;
-const RING_COUNT = 3;
-const RING_DURATION = 4.6; // seconds per ripple cycle — slow, like water settling
-const RING_SPREAD = 1.7;
 
 /**
  * A slow, breathing form instead of a shiny "product shot" rock — the brand
@@ -44,45 +41,6 @@ function BreathingOrb() {
         />
       </mesh>
     </Float>
-  );
-}
-
-/**
- * The requested symbol: slow concentric rings breathing outward from the
- * orb, like ripples settling on still water — a universal, unclichéd stand-in
- * for calm/meditation/energy, tied directly to the piece that's already
- * there instead of a bolted-on icon (lotus, om, ...).
- */
-function RippleRings() {
-  const ringRefs = useRef<(Mesh | null)[]>([]);
-
-  useFrame(({ clock }) => {
-    for (let i = 0; i < RING_COUNT; i++) {
-      const ring = ringRefs.current[i];
-      if (!ring) continue;
-
-      const phase = i / RING_COUNT;
-      const t = ((clock.elapsedTime / RING_DURATION + phase) % 1 + 1) % 1;
-
-      ring.scale.setScalar(BASE_SCALE * (1 + t * RING_SPREAD));
-      (ring.material as MeshBasicMaterial).opacity = (1 - t) * 0.3;
-    }
-  });
-
-  return (
-    <>
-      {Array.from({ length: RING_COUNT }, (_, i) => (
-        <mesh
-          key={i}
-          ref={(el) => {
-            ringRefs.current[i] = el;
-          }}
-        >
-          <ringGeometry args={[0.99, 1, 80]} />
-          <meshBasicMaterial color="#d4af37" transparent opacity={0} side={DoubleSide} depthWrite={false} />
-        </mesh>
-      ))}
-    </>
   );
 }
 
@@ -142,7 +100,6 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
         <group ref={groupRef} position={[2.1, 0, 0]}>
           <Rig />
           <BreathingOrb />
-          <RippleRings />
           <Sparkles count={50} scale={6} size={2} speed={0.12} color="#e8d8b0" opacity={0.4} />
         </group>
       </Suspense>

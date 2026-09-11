@@ -54,10 +54,6 @@ export function Hero() {
         <Container>
           <div className="max-w-3xl">
             <div className="flex items-center gap-5 sm:gap-7">
-              <motion.div variants={fadeUp} className="shrink-0">
-                <CrescentMoon className="h-14 w-14 text-gold sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
-              </motion.div>
-
               <h1 className="text-display font-serif font-bold">
                 <span className="block overflow-hidden">
                   <motion.span variants={revealLine} className="block text-ink-soft">
@@ -70,6 +66,10 @@ export function Hero() {
                   </motion.span>
                 </span>
               </h1>
+
+              <motion.div variants={fadeUp} className="shrink-0">
+                <CrescentMoon className="h-14 w-14 text-gold sm:h-20 sm:w-20 lg:h-24 lg:w-24" />
+              </motion.div>
             </div>
 
             <motion.p variants={fadeUp} className="text-body mt-9 max-w-md text-ink-soft">
