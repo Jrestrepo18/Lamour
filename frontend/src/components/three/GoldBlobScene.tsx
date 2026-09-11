@@ -2,7 +2,7 @@
 
 import { Suspense, useRef, type RefObject } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Float, Sparkles, useGLTF } from "@react-three/drei";
+import { Sparkles, useGLTF } from "@react-three/drei";
 import { MathUtils, type Group } from "three";
 import { gsap } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
@@ -25,22 +25,18 @@ const MODEL_HEIGHT = 1.906;
  * baked lighting instead of a hand-built primitive approximation. Optimized
  * from the 52 MB source (Draco geometry compression + WebP textures at
  * 1024px + a simplify pass) down to 1.4 MB; see frontend/public/models/.
+ *
+ * Deliberately static on its own — no autonomous spin or float. The only
+ * things that move it are the user's scroll (ScrollParallax) and cursor
+ * (PointerTilt), both applied to the groups that wrap this one.
  */
 function HeroFigure() {
   const { scene } = useGLTF(MODEL_URL);
-  const groupRef = useRef<Group>(null);
-
-  useFrame((_, delta) => {
-    if (!groupRef.current) return;
-    groupRef.current.rotation.y += delta * 0.02;
-  });
 
   return (
-    <Float speed={0.5} rotationIntensity={0.05} floatIntensity={0.3}>
-      <group ref={groupRef} scale={SCALE} position={[0, -(MODEL_HEIGHT / 2) * SCALE, 0]}>
-        <primitive object={scene} />
-      </group>
-    </Float>
+    <group scale={SCALE} position={[0, -(MODEL_HEIGHT / 2) * SCALE, 0]}>
+      <primitive object={scene} />
+    </group>
   );
 }
 
@@ -79,10 +75,10 @@ function PointerTilt({ groupRef }: { groupRef: RefObject<Group | null> }) {
 }
 
 /**
- * The slow-parallax "image" of the hero: this group is what GSAP moves — a
- * real 3D object translating through the scene, not a CSS trick on the
- * canvas element. It lags behind the page's scroll, exactly like a
- * background photo would in the classic parallax pattern.
+ * All the figure's motion lives here, driven directly by scroll position
+ * (scrub: true — no autoplay, no easing lag beyond what scrub itself
+ * smooths). Position drifts up like a parallax background; rotation turns
+ * the figure so scrolling visibly "does something" to it, not just moves it.
  */
 function ScrollParallax({
   groupRef,
@@ -96,6 +92,17 @@ function ScrollParallax({
 
     gsap.to(groupRef.current.position, {
       y: -0.9,
+      ease: "none",
+      scrollTrigger: {
+        trigger: triggerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+      },
+    });
+
+    gsap.to(groupRef.current.rotation, {
+      y: 0.9,
       ease: "none",
       scrollTrigger: {
         trigger: triggerRef.current,
