@@ -18,6 +18,8 @@ export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  // The homepage hero is a light, airy scene now; every other route still opens on a dark PageHeader.
+  const topIsDark = pathname !== "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -54,7 +56,7 @@ export function Header() {
         )}
       >
         <Link href="/" className="flex flex-col leading-none">
-          <span className={clsx("font-serif text-xl tracking-wide transition-colors", scrolled ? "text-ink" : "text-ivory")}>
+          <span className={clsx("font-serif text-xl font-bold tracking-wide transition-colors", scrolled || !topIsDark ? "text-ink" : "text-ivory")}>
             L&apos;AMOUR
           </span>
           {!scrolled && (
@@ -67,20 +69,21 @@ export function Header() {
         <nav className="hidden items-center gap-7 md:flex">
           {NAV_LINKS.map((link) => {
             const active = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
+            const lightText = scrolled || !topIsDark;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className={clsx(
                   "relative text-sm transition-colors",
-                  scrolled ? (active ? "text-ink" : "text-ink-soft hover:text-ink") : active ? "text-ivory" : "text-ivory/70 hover:text-ivory",
+                  lightText ? (active ? "text-ink" : "text-ink-soft hover:text-ink") : active ? "text-ivory" : "text-ivory/70 hover:text-ivory",
                 )}
               >
                 {link.label}
                 {active && (
                   <motion.span
                     layoutId="nav-active"
-                    className={clsx("absolute -bottom-1.5 left-0 right-0 h-px", scrolled ? "bg-terracotta" : "bg-gold")}
+                    className={clsx("absolute -bottom-1.5 left-0 right-0 h-px", lightText ? "bg-terracotta" : "bg-gold")}
                   />
                 )}
               </Link>
@@ -98,7 +101,7 @@ export function Header() {
           type="button"
           aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={menuOpen}
-          className={clsx("md:hidden", scrolled ? "text-ink" : "text-ivory")}
+          className={clsx("md:hidden", scrolled || !topIsDark ? "text-ink" : "text-ivory")}
           onClick={() => setMenuOpen((v) => !v)}
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}

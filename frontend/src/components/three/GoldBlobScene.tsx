@@ -7,27 +7,37 @@ import type { Group, Mesh } from "three";
 import { gsap } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 
-function GoldBlob() {
+const BASE_SCALE = 2.6;
+
+/**
+ * A slow, breathing form instead of a shiny "product shot" rock — the brand
+ * wants to read as calm and spiritual, not dramatic. Low metalness, soft
+ * roughness and a gentle inner glow read as warm wax or a singing bowl
+ * rather than polished jewelry; the scale pulse mimics an inhale/exhale.
+ */
+function BreathingOrb() {
   const meshRef = useRef<Mesh>(null);
 
-  useFrame((_, delta) => {
+  useFrame(({ clock }, delta) => {
     if (!meshRef.current) return;
-    meshRef.current.rotation.x += delta * 0.07;
-    meshRef.current.rotation.y += delta * 0.1;
+    meshRef.current.rotation.y += delta * 0.035;
+
+    const breathe = 1 + Math.sin(clock.elapsedTime * 0.5) * 0.055;
+    meshRef.current.scale.setScalar(BASE_SCALE * breathe);
   });
 
   return (
-    <Float speed={1.2} rotationIntensity={0.28} floatIntensity={0.7}>
-      <mesh ref={meshRef} scale={3.4}>
+    <Float speed={0.8} rotationIntensity={0.15} floatIntensity={0.6}>
+      <mesh ref={meshRef} scale={BASE_SCALE}>
         <icosahedronGeometry args={[1, 32]} />
         <MeshDistortMaterial
-          color="#d4af37"
-          roughness={0.2}
-          metalness={0.92}
-          distort={0.28}
-          speed={1.4}
-          clearcoat={0.8}
-          clearcoatRoughness={0.1}
+          color="#e8d8b0"
+          emissive="#d4af37"
+          emissiveIntensity={0.22}
+          roughness={0.55}
+          metalness={0.3}
+          distort={0.14}
+          speed={0.7}
         />
       </mesh>
     </Float>
@@ -37,11 +47,9 @@ function GoldBlob() {
 function Rig() {
   return (
     <>
-      <ambientLight intensity={0.4} color="#fdfbf7" />
-      <directionalLight position={[4, 5, 3]} intensity={2.2} color="#e8d8b0" />
-      <pointLight position={[-3, -1, 2]} intensity={1.6} color="#d4af37" />
-      <pointLight position={[2, -2, -3]} intensity={1.2} color="#a5502a" />
-      <pointLight position={[0, 4, -2]} intensity={1} color="#fdfbf7" />
+      <ambientLight intensity={0.9} color="#fdfbf7" />
+      <directionalLight position={[3, 4, 4]} intensity={1.1} color="#fdfbf7" />
+      <pointLight position={[-3, -1, 2]} intensity={0.6} color="#e8d8b0" />
     </>
   );
 }
@@ -63,7 +71,7 @@ function ParallaxRig({
     if (!groupRef.current || !triggerRef.current) return;
 
     gsap.to(groupRef.current.position, {
-      y: -1.6,
+      y: -1.2,
       ease: "none",
       scrollTrigger: {
         trigger: triggerRef.current,
@@ -88,11 +96,11 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
       className="!touch-none"
     >
       <Suspense fallback={null}>
-        {/* Offset to the right so the piece reads as a dominant satellite behind the text, not centered. */}
+        {/* Offset to the right so the piece reads as a calm satellite behind the text, not centered. */}
         <group ref={groupRef} position={[2.1, 0, 0]}>
           <Rig />
-          <GoldBlob />
-          <Sparkles count={70} scale={7} size={2.4} speed={0.3} color="#e8d8b0" opacity={0.6} />
+          <BreathingOrb />
+          <Sparkles count={50} scale={6} size={2} speed={0.12} color="#e8d8b0" opacity={0.4} />
         </group>
       </Suspense>
       <ParallaxRig groupRef={groupRef} triggerRef={triggerRef} />
