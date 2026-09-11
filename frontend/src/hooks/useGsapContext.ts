@@ -23,7 +23,11 @@ export function useGsapContext<T extends HTMLElement = HTMLDivElement>(
   const scope = useRef<T | null>(null);
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => setup(scope), scope);
+    // `scope.current` may legitimately stay null for logic-only callers (e.g. a
+    // React Three Fiber component with no DOM output) — GSAP's scope param is
+    // only for selector-text convenience, so fall back to no scope rather than
+    // passing it a non-DOM/null value, which GSAP warns about ("Invalid scope").
+    const ctx = gsap.context(() => setup(scope), scope.current ?? undefined);
     return () => ctx.revert();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps);

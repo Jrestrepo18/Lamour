@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type RefObject } from "react";
 import dynamic from "next/dynamic";
 
 const GoldBlobScene = dynamic(() => import("./GoldBlobScene").then((m) => m.GoldBlobScene), {
@@ -21,13 +21,13 @@ function supportsWebGL(): boolean {
 function StaticGlow() {
   return (
     <div className="relative h-full w-full">
-      <div className="absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-br from-terracotta via-gold to-champagne opacity-70 blur-2xl" />
-      <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gradient-to-tr from-gold to-terracotta opacity-90 blur-md" />
+      <div className="absolute right-[15%] top-1/2 h-64 w-64 -translate-y-1/2 rounded-full bg-gradient-to-br from-gold via-champagne to-gold opacity-60 blur-2xl" />
+      <div className="absolute right-[18%] top-1/2 h-40 w-40 -translate-y-1/2 rounded-full bg-gold opacity-80 blur-md" />
     </div>
   );
 }
 
-export function Hero3D() {
+export function Hero3D({ triggerRef }: { triggerRef: RefObject<HTMLElement | null> }) {
   const [mode, setMode] = useState<"checking" | "3d" | "static">("checking");
 
   useEffect(() => {
@@ -37,5 +37,5 @@ export function Hero3D() {
   }, []);
 
   if (mode === "checking") return null;
-  return mode === "3d" ? <GoldBlobScene /> : <StaticGlow />;
+  return mode === "3d" ? <GoldBlobScene triggerRef={triggerRef} /> : <StaticGlow />;
 }

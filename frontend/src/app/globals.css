@@ -39,6 +39,16 @@
   --font-serif: var(--font-bodoni);
   --font-sans: var(--font-general-sans);
 
+  /* Fase 0 — escala bipolar: 4 escalones, sin tamaños intermedios tibios */
+  --text-display: clamp(3.25rem, 1.2rem + 8vw, 9rem);
+  --text-display--line-height: 0.88;
+  --text-heading: clamp(1.75rem, 1.2rem + 2.2vw, 3rem);
+  --text-heading--line-height: 1.05;
+  --text-body: clamp(0.95rem, 0.9rem + 0.2vw, 1.0625rem);
+  --text-body--line-height: 1.6;
+  --text-label: clamp(0.7rem, 0.68rem + 0.1vw, 0.75rem);
+  --text-label--line-height: 1.4;
+
   --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-shimmer: shimmer 2.5s linear infinite;
 
