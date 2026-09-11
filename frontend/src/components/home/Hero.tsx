@@ -6,6 +6,7 @@ import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { CrescentMoon } from "@/components/ui/CrescentMoon";
+import { Grain } from "@/components/ui/Grain";
 import { Hero3D } from "@/components/three/Hero3D";
 
 /**
@@ -40,7 +41,10 @@ export function Hero() {
       {/* Soft breathing light behind the piece — warmth, not drama */}
       <div className="pointer-events-none absolute right-[10%] top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full bg-gold/25 blur-[120px]" />
 
-      {/* The "full-bleed image": a slow, breathing 3D piece, parallaxed by GSAP as the page scrolls past. */}
+      {/* Grain on the flat gradient — under the 3D piece, never over it (Fase 0). */}
+      <Grain />
+
+      {/* The "full-bleed image": the user's own 3D figure, parallaxed by GSAP as the page scrolls past. */}
       <div className="absolute inset-0">
         <Hero3D triggerRef={sectionRef} />
       </div>
@@ -53,27 +57,30 @@ export function Hero() {
       >
         <Container>
           <div className="max-w-3xl">
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-7">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:gap-7">
               <h1 className="text-display font-serif font-bold">
                 <span className="block overflow-hidden">
                   <motion.span variants={revealLine} className="block text-ink-soft">
-                    estética
+                    Estética
                   </motion.span>
                 </span>
                 <span className="block overflow-hidden">
-                  <motion.span variants={revealLine} className="block uppercase text-ink">
-                    y sentidos
+                  <motion.span variants={revealLine} className="block text-ink">
+                    y Sentidos
                   </motion.span>
                 </span>
               </h1>
 
-              <motion.div variants={fadeUp} className="shrink-0">
+              {/* Aligned to the baseline of the second line (items-end on the row) instead of floating
+                  centered against the whole block — anchors it to the text instead of hovering in the
+                  gap between the two lines. */}
+              <motion.div variants={fadeUp} className="shrink-0 pb-1 sm:pb-2">
                 {/* Sized off the same vw+vh-aware token as the headline, not fixed breakpoints — so on a
                     short-but-wide window it shrinks together with the text instead of staying pinned at
                     its largest size and forcing the row taller than the headline needs. */}
                 <CrescentMoon
                   className="text-gold"
-                  style={{ height: "calc(var(--text-display) * 1.35)", width: "calc(var(--text-display) * 1.35)" }}
+                  style={{ height: "calc(var(--text-display) * 0.85)", width: "calc(var(--text-display) * 0.85)" }}
                 />
               </motion.div>
             </div>
