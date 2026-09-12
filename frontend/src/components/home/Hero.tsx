@@ -40,6 +40,21 @@ export function Hero() {
       {/* Soft breathing light behind the piece — warmth, not drama */}
       <div className="pointer-events-none absolute right-[10%] top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full bg-gold/25 blur-[120px]" />
 
+      {/* Aura waves: slow, soft glow pulses behind the figure — blurred radial light, not a hard-edged
+          ring, so it reads as an aura rather than the water-ripple lines that didn't land before. Three
+          instances staggered in time keep one always mid-expansion, so it never reads as "done". */}
+      <div className="pointer-events-none absolute right-[10%] top-1/2 -translate-y-1/2">
+        {[0, 1, 2].map((i) => (
+          <motion.div
+            key={i}
+            className="absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
+            style={{ background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 72%)" }}
+            animate={{ scale: [0.7, 2.1], opacity: [0.55, 0] }}
+            transition={{ duration: 8, delay: i * (8 / 3), repeat: Infinity, ease: "easeOut" }}
+          />
+        ))}
+      </div>
+
       {/* Grain on the flat gradient — under the 3D piece, never over it (Fase 0). */}
       <Grain />
 
