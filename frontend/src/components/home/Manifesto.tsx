@@ -1,12 +1,12 @@
-import Image from "next/image";
 import { Quote } from "lucide-react";
 import { Container } from "@/components/ui/Container";
+import { FadeInImage } from "@/components/ui/FadeInImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { ScrollFocusText } from "@/components/home/ScrollFocusText";
 
 export function Manifesto() {
   return (
-    <section className="relative overflow-hidden py-28 sm:py-40">
+    <section className="relative overflow-hidden py-20 sm:py-28">
       <Quote
         aria-hidden
         strokeWidth={0.6}
@@ -40,7 +40,7 @@ export function Manifesto() {
           </div>
 
           <Reveal from="right" delay={0.15} className="mx-auto w-40 -rotate-1 overflow-hidden rounded-[1.5rem] shadow-xl sm:w-56 lg:mx-0 lg:w-full">
-            <Image
+            <FadeInImage
               src="/images/essential-oil-bottle.jpg"
               alt="Aceite esencial en un frasco de vidrio ámbar"
               width={3000}

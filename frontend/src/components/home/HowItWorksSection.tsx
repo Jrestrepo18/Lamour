@@ -38,7 +38,7 @@ const ACCENTS = {
 
 export function HowItWorksSection() {
   return (
-    <section id="como-funciona" className="py-28 sm:py-36">
+    <section id="como-funciona" className="py-20 sm:py-28">
       <Container>
         <div className="border-b border-ink/10 pb-10">
           <Reveal from="left">

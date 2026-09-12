@@ -65,6 +65,8 @@
 
   --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-shimmer: shimmer 2.5s linear infinite;
+  --animate-radar-pulse: radar-pulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-marquee: marquee 32s linear infinite;
 
   @keyframes fade-up {
     from {
@@ -85,6 +87,43 @@
       background-position: 200% 0;
     }
   }
+
+  /* CoverageSection's "radar" rings — reinforces the coverage-area concept. */
+  @keyframes radar-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.65;
+    }
+    100% {
+      transform: scale(2.4);
+      opacity: 0;
+    }
+  }
+
+  /* MarqueeBand: the track holds two identical copies of the phrase list side
+     by side, so shifting exactly -50% loops seamlessly. */
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  /* PhotoCarousel: same seamless-loop technique as MarqueeBand's (two copies of
+     the track, shift exactly -50%), kept as its own name/duration since it
+     scrolls photo cards rather than a single line of text. */
+  --animate-photo-scroll: photo-scroll 38s linear infinite;
+
+  @keyframes photo-scroll {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
 }
 
 body {
@@ -100,6 +139,13 @@ body {
 
 .text-balance {
   text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee,
+  .animate-photo-scroll {
+    animation: none;
+  }
 }
 
 /* Thin gold scrollbar to match the brand instead of the browser default */

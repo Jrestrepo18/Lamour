@@ -5,7 +5,7 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-ink py-24">
+    <section className="relative overflow-hidden bg-ink py-20">
       <Image
         src="/images/foot-massage-bw.jpg"
         alt=""

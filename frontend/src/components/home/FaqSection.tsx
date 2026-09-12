@@ -38,7 +38,7 @@ export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-28 sm:py-36">
+    <section id="faq" className="py-20 sm:py-28">
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
           <div>

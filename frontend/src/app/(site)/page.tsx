@@ -6,6 +6,7 @@ import { MasseusesTeaser } from "@/components/home/MasseusesTeaser";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { CoverageSection } from "@/components/home/CoverageSection";
 import { FaqSection } from "@/components/home/FaqSection";
+import { PhotoCarousel } from "@/components/home/PhotoCarousel";
 import { FinalCta } from "@/components/home/FinalCta";
 import { ScrollTint } from "@/components/home/ScrollTint";
 
@@ -29,6 +30,7 @@ export default async function HomePage() {
         <HowItWorksSection />
         <CoverageSection />
         <FaqSection />
+        <PhotoCarousel />
       </ScrollTint>
       <FinalCta />
     </>

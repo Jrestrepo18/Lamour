@@ -1,8 +1,8 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight, Droplet, Eye, Sparkles } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
+import { FadeInImage } from "@/components/ui/FadeInImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { formatCOP, formatDuration } from "@/lib/format";
 
@@ -37,7 +37,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
   if (services.length === 0) return null;
 
   return (
-    <section className="py-28 sm:py-36">
+    <section className="py-20 sm:py-28">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-ink/10 pb-10">
           <Reveal from="left">
@@ -65,7 +65,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   className="group relative flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white/60 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl"
                 >
                   <div className="relative aspect-[4/3] w-full overflow-hidden">
-                    <Image
+                    <FadeInImage
                       src={visual.photo}
                       alt={visual.alt}
                       width={visual.w}

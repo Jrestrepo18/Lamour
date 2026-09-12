@@ -19,7 +19,7 @@ export function MasseusesTeaser({ masseuses }: { masseuses: Masseuse[] }) {
   if (active.length === 0) return null;
 
   return (
-    <section id="masajistas" className="py-28 sm:py-36">
+    <section id="masajistas" className="py-20 sm:py-28">
       <Container>
         <div className="border-b border-ink/10 pb-10">
           <Reveal from="left">
