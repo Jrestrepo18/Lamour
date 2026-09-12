@@ -6,7 +6,7 @@ public static class Mapping
 {
     public static ServiceDto ToDto(this Service s) => new(
         s.Id, s.ServiceCategoryId, s.Name, s.Slug, s.ShortDescription, s.LongDescription,
-        s.DurationMinutes, s.Price, s.ImageUrl, s.Highlights.ToList(),
+        s.DurationMinutes, s.Price, s.ImageUrl, s.ImageGallery.ToList(), s.Highlights.ToList(),
         s.RequiresTwoTherapists, s.HasSensoryDressOption, s.AllowsExtraTime, s.IsCoupleExperience,
         s.DisplayOrder, s.IsActive
     );
@@ -17,11 +17,11 @@ public static class Mapping
     );
 
     public static MasseuseDto ToPublicDto(this Masseuse m) => new(
-        m.Id, m.StageName, m.Bio, m.PhotoUrl, m.DisplayOrder, m.IsActive
+        m.Id, m.StageName, m.Age, m.Bio, m.PhotoUrl, m.PhotoGallery.ToList(), m.DisplayOrder, m.IsActive
     );
 
     public static MasseuseAdminDto ToAdminDto(this Masseuse m) => new(
-        m.Id, m.StageName, m.Bio, m.PhotoUrl, m.WhatsAppNumber, m.DisplayOrder, m.IsActive
+        m.Id, m.StageName, m.Age, m.Bio, m.PhotoUrl, m.PhotoGallery.ToList(), m.WhatsAppNumber, m.DisplayOrder, m.IsActive
     );
 
     public static AppointmentDto ToDto(this Appointment a) => new(

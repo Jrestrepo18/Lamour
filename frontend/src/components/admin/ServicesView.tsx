@@ -17,6 +17,7 @@ type FormState = {
   durationMinutes: number;
   price: number;
   imageUrl: string;
+  imageGallery: string;
   highlights: string;
   requiresTwoTherapists: boolean;
   hasSensoryDressOption: boolean;
@@ -36,6 +37,7 @@ function emptyForm(categoryId: number): FormState {
     durationMinutes: 60,
     price: 150000,
     imageUrl: "",
+    imageGallery: "",
     highlights: "",
     requiresTwoTherapists: false,
     hasSensoryDressOption: false,
@@ -93,6 +95,7 @@ export function ServicesView({ token }: { token: string }) {
       durationMinutes: s.durationMinutes,
       price: s.price,
       imageUrl: s.imageUrl ?? "",
+      imageGallery: s.imageGallery.join("; "),
       highlights: s.highlights.join("; "),
       requiresTwoTherapists: s.requiresTwoTherapists,
       hasSensoryDressOption: s.hasSensoryDressOption,
@@ -116,6 +119,7 @@ export function ServicesView({ token }: { token: string }) {
         durationMinutes: form.durationMinutes,
         price: form.price,
         imageUrl: form.imageUrl.trim() || null,
+        imageGallery: form.imageGallery.split(";").map((u) => u.trim()).filter(Boolean),
         highlights: form.highlights.split(";").map((h) => h.trim()).filter(Boolean),
         requiresTwoTherapists: form.requiresTwoTherapists,
         hasSensoryDressOption: form.hasSensoryDressOption,
@@ -268,6 +272,20 @@ export function ServicesView({ token }: { token: string }) {
                 />
               </Field>
             </div>
+            <Field label="URL de foto principal (opcional)">
+              <input
+                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                value={form.imageUrl}
+                onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
+              />
+            </Field>
+            <Field label="Galería de fotos adicionales (URLs separadas por ;)">
+              <textarea
+                className="min-h-16 w-full resize-none rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                value={form.imageGallery}
+                onChange={(e) => setForm((f) => ({ ...f, imageGallery: e.target.value }))}
+              />
+            </Field>
             <Field label="Highlights (separados por ;)">
               <input
                 className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"

@@ -59,7 +59,7 @@ export function CouplesSection({ category }: { category: ServiceCategory }) {
           </Reveal>
         )}
 
-        <div className="mt-6">
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
           {rest.map((service, i) => (
             <Reveal key={service.id} delay={0.08 * i} from={i % 2 === 0 ? "left" : "right"}>
               <ServiceCard service={service} tone="dark" />

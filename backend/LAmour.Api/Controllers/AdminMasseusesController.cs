@@ -25,8 +25,10 @@ public class AdminMasseusesController(LAmourDbContext db) : ControllerBase
         var masseuse = new Masseuse
         {
             StageName = dto.StageName,
+            Age = dto.Age,
             Bio = dto.Bio,
             PhotoUrl = dto.PhotoUrl,
+            PhotoGalleryRaw = dto.PhotoGallery is null ? null : string.Join(';', dto.PhotoGallery),
             WhatsAppNumber = dto.WhatsAppNumber,
             DisplayOrder = dto.DisplayOrder,
             IsActive = dto.IsActive
@@ -45,8 +47,10 @@ public class AdminMasseusesController(LAmourDbContext db) : ControllerBase
         if (masseuse is null) return NotFound();
 
         masseuse.StageName = dto.StageName;
+        masseuse.Age = dto.Age;
         masseuse.Bio = dto.Bio;
         masseuse.PhotoUrl = dto.PhotoUrl;
+        masseuse.PhotoGalleryRaw = dto.PhotoGallery is null ? null : string.Join(';', dto.PhotoGallery);
         masseuse.WhatsAppNumber = dto.WhatsAppNumber;
         masseuse.DisplayOrder = dto.DisplayOrder;
         masseuse.IsActive = dto.IsActive;

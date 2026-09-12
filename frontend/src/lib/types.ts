@@ -19,6 +19,7 @@ export interface Service {
   durationMinutes: number;
   price: number;
   imageUrl: string | null;
+  imageGallery: string[];
   highlights: string[];
   requiresTwoTherapists: boolean;
   hasSensoryDressOption: boolean;
@@ -31,8 +32,10 @@ export interface Service {
 export interface Masseuse {
   id: number;
   stageName: string;
+  age: number | null;
   bio: string | null;
   photoUrl: string | null;
+  photoGallery: string[];
   displayOrder: number;
   isActive: boolean;
 }

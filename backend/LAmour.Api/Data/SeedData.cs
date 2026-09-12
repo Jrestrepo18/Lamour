@@ -275,6 +275,7 @@ public static class SeedData
             new Masseuse
             {
                 StageName = "Valentina",
+                Age = 28,
                 Bio = "Especialista en rituales tántricos y terapias de contacto total, con más de 5 años de experiencia.",
                 WhatsAppNumber = "573001112233",
                 DisplayOrder = 1
@@ -282,6 +283,7 @@ public static class SeedData
             new Masseuse
             {
                 StageName = "Isabella",
+                Age = 25,
                 Bio = "Experta en masajes sensoriales y experiencias en pareja, enfocada en la conexión y la calidez.",
                 WhatsAppNumber = "573002223344",
                 DisplayOrder = 2
@@ -289,6 +291,7 @@ public static class SeedData
             new Masseuse
             {
                 StageName = "Camila",
+                Age = 31,
                 Bio = "Terapeuta certificada en recuperación muscular y piedras volcánicas.",
                 WhatsAppNumber = "573003334455",
                 DisplayOrder = 3
@@ -296,6 +299,7 @@ public static class SeedData
             new Masseuse
             {
                 StageName = "Sofía",
+                Age = 27,
                 Bio = "Especialista en masajes a cuatro manos y rituales L'AMOUR.",
                 WhatsAppNumber = "573004445566",
                 DisplayOrder = 4

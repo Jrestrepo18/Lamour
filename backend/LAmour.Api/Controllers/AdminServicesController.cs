@@ -35,6 +35,7 @@ public class AdminServicesController(LAmourDbContext db) : ControllerBase
             DurationMinutes = dto.DurationMinutes,
             Price = dto.Price,
             ImageUrl = dto.ImageUrl,
+            ImageGalleryRaw = dto.ImageGallery is null ? null : string.Join(';', dto.ImageGallery),
             HighlightsRaw = dto.Highlights is null ? null : string.Join(';', dto.Highlights),
             RequiresTwoTherapists = dto.RequiresTwoTherapists,
             HasSensoryDressOption = dto.HasSensoryDressOption,
@@ -67,6 +68,7 @@ public class AdminServicesController(LAmourDbContext db) : ControllerBase
         service.DurationMinutes = dto.DurationMinutes;
         service.Price = dto.Price;
         service.ImageUrl = dto.ImageUrl;
+        service.ImageGalleryRaw = dto.ImageGallery is null ? null : string.Join(';', dto.ImageGallery);
         service.HighlightsRaw = dto.Highlights is null ? null : string.Join(';', dto.Highlights);
         service.RequiresTwoTherapists = dto.RequiresTwoTherapists;
         service.HasSensoryDressOption = dto.HasSensoryDressOption;

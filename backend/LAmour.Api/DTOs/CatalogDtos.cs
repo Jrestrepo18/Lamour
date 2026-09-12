@@ -21,6 +21,7 @@ public record ServiceDto(
     int DurationMinutes,
     decimal Price,
     string? ImageUrl,
+    List<string> ImageGallery,
     List<string> Highlights,
     bool RequiresTwoTherapists,
     bool HasSensoryDressOption,
@@ -39,6 +40,7 @@ public record ServiceUpsertDto(
     int DurationMinutes,
     decimal Price,
     string? ImageUrl,
+    List<string>? ImageGallery,
     List<string>? Highlights,
     bool RequiresTwoTherapists,
     bool HasSensoryDressOption,
@@ -60,8 +62,10 @@ public record ServiceCategoryUpsertDto(
 public record MasseuseDto(
     int Id,
     string StageName,
+    int? Age,
     string? Bio,
     string? PhotoUrl,
+    List<string> PhotoGallery,
     int DisplayOrder,
     bool IsActive
 );
@@ -69,8 +73,10 @@ public record MasseuseDto(
 public record MasseuseAdminDto(
     int Id,
     string StageName,
+    int? Age,
     string? Bio,
     string? PhotoUrl,
+    List<string> PhotoGallery,
     string WhatsAppNumber,
     int DisplayOrder,
     bool IsActive
@@ -78,8 +84,10 @@ public record MasseuseAdminDto(
 
 public record MasseuseUpsertDto(
     string StageName,
+    int? Age,
     string? Bio,
     string? PhotoUrl,
+    List<string>? PhotoGallery,
     string WhatsAppNumber,
     int DisplayOrder,
     bool IsActive

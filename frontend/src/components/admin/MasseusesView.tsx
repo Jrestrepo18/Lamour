@@ -7,7 +7,16 @@ import type { MasseuseAdmin } from "@/lib/types";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 
-const EMPTY_FORM = { stageName: "", bio: "", photoUrl: "", whatsAppNumber: "", displayOrder: 0, isActive: true };
+const EMPTY_FORM = {
+  stageName: "",
+  age: "",
+  bio: "",
+  photoUrl: "",
+  photoGallery: "",
+  whatsAppNumber: "",
+  displayOrder: 0,
+  isActive: true,
+};
 
 export function MasseusesView({ token }: { token: string }) {
   const [items, setItems] = useState<MasseuseAdmin[] | null>(null);
@@ -46,8 +55,10 @@ export function MasseusesView({ token }: { token: string }) {
     setEditing(m);
     setForm({
       stageName: m.stageName,
+      age: m.age != null ? String(m.age) : "",
       bio: m.bio ?? "",
       photoUrl: m.photoUrl ?? "",
+      photoGallery: m.photoGallery.join("; "),
       whatsAppNumber: m.whatsAppNumber,
       displayOrder: m.displayOrder,
       isActive: m.isActive,
@@ -60,8 +71,10 @@ export function MasseusesView({ token }: { token: string }) {
     try {
       const payload = {
         stageName: form.stageName.trim(),
+        age: form.age.trim() ? Number(form.age) : null,
         bio: form.bio.trim() || null,
         photoUrl: form.photoUrl.trim() || null,
+        photoGallery: form.photoGallery.split(";").map((u) => u.trim()).filter(Boolean),
         whatsAppNumber: form.whatsAppNumber.trim(),
         displayOrder: form.displayOrder,
         isActive: form.isActive,
@@ -120,7 +133,10 @@ export function MasseusesView({ token }: { token: string }) {
           <div key={m.id} className="rounded-2xl border border-silk bg-white/60 p-5">
             <div className="flex items-start justify-between">
               <div>
-                <p className="font-serif text-lg text-ink">{m.stageName}</p>
+                <p className="font-serif text-lg text-ink">
+                  {m.stageName}
+                  {m.age != null && <span className="ml-1.5 text-xs font-sans text-ink-soft">{m.age} años</span>}
+                </p>
                 <p className="text-xs text-ink-soft">{m.whatsAppNumber}</p>
               </div>
               <span
@@ -163,6 +179,14 @@ export function MasseusesView({ token }: { token: string }) {
                 onChange={(e) => setForm((f) => ({ ...f, stageName: e.target.value }))}
               />
             </Field>
+            <Field label="Edad (opcional)">
+              <input
+                type="number"
+                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                value={form.age}
+                onChange={(e) => setForm((f) => ({ ...f, age: e.target.value }))}
+              />
+            </Field>
             <Field label="Número de WhatsApp (con indicativo, sin +)">
               <input
                 className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
@@ -178,11 +202,18 @@ export function MasseusesView({ token }: { token: string }) {
                 onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
               />
             </Field>
-            <Field label="URL de foto (opcional)">
+            <Field label="URL de foto principal (opcional)">
               <input
                 className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
                 value={form.photoUrl}
                 onChange={(e) => setForm((f) => ({ ...f, photoUrl: e.target.value }))}
+              />
+            </Field>
+            <Field label="Galería de fotos adicionales (URLs separadas por ;)">
+              <textarea
+                className="min-h-16 w-full resize-none rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                value={form.photoGallery}
+                onChange={(e) => setForm((f) => ({ ...f, photoGallery: e.target.value }))}
               />
             </Field>
             <label className="flex items-center gap-2 text-sm text-ink">

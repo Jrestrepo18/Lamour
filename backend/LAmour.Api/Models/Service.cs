@@ -16,6 +16,9 @@ public class Service
 
     public string? ImageUrl { get; set; }
 
+    /// <summary>Semicolon-separated extra photo URLs shown in the detail view (cover photo, <see cref="ImageUrl"/>, is separate).</summary>
+    public string? ImageGalleryRaw { get; set; }
+
     /// <summary>Semicolon-separated bullet highlights shown on the service card (e.g. "Incluye estimulación final;Aceites tibios").</summary>
     public string? HighlightsRaw { get; set; }
 
@@ -31,5 +34,9 @@ public class Service
 
     public IEnumerable<string> Highlights =>
         (HighlightsRaw ?? string.Empty)
+            .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+
+    public IEnumerable<string> ImageGallery =>
+        (ImageGalleryRaw ?? string.Empty)
             .Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 }
