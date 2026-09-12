@@ -4,12 +4,11 @@ import { Reveal } from "@/components/ui/Reveal";
 
 export function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-ink py-24">
-      {/* Picks up exactly where ScrollTint's backdrop leaves off (#b89a73), fading to
-          transparent so the jump into this section's solid dark background reads as a
-          continuation of the same gradient rather than a hard cut between sections. */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#b89a73] to-transparent sm:h-48" />
-      <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[40rem] -translate-x-1/2 rounded-full bg-gold/10 blur-[120px]" />
+    <section className="relative overflow-hidden bg-gradient-to-b from-[#b89a73] via-[#4a3527] to-ink py-24">
+      {/* The glow sits low, on the section's already-solid dark portion, instead of at
+          top-0 where it used to overlap the caramel→ink transition above — stacking two
+          translucent warm layers there was compositing into a muddy olive band. */}
+      <div className="pointer-events-none absolute bottom-0 left-1/2 h-64 w-[40rem] -translate-x-1/2 translate-y-1/3 rounded-full bg-gold/10 blur-[120px]" />
       <Container className="relative text-center">
         <Reveal>
           <p className="text-xs font-sans font-semibold uppercase tracking-[0.35em] text-gold">Tu momento te espera</p>
