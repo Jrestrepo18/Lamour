@@ -103,7 +103,7 @@ export function DetailModal({
               )}
             </div>
 
-            <div className="flex-1 overflow-y-auto p-6 sm:p-8">
+            <div className="min-h-0 flex-1 overflow-y-auto p-6 sm:p-8">
               {eyebrow && (
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta">{eyebrow}</p>
               )}
