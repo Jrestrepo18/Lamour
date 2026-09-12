@@ -2,7 +2,7 @@
 
 import { useCallback, useRef, type RefObject } from "react";
 import { Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Sparkles, useGLTF } from "@react-three/drei";
 import { MathUtils, type Group } from "three";
 import { ScrollTrigger } from "@/lib/gsap";
@@ -19,6 +19,8 @@ const SCALE = 1.4;
 // up by half its (scaled) height so it's vertically centered like the
 // primitive shapes before it were.
 const MODEL_HEIGHT = 1.906;
+// Desktop/landscape offset to the right, as an asymmetric satellite.
+const DESKTOP_X_OFFSET = 1.6;
 
 /**
  * The user's own 3D export, loaded as-is — real carved-stone detail and
@@ -77,9 +79,27 @@ function PointerTilt({ groupRef }: { groupRef: RefObject<Group | null> }) {
   return null;
 }
 
-export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElement | null> }) {
+/**
+ * Everything that needs `useThree()` (i.e. needs to know the real render
+ * size) lives here, inside the Canvas. `viewport.width`/`.height` are in
+ * Three.js world units at the camera's focal plane — not CSS pixels — so
+ * they already account for the current aspect ratio.
+ *
+ * The 1.6 desktop X offset was tuned against a landscape aspect ratio. On a
+ * narrow phone in portrait, the visible half-width at this camera distance
+ * shrinks to roughly 1 world unit — well inside 1.6 — so the whole figure
+ * was sitting outside the frustum and effectively invisible. Clamping the
+ * offset (and easing the scale down slightly) to the actual viewport keeps
+ * it on-screen and reasonably framed at any width instead of only desktop.
+ */
+function Scene({ triggerRef }: { triggerRef: RefObject<HTMLElement | null> }) {
+  const viewport = useThree((state) => state.viewport);
   const tiltRef = useRef<Group>(null);
   const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
+  const isNarrow = viewport.width < 3.2;
+  const xOffset = isNarrow ? viewport.width * 0.24 : DESKTOP_X_OFFSET;
+  const scale = isNarrow ? 0.8 : 1;
 
   /**
    * A callback ref instead of `useRef` + a `useLayoutEffect` with `[]` deps.
@@ -114,6 +134,19 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
   );
 
   return (
+    <group ref={setScrollGroup} position={[xOffset, -0.35, 0]} scale={scale}>
+      <group ref={tiltRef}>
+        <Rig />
+        <HeroFigure />
+        <Sparkles count={90} scale={6} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
+      </group>
+      <PointerTilt groupRef={tiltRef} />
+    </group>
+  );
+}
+
+export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElement | null> }) {
+  return (
     <Canvas
       dpr={[1, 1.75]}
       camera={{ position: [0, 0, 5.5], fov: 45 }}
@@ -121,16 +154,7 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
       className="!touch-none"
     >
       <Suspense fallback={null}>
-        {/* Outer group: scroll parallax only, in world space. */}
-        <group ref={setScrollGroup} position={[1.6, -0.35, 0]}>
-          {/* Inner group: pointer tilt, isolated so it doesn't fight the scroll tween. */}
-          <group ref={tiltRef}>
-            <Rig />
-            <HeroFigure />
-            <Sparkles count={90} scale={6} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
-          </group>
-          <PointerTilt groupRef={tiltRef} />
-        </group>
+        <Scene triggerRef={triggerRef} />
       </Suspense>
     </Canvas>
   );

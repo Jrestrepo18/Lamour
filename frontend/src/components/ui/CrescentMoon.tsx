@@ -3,28 +3,27 @@
 import { motion, type Variants } from "framer-motion";
 import type { CSSProperties } from "react";
 
-const draw: Variants = {
-  hidden: { pathLength: 0, opacity: 0 },
-  show: { pathLength: 1, opacity: 1, transition: { duration: 1.6, ease: [0.16, 1, 0.3, 1] } },
+const reveal: Variants = {
+  hidden: { opacity: 0, scale: 0.8, rotate: -8 },
+  show: { opacity: 1, scale: 1, rotate: 0, transition: { duration: 1.1, ease: [0.16, 1, 0.3, 1] } },
 };
 
 /**
- * A hand-drawn-feeling crescent, built from two overlapping arcs — not an
- * icon-font glyph. Inherits `hidden`/`show` from whatever parent Framer
- * Motion stagger container it's placed in (no own initial/animate), so it
- * can join an existing orchestrated sequence as one more staggered child.
+ * A filled crescent (two overlapping arcs, filled — not stroked). The
+ * previous version only stroked the outline of a lune path with two very
+ * different arc radii, which traced as two visibly separate curved lines
+ * instead of one clean sliver shape. Filling the same path data is what
+ * actually renders a crescent; stroking it doesn't. Inherits `hidden`/
+ * `show` from whatever parent Framer Motion stagger container it's placed
+ * in (no own initial/animate), so it can join an existing sequence.
  */
 export function CrescentMoon({ className, style }: { className?: string; style?: CSSProperties }) {
   return (
-    <motion.svg viewBox="0 0 100 100" fill="none" className={className} style={style} aria-hidden>
+    <motion.svg viewBox="0 0 100 100" className={className} style={style} aria-hidden>
       <motion.path
-        d="M52,6 A46,46 0 1,0 52,94 A34,34 0 1,1 52,6 Z"
-        stroke="currentColor"
-        strokeWidth={1.8}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-        variants={draw}
+        d="M54,4 A48,48 0 1,0 54,96 A34,34 0 1,1 54,4 Z"
+        fill="currentColor"
+        variants={reveal}
       />
     </motion.svg>
   );
