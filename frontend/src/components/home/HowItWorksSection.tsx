@@ -1,38 +1,42 @@
-import { CalendarCheck, MapPinned, Sparkles, UserRound } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { asymmetricDirection } from "@/lib/motion";
 
 const STEPS = [
-  { icon: Sparkles, title: "Elige tu Servicio", text: "Explora el catálogo y selecciona el ritual perfecto para ti." },
-  { icon: UserRound, title: "Elige tu Masajista", text: "Conoce a nuestro equipo y elige con quién vivir la experiencia." },
-  { icon: CalendarCheck, title: "Elige tu Horario", text: "Consulta disponibilidad en tiempo real y agenda sin cruces." },
-  { icon: MapPinned, title: "Recibe en tu Espacio", text: "Confirma tus datos y dirección; nosotros llegamos a ti." },
+  { title: "Elige tu servicio", text: "Explora el catálogo y selecciona el ritual perfecto para ti." },
+  { title: "Elige tu masajista", text: "Conoce a nuestro equipo y elige con quién vivir la experiencia." },
+  { title: "Elige tu horario", text: "Consulta disponibilidad en tiempo real y agenda sin cruces." },
+  { title: "Recibe en tu espacio", text: "Confirma tus datos y dirección; nosotros llegamos a ti." },
 ];
 
 export function HowItWorksSection() {
   return (
-    <section className="py-24">
+    <section className="py-28 sm:py-36">
       <Container>
-        <SectionHeading
-          eyebrow="Reserva en 4 pasos"
-          title="Tu experiencia, a tu manera"
-          description="Un proceso simple, discreto y en tiempo real para agendar tu ritual L'AMOUR."
-        />
-        <div className="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="border-b border-ink/10 pb-10">
+          <Reveal from="left">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-terracotta">
+              Reserva en 4 pasos
+            </p>
+            <h2 className="font-serif text-4xl leading-[1.05] text-ink text-balance sm:text-5xl">
+              Tu experiencia, a tu manera
+            </h2>
+          </Reveal>
+          <Reveal from="right" delay={0.1} className="mt-4 max-w-md">
+            <p className="text-sm leading-relaxed text-ink-soft">
+              Un proceso simple, discreto y en tiempo real para agendar tu ritual L&apos;AMOUR.
+            </p>
+          </Reveal>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, i) => (
-            <Reveal key={step.title} delay={0.1 * i} className="relative">
-              <div className="flex flex-col items-center text-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gold/10 text-gold-dark">
-                  <step.icon size={26} strokeWidth={1.5} />
-                </div>
-                <span className="mt-4 font-serif text-sm text-gold-dark">Paso {i + 1}</span>
-                <h3 className="mt-1 font-serif text-lg text-ink">{step.title}</h3>
+            <Reveal key={step.title} delay={0.08 * i} from={asymmetricDirection(i)}>
+              <div className="border-t border-ink/10 py-8 pr-6 lg:border-t-0 lg:border-l lg:py-2 lg:pl-8 lg:pt-1 first:lg:border-l-0 first:lg:pl-0">
+                <span className="font-serif text-sm text-gold">0{i + 1}</span>
+                <h3 className="mt-3 font-serif text-xl text-ink">{step.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-ink-soft">{step.text}</p>
               </div>
-              {i < STEPS.length - 1 && (
-                <div className="absolute right-[-1rem] top-8 hidden h-px w-8 bg-gradient-to-r from-gold/40 to-transparent lg:block" />
-              )}
             </Reveal>
           ))}
         </div>

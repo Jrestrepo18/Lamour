@@ -5,6 +5,7 @@ import { FeaturedServices } from "@/components/home/FeaturedServices";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
 import { CoverageSection } from "@/components/home/CoverageSection";
 import { FinalCta } from "@/components/home/FinalCta";
+import { ScrollTint } from "@/components/home/ScrollTint";
 
 const FEATURED_SLUGS = ["ritual-lamour-full-nuru", "masaje-sensorial", "masaje-voyerista"];
 
@@ -19,10 +20,12 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
-      <Manifesto />
-      <FeaturedServices services={featured} />
-      <HowItWorksSection />
-      <CoverageSection />
+      <ScrollTint>
+        <Manifesto />
+        <FeaturedServices services={featured} />
+        <HowItWorksSection />
+        <CoverageSection />
+      </ScrollTint>
       <FinalCta />
     </>
   );
