@@ -12,6 +12,8 @@ const NAV_LINKS = [
   { href: "/", label: "Inicio" },
   { href: "/servicios", label: "Servicios" },
   { href: "/masajistas", label: "Masajistas" },
+  { href: "/#como-funciona", label: "Cómo funciona" },
+  { href: "/#faq", label: "FAQ" },
 ];
 
 export function Header() {
@@ -39,6 +41,15 @@ export function Header() {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- closes the mobile menu on route change, not a render loop
     setMenuOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") setMenuOpen(false);
+    }
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [menuOpen]);
 
   return (
     <motion.header
@@ -109,7 +120,11 @@ export function Header() {
           type="button"
           aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={menuOpen}
-          className={clsx("md:hidden", scrolled || !topIsDark ? "text-ink" : "text-ivory")}
+          aria-controls="mobile-nav"
+          className={clsx(
+            "-m-2.5 flex items-center justify-center p-2.5 md:hidden",
+            scrolled || !topIsDark ? "text-ink" : "text-ivory",
+          )}
           onClick={() => setMenuOpen((v) => !v)}
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -117,6 +132,8 @@ export function Header() {
       </div>
 
       <div
+        id="mobile-nav"
+        inert={!menuOpen}
         className={clsx(
           "fixed inset-x-4 top-20 z-40 overflow-hidden rounded-3xl border border-gold/15 bg-ivory/95 shadow-xl backdrop-blur-xl transition-[max-height,opacity] duration-300 md:hidden",
           menuOpen ? "max-h-96 opacity-100" : "pointer-events-none max-h-0 opacity-0",

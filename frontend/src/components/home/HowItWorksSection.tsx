@@ -38,14 +38,14 @@ const ACCENTS = {
 
 export function HowItWorksSection() {
   return (
-    <section className="py-28 sm:py-36">
+    <section id="como-funciona" className="py-28 sm:py-36">
       <Container>
         <div className="border-b border-ink/10 pb-10">
           <Reveal from="left">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.35em] text-terracotta">
               Reserva en 4 pasos
             </p>
-            <h2 className="font-serif text-4xl leading-[1.05] text-ink text-balance sm:text-5xl">
+            <h2 className="max-w-lg font-serif text-4xl leading-[1.05] text-ink text-balance sm:text-5xl">
               Simple, discreto, a tu ritmo
             </h2>
           </Reveal>

@@ -1,13 +1,29 @@
+import Image from "next/image";
 import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 
 export function FinalCta() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-[#b89a73] via-[#4a3527] to-ink py-24">
-      {/* The glow sits low, on the section's already-solid dark portion, instead of at
-          top-0 where it used to overlap the caramel→ink transition above — stacking two
-          translucent warm layers there was compositing into a muddy olive band. */}
+    <section className="relative overflow-hidden bg-ink py-24">
+      <Image
+        src="/images/foot-massage-bw.jpg"
+        alt=""
+        aria-hidden
+        fill
+        sizes="100vw"
+        className="-z-20 object-cover opacity-35"
+      />
+      {/* Same real-gradient-over-photo approach as the caramel→ink handoff above this
+          section: one deliberate blend (photo + color wash), not translucent layers left
+          to interact by accident — that's what caused the muddy band fixed earlier. */}
+      <div
+        className="pointer-events-none absolute inset-0 -z-10"
+        style={{
+          background:
+            "linear-gradient(to bottom, rgba(184,154,115,0.85) 0%, rgba(74,53,39,0.92) 35%, #2b2019 72%)",
+        }}
+      />
       <div className="pointer-events-none absolute bottom-0 left-1/2 h-64 w-[40rem] -translate-x-1/2 translate-y-1/3 rounded-full bg-gold/10 blur-[120px]" />
       <Container className="relative text-center">
         <Reveal>
