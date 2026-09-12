@@ -132,10 +132,16 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
             <HeroFigure />
             <Sparkles count={90} scale={6} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
           </group>
+
+          {/* Both live inside the same Suspense boundary as HeroFigure (not as siblings of it outside
+              Suspense) — React only commits this whole subtree once the GLTF has resolved, so by the
+              time these mount and run their effects, groupRef/tiltRef are already attached. Outside
+              Suspense, their one-shot effect could run before the model loaded, see null refs, bail
+              out via the early return, and never get a second chance. */}
+          <ScrollParallax groupRef={groupRef} triggerRef={triggerRef} />
+          <PointerTilt groupRef={tiltRef} />
         </group>
       </Suspense>
-      <ScrollParallax groupRef={groupRef} triggerRef={triggerRef} />
-      <PointerTilt groupRef={tiltRef} />
     </Canvas>
   );
 }
