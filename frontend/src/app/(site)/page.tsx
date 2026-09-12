@@ -1,5 +1,6 @@
 import { getMasseuses, getServiceCategories } from "@/lib/api";
 import { Hero } from "@/components/home/Hero";
+import { PhotoGallery } from "@/components/home/PhotoGallery";
 import { Manifesto } from "@/components/home/Manifesto";
 import { FeaturedServices } from "@/components/home/FeaturedServices";
 import { HowItWorksSection } from "@/components/home/HowItWorksSection";
@@ -20,6 +21,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
+      <PhotoGallery />
       <ScrollTint>
         <Manifesto />
         <FeaturedServices services={featured} />
