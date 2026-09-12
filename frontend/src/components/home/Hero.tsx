@@ -5,7 +5,6 @@ import Link from "next/link";
 import { motion, type Variants } from "framer-motion";
 import { ArrowUpRight, MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { CrescentMoon } from "@/components/ui/CrescentMoon";
 import { Grain } from "@/components/ui/Grain";
 import { Hero3D } from "@/components/three/Hero3D";
 
@@ -67,33 +66,18 @@ export function Hero() {
       >
         <Container>
           <div className="max-w-3xl">
-            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-end sm:gap-7">
-              <h1 className="text-display font-serif font-bold">
-                <span className="block overflow-hidden">
-                  <motion.span variants={revealLine} className="block text-ink-soft">
-                    Estética
-                  </motion.span>
-                </span>
-                <span className="block overflow-hidden">
-                  <motion.span variants={revealLine} className="block text-ink">
-                    y Sentidos
-                  </motion.span>
-                </span>
-              </h1>
-
-              {/* Aligned to the baseline of the second line (items-end on the row) instead of floating
-                  centered against the whole block — anchors it to the text instead of hovering in the
-                  gap between the two lines. */}
-              <motion.div variants={fadeUp} className="shrink-0 pb-1 sm:pb-2">
-                {/* Sized off the same vw+vh-aware token as the headline, not fixed breakpoints — so on a
-                    short-but-wide window it shrinks together with the text instead of staying pinned at
-                    its largest size and forcing the row taller than the headline needs. */}
-                <CrescentMoon
-                  className="text-gold"
-                  style={{ height: "calc(var(--text-display) * 0.85)", width: "calc(var(--text-display) * 0.85)" }}
-                />
-              </motion.div>
-            </div>
+            <h1 className="text-display font-serif font-bold">
+              <span className="block overflow-hidden">
+                <motion.span variants={revealLine} className="block text-ink-soft">
+                  Estética
+                </motion.span>
+              </span>
+              <span className="block overflow-hidden">
+                <motion.span variants={revealLine} className="block text-ink">
+                  y Sentidos
+                </motion.span>
+              </span>
+            </h1>
 
             <motion.p variants={fadeUp} className="text-body mt-5 max-w-md text-ink-soft sm:mt-9">
               Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu
