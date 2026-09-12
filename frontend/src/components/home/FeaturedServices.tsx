@@ -33,31 +33,33 @@ export function FeaturedServices({ services }: { services: Service[] }) {
           </Reveal>
         </div>
 
-        <div className="mt-4 grid grid-cols-1 gap-x-10 sm:grid-cols-3">
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-3">
           {services.map((service, i) => {
             const visual = VISUALS[i % VISUALS.length];
             return (
               <Reveal key={service.id} delay={0.1 * i} from={i % 2 === 0 ? "left" : "right"}>
                 <Link
                   href={`/reservar?service=${service.slug}`}
-                  className="group relative flex gap-4 overflow-hidden border-t border-ink/10 py-8 pl-0 transition-colors sm:border-t-0 sm:py-10"
+                  className="group relative flex h-full flex-col rounded-[1.75rem] border border-ink/10 bg-white/60 p-6 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-gold/30 hover:shadow-xl sm:p-7"
                 >
-                  <span className="absolute left-0 top-1/2 h-0 w-[3px] -translate-y-1/2 bg-gold transition-all duration-500 ease-out group-hover:h-2/3" />
+                  <span className="absolute right-6 top-6 flex h-9 w-9 items-center justify-center rounded-full bg-ivory/90 text-ink opacity-0 shadow-md backdrop-blur transition-all duration-300 group-hover:opacity-100">
+                    <ArrowUpRight size={16} />
+                  </span>
+
                   <div
-                    className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 ease-out group-hover:scale-105 ${visual.className}`}
+                    className={`flex h-14 w-14 items-center justify-center rounded-2xl shadow-sm transition-transform duration-500 ease-out group-hover:scale-105 ${visual.className}`}
                   >
                     <visual.icon size={22} strokeWidth={1.5} />
                   </div>
-                  <div className="min-w-0 transition-transform duration-500 ease-out group-hover:translate-x-2">
-                    <span className="font-serif text-sm text-gold">0{i + 1}</span>
-                    <h3 className="mt-1 font-serif text-2xl text-ink transition-colors group-hover:text-terracotta">
-                      {service.name}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-ink-soft">{service.shortDescription}</p>
-                    <div className="mt-5 flex items-center justify-between text-xs text-ink-soft">
-                      <span>{formatDuration(service.durationMinutes)}</span>
-                      <span className="font-serif text-base text-ink">{formatCOP(service.price)}</span>
-                    </div>
+
+                  <h3 className="mt-5 pr-8 font-serif text-2xl text-ink transition-colors group-hover:text-terracotta">
+                    {service.name}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{service.shortDescription}</p>
+
+                  <div className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4 text-xs text-ink-soft">
+                    <span>{formatDuration(service.durationMinutes)}</span>
+                    <span className="font-serif text-base text-ink">{formatCOP(service.price)}</span>
                   </div>
                 </Link>
               </Reveal>
