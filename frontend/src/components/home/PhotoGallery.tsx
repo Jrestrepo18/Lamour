@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Expand, X } from "lucide-react";
+import { gsap } from "@/lib/gsap";
+import { useGsapContext } from "@/hooks/useGsapContext";
 import { Container } from "@/components/ui/Container";
 import { FadeInImage } from "@/components/ui/FadeInImage";
 import { Reveal } from "@/components/ui/Reveal";
@@ -21,6 +23,15 @@ const PHOTOS = [
   { src: "/images/spa-bath-tray.jpg", alt: "Ritual de baño con velas, sales y aceites", w: 3648, h: 5472 },
 ];
 
+// lg+ only: split into 4 explicit columns (round-robin) so each one can be
+// given its own GSAP scroll offset — a CSS `columns-N` masonry has no per-
+// column element to target. Offsets alternate direction and magnitude for a
+// gentle zig-zag depth rather than every column sliding the same way.
+const COLUMN_COUNT = 4;
+const COLUMN_OFFSETS = [-36, 56, -52, 32];
+const COLUMNS = Array.from({ length: COLUMN_COUNT }, () => [] as { photo: (typeof PHOTOS)[number]; index: number }[]);
+PHOTOS.forEach((photo, index) => COLUMNS[index % COLUMN_COUNT].push({ photo, index }));
+
 /**
  * A curated editorial masonry — real aspect ratios, no forced crop — that
  * opens into a full lightbox on click, with keyboard/arrow navigation
@@ -28,13 +39,38 @@ const PHOTOS = [
  * occupy; the team already has its own page (linked from the nav), so this
  * spot is better spent as the site's one deliberate, interactive photo
  * moment instead of a passive auto-scrolling strip.
+ *
+ * Two layouts: below lg, a plain CSS-columns masonry (mobile is the most-
+ * visited version and stays simple/fast). At lg+, an explicit 4-column grid
+ * where each column drifts vertically at its own rate as the section
+ * scrolls past — a multi-speed parallax, purely a desktop/tablet flourish.
  */
 export function PhotoGallery() {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const parallaxRef = useRef<HTMLDivElement>(null);
+  const columnRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const close = useCallback(() => setActiveIndex(null), []);
   const prev = useCallback(() => setActiveIndex((i) => (i === null ? null : (i - 1 + PHOTOS.length) % PHOTOS.length)), []);
   const next = useCallback(() => setActiveIndex((i) => (i === null ? null : (i + 1) % PHOTOS.length)), []);
+
+  useGsapContext(() => {
+    if (!parallaxRef.current) return;
+
+    columnRefs.current.forEach((col, i) => {
+      if (!col) return;
+      gsap.to(col, {
+        y: COLUMN_OFFSETS[i % COLUMN_OFFSETS.length],
+        ease: "none",
+        scrollTrigger: {
+          trigger: parallaxRef.current,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true,
+        },
+      });
+    });
+  }, []);
 
   useEffect(() => {
     if (activeIndex === null) return;
@@ -55,8 +91,33 @@ export function PhotoGallery() {
 
   const active = activeIndex !== null ? PHOTOS[activeIndex] : null;
 
+  function renderTile(photo: (typeof PHOTOS)[number], index: number, delayIndex: number) {
+    return (
+      <Reveal key={photo.src} delay={0.04 * (delayIndex % 8)} from="up" className="mb-5 block break-inside-avoid">
+        <button
+          type="button"
+          onClick={() => setActiveIndex(index)}
+          className="group relative block w-full overflow-hidden rounded-[1.25rem]"
+        >
+          <FadeInImage
+            src={photo.src}
+            alt={photo.alt}
+            width={photo.w}
+            height={photo.h}
+            sizes="(min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw"
+            className="h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+          <span className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-ivory/90 text-ink opacity-0 shadow-md backdrop-blur transition-all duration-300 group-hover:opacity-100">
+            <Expand size={16} />
+          </span>
+        </button>
+      </Reveal>
+    );
+  }
+
   return (
-    <section className="py-20 sm:py-28">
+    <section className="overflow-hidden py-20 sm:py-28">
       <Container>
         <Reveal className="max-w-xl">
           <p className="text-xs font-semibold uppercase tracking-[0.35em] text-terracotta">Un vistazo</p>
@@ -65,28 +126,17 @@ export function PhotoGallery() {
           </h2>
         </Reveal>
 
-        <div className="mt-10 columns-2 gap-5 sm:columns-3 lg:columns-4">
-          {PHOTOS.map((photo, i) => (
-            <Reveal key={photo.src} delay={0.04 * (i % 8)} from="up" className="mb-5 block break-inside-avoid">
-              <button
-                type="button"
-                onClick={() => setActiveIndex(i)}
-                className="group relative block w-full overflow-hidden rounded-[1.25rem]"
-              >
-                <FadeInImage
-                  src={photo.src}
-                  alt={photo.alt}
-                  width={photo.w}
-                  height={photo.h}
-                  sizes="(min-width: 1024px) 23vw, (min-width: 640px) 31vw, 46vw"
-                  className="h-auto w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/40 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <span className="absolute bottom-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-ivory/90 text-ink opacity-0 shadow-md backdrop-blur transition-all duration-300 group-hover:opacity-100">
-                  <Expand size={16} />
-                </span>
-              </button>
-            </Reveal>
+        {/* Below lg: plain masonry, no parallax — keeps mobile simple and fast. */}
+        <div className="mt-10 columns-2 gap-5 sm:columns-3 lg:hidden">
+          {PHOTOS.map((photo, i) => renderTile(photo, i, i))}
+        </div>
+
+        {/* lg+: explicit 4-column grid, each column parallaxed independently. */}
+        <div ref={parallaxRef} className="mt-10 hidden gap-5 lg:grid lg:grid-cols-4">
+          {COLUMNS.map((column, colIndex) => (
+            <div key={colIndex} ref={(el) => { columnRefs.current[colIndex] = el; }}>
+              {column.map(({ photo, index }, i) => renderTile(photo, index, colIndex + i))}
+            </div>
           ))}
         </div>
       </Container>
