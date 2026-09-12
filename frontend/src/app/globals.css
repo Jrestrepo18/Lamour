@@ -110,20 +110,6 @@
       transform: translateX(-50%);
     }
   }
-
-  /* PhotoCarousel: same seamless-loop technique as MarqueeBand's (two copies of
-     the track, shift exactly -50%), kept as its own name/duration since it
-     scrolls photo cards rather than a single line of text. */
-  --animate-photo-scroll: photo-scroll 38s linear infinite;
-
-  @keyframes photo-scroll {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
 }
 
 body {
@@ -142,8 +128,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee,
-  .animate-photo-scroll {
+  .animate-marquee {
     animation: none;
   }
 }
