@@ -25,7 +25,7 @@ export function Manifesto() {
           </ScrollFocusText>
         </Reveal>
         <Reveal delay={0.2} className="mt-10 max-w-lg border-l-2 border-gold/30 pl-6">
-          <p className="text-sm leading-relaxed text-ink-soft">
+          <p className="text-sm leading-relaxed text-[var(--tone-body)]">
             Cada ritual L&apos;AMOUR es ejecutado por terapeutas certificadas, en un marco de absoluto respeto,
             consentimiento y confidencialidad — para que lo único que tengas que hacer sea entregarte a la
             experiencia.

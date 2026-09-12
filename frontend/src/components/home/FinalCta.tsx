@@ -5,6 +5,10 @@ import { Reveal } from "@/components/ui/Reveal";
 export function FinalCta() {
   return (
     <section className="relative overflow-hidden bg-ink py-24">
+      {/* Picks up exactly where ScrollTint's backdrop leaves off (#b89a73), fading to
+          transparent so the jump into this section's solid dark background reads as a
+          continuation of the same gradient rather than a hard cut between sections. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#b89a73] to-transparent sm:h-48" />
       <div className="pointer-events-none absolute left-1/2 top-0 h-64 w-[40rem] -translate-x-1/2 rounded-full bg-gold/10 blur-[120px]" />
       <Container className="relative text-center">
         <Reveal>

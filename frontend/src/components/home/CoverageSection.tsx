@@ -17,7 +17,7 @@ const MUNICIPIOS = [
 
 export function CoverageSection() {
   return (
-    <section id="cobertura" className="bg-silk/40 py-24">
+    <section id="cobertura" className="py-24">
       <Container className="grid items-center gap-12 lg:grid-cols-2">
         <Reveal>
           <SectionHeading
@@ -28,7 +28,7 @@ export function CoverageSection() {
           />
           <ul className="mt-8 grid grid-cols-2 gap-3">
             {MUNICIPIOS.map((m) => (
-              <li key={m} className="flex items-center gap-2 text-sm text-ink-soft">
+              <li key={m} className="flex items-center gap-2 text-sm text-[var(--tone-body)]">
                 <CheckCircle2 size={16} className="shrink-0 text-gold-dark" />
                 {m}
               </li>
@@ -46,16 +46,16 @@ export function CoverageSection() {
             <div className="absolute inset-1/2 flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-gold text-ivory shadow-lg">
               <MapPin size={26} />
             </div>
-            <span className="absolute left-1/2 top-8 -translate-x-1/2 text-xs font-sans font-medium uppercase tracking-widest text-ink-soft">
+            <span className="absolute left-1/2 top-8 -translate-x-1/2 text-xs font-sans font-medium uppercase tracking-widest text-[var(--tone-body)]">
               Bello
             </span>
-            <span className="absolute bottom-10 left-10 text-xs font-sans font-medium uppercase tracking-widest text-ink-soft">
+            <span className="absolute bottom-10 left-10 text-xs font-sans font-medium uppercase tracking-widest text-[var(--tone-body)]">
               Itagüí
             </span>
-            <span className="absolute bottom-10 right-8 text-xs font-sans font-medium uppercase tracking-widest text-ink-soft">
+            <span className="absolute bottom-10 right-8 text-xs font-sans font-medium uppercase tracking-widest text-[var(--tone-body)]">
               Envigado
             </span>
-            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-sans font-medium uppercase tracking-widest text-ink-soft">
+            <span className="absolute right-6 top-1/2 -translate-y-1/2 text-xs font-sans font-medium uppercase tracking-widest text-[var(--tone-body)]">
               Rionegro
             </span>
           </div>

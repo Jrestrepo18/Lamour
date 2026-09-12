@@ -50,7 +50,7 @@ export function HowItWorksSection() {
             </h2>
           </Reveal>
           <Reveal from="right" delay={0.1} className="mt-4 max-w-md">
-            <p className="text-sm leading-relaxed text-ink-soft">
+            <p className="text-sm leading-relaxed text-[var(--tone-body)]">
               Un proceso simple, discreto y en tiempo real para agendar tu ritual L&apos;AMOUR.
             </p>
           </Reveal>
@@ -64,7 +64,7 @@ export function HowItWorksSection() {
                   <step.icon size={22} strokeWidth={1.6} />
                 </div>
                 <h3 className="mt-5 font-serif text-xl text-ink">{step.title}</h3>
-                <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{step.text}</p>
+                <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--tone-body)]">{step.text}</p>
                 <span className="mt-4 font-serif text-sm text-gold">0{i + 1}</span>
               </div>
             </Reveal>

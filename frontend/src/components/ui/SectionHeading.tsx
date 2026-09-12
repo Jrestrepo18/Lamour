@@ -34,7 +34,7 @@ export function SectionHeading({
         {title}
       </h2>
       {description && (
-        <p className={clsx("mt-4 font-sans text-base leading-relaxed", light ? "text-ivory/75" : "text-ink-soft")}>
+        <p className={clsx("mt-4 font-sans text-base leading-relaxed", light ? "text-ivory/75" : "text-[var(--tone-body)]")}>
           {description}
         </p>
       )}

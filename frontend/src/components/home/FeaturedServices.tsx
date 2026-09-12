@@ -15,7 +15,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
   if (services.length === 0) return null;
 
   return (
-    <section className="bg-silk/40 py-28 sm:py-36">
+    <section className="py-28 sm:py-36">
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6 border-b border-ink/10 pb-10">
           <Reveal from="left">
@@ -25,7 +25,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
           <Reveal from="right" delay={0.1}>
             <Link
               href="/servicios"
-              className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink-soft transition-colors hover:text-terracotta"
+              className="group inline-flex items-center gap-1.5 text-sm font-medium text-[var(--tone-body)] transition-colors hover:text-terracotta"
             >
               Ver catálogo completo
               <ArrowUpRight size={16} className="transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -55,9 +55,9 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   <h3 className="mt-5 pr-8 font-serif text-2xl text-ink transition-colors group-hover:text-terracotta">
                     {service.name}
                   </h3>
-                  <p className="mt-2 flex-1 text-sm leading-relaxed text-ink-soft">{service.shortDescription}</p>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-[var(--tone-body)]">{service.shortDescription}</p>
 
-                  <div className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4 text-xs text-ink-soft">
+                  <div className="mt-5 flex items-center justify-between border-t border-ink/10 pt-4 text-xs text-[var(--tone-body)]">
                     <span>{formatDuration(service.durationMinutes)}</span>
                     <span className="font-serif text-base text-ink">{formatCOP(service.price)}</span>
                   </div>

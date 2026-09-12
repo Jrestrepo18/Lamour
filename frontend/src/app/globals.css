@@ -22,6 +22,13 @@
   --color-gold-dark: #b3901f;
   --color-terracotta: #a5502a;
   --color-terracotta-dark: #7c3b1e;
+
+  /**
+   * Secondary/body text tone, overridden locally (and animated on scroll) by
+   * ScrollTint's wrapper — see components/home/ScrollTint.tsx. Defaults here
+   * to plain --color-ink-soft so every use outside that wrapper is unaffected.
+   */
+  --tone-body: var(--color-ink-soft);
 }
 
 @theme inline {
