@@ -93,35 +93,41 @@ export function ServiceCard({ service, tone = "light" }: { service: Service; ton
         gallery={gallery}
         fallback={
           <div className="flex h-full w-full items-center justify-center">
-            <Sparkle size={64} strokeWidth={1} className="text-gold/40" />
+            <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/30 bg-ivory/40">
+              <Sparkle size={28} strokeWidth={1.3} className="text-gold/60" />
+            </div>
           </div>
+        }
+        footer={
+          <LinkButton href={`/reservar?service=${service.slug}`} className="w-full justify-center">
+            Reservar este servicio
+            <ArrowUpRight size={16} />
+          </LinkButton>
         }
       >
         <p className="text-sm leading-relaxed text-ink-soft">{service.longDescription ?? service.shortDescription}</p>
 
-        {service.highlights.length > 0 && (
-          <ul className="mt-4 space-y-1.5">
-            {service.highlights.map((h) => (
-              <li key={h} className="flex items-start gap-2 text-sm text-ink-soft">
-                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
-                {h}
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <div className="mt-5 flex items-center gap-6 text-sm text-ink-soft">
+        <div className="flex items-center gap-6 rounded-2xl bg-silk/40 px-4 py-3 text-sm text-ink-soft">
           <span className="flex items-center gap-1.5">
             <Clock3 size={14} className="text-gold" />
             {formatDuration(service.durationMinutes)}
           </span>
-          <span className="font-serif text-xl text-ink">{formatCOP(service.price)}</span>
+          <span className="ml-auto font-serif text-xl text-ink">{formatCOP(service.price)}</span>
         </div>
 
-        <LinkButton href={`/reservar?service=${service.slug}`} className="mt-6">
-          Reservar este servicio
-          <ArrowUpRight size={16} />
-        </LinkButton>
+        {service.highlights.length > 0 && (
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.25em] text-ink-soft/70">Incluye</p>
+            <ul className="mt-2 space-y-1.5">
+              {service.highlights.map((h) => (
+                <li key={h} className="flex items-start gap-2 text-sm text-ink-soft">
+                  <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-gold" />
+                  {h}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </DetailModal>
     </>
   );

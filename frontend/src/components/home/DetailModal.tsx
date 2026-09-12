@@ -6,9 +6,12 @@ import { X } from "lucide-react";
 
 /**
  * The editorial, image-forward detail sheet used by MasseuseCard and ServiceCard —
- * distinct from ui/Modal (the compact admin CRUD form dialog). Behaves as a
- * bottom sheet on mobile (rounded top only, anchored to the bottom edge) and a
- * centered dialog on desktop.
+ * distinct from ui/Modal (the compact admin CRUD form dialog). Three fixed regions
+ * (image header, scrollable body, pinned footer) rather than one long scroll, so
+ * the close button and the reserve CTA are always reachable regardless of how
+ * long the description or highlights list gets. Behaves as a bottom sheet on
+ * mobile (rounded top only, anchored to the bottom edge) and a centered dialog
+ * on desktop.
  */
 export function DetailModal({
   open,
@@ -17,6 +20,7 @@ export function DetailModal({
   title,
   gallery,
   fallback,
+  footer,
   children,
 }: {
   open: boolean;
@@ -25,6 +29,7 @@ export function DetailModal({
   title: string;
   gallery: string[];
   fallback: ReactNode;
+  footer: ReactNode;
   children: ReactNode;
 }) {
   useEffect(() => {
@@ -58,7 +63,7 @@ export function DetailModal({
             role="dialog"
             aria-modal="true"
             aria-label={title}
-            className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-[2rem] bg-ivory shadow-2xl sm:rounded-[2rem]"
+            className="relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-t-[2rem] bg-ivory shadow-2xl sm:max-h-[85vh] sm:rounded-[2rem]"
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 20, opacity: 0 }}
@@ -73,7 +78,7 @@ export function DetailModal({
               <X size={18} />
             </button>
 
-            <div className="relative aspect-[4/3] w-full overflow-hidden bg-gradient-to-br from-champagne/50 to-gold/15 sm:rounded-t-[2rem]">
+            <div className="relative h-52 w-full shrink-0 overflow-hidden bg-gradient-to-br from-champagne/50 to-gold/15 sm:h-64">
               {gallery.length > 0 ? (
                 <div className="flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth">
                   {gallery.map((src, i) => (
@@ -98,13 +103,15 @@ export function DetailModal({
               )}
             </div>
 
-            <div className="p-6 sm:p-8">
+            <div className="flex-1 overflow-y-auto p-6 sm:p-8">
               {eyebrow && (
                 <p className="text-xs font-semibold uppercase tracking-[0.3em] text-terracotta">{eyebrow}</p>
               )}
               <h2 className="mt-2 font-serif text-3xl text-ink">{title}</h2>
-              <div className="mt-4">{children}</div>
+              <div className="mt-4 space-y-5">{children}</div>
             </div>
+
+            <div className="shrink-0 border-t border-ink/10 bg-ivory p-4 sm:p-6">{footer}</div>
           </motion.div>
         </motion.div>
       )}

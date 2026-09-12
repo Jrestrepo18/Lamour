@@ -63,12 +63,18 @@ export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
             <span className="font-serif text-8xl text-gold-dark/60">{initials(masseuse.stageName)}</span>
           </div>
         }
+        footer={
+          <LinkButton href={`/reservar?masseuse=${masseuse.id}`} className="w-full justify-center">
+            Reservar con {masseuse.stageName}
+            <ArrowUpRight size={16} />
+          </LinkButton>
+        }
       >
-        {masseuse.bio && <p className="text-sm leading-relaxed text-ink-soft">{masseuse.bio}</p>}
-        <LinkButton href={`/reservar?masseuse=${masseuse.id}`} className="mt-6">
-          Reservar con {masseuse.stageName}
-          <ArrowUpRight size={16} />
-        </LinkButton>
+        {masseuse.bio ? (
+          <p className="text-sm leading-relaxed text-ink-soft">{masseuse.bio}</p>
+        ) : (
+          <p className="text-sm italic leading-relaxed text-ink-soft/60">Sin biografía por ahora.</p>
+        )}
       </DetailModal>
     </>
   );
