@@ -1,11 +1,11 @@
 "use client";
 
-import { Suspense, useRef, type RefObject } from "react";
+import { useCallback, useRef, type RefObject } from "react";
+import { Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sparkles, useGLTF } from "@react-three/drei";
 import { MathUtils, type Group } from "three";
 import { ScrollTrigger } from "@/lib/gsap";
-import { useGsapContext } from "@/hooks/useGsapContext";
 
 const MODEL_URL = "/models/hero-figure.glb";
 useGLTF.preload(MODEL_URL);
@@ -27,8 +27,8 @@ const MODEL_HEIGHT = 1.906;
  * 1024px + a simplify pass) down to 1.4 MB; see frontend/public/models/.
  *
  * Deliberately static on its own — no autonomous spin or float. The only
- * things that move it are the user's scroll (ScrollParallax) and cursor
- * (PointerTilt), both applied to the groups that wrap this one.
+ * things that move it are the user's scroll (the callback ref on the outer
+ * group, in GoldBlobScene) and cursor (PointerTilt).
  */
 function HeroFigure() {
   const { scene } = useGLTF(MODEL_URL);
@@ -61,7 +61,10 @@ function Rig() {
 /**
  * Subtle cursor-reactive tilt — the one thing that reads as "premium/
  * interactive" rather than a static render. Lerped, so it trails the
- * pointer gently instead of snapping to it.
+ * pointer gently instead of snapping to it. `useFrame` re-checks the ref
+ * every frame, so unlike a one-shot effect it isn't sensitive to whether
+ * the model has finished loading yet — it just starts working the first
+ * frame the ref is non-null.
  */
 function PointerTilt({ groupRef }: { groupRef: RefObject<Group | null> }) {
   useFrame((state) => {
@@ -74,47 +77,41 @@ function PointerTilt({ groupRef }: { groupRef: RefObject<Group | null> }) {
   return null;
 }
 
-/**
- * All the figure's motion lives here, driven directly by scroll position
- * (scrub: true — no autoplay, no easing lag beyond what scrub itself
- * smooths). Position drifts up like a parallax background; rotation turns
- * the figure so scrolling visibly "does something" to it, not just moves it.
- */
-function ScrollParallax({
-  groupRef,
-  triggerRef,
-}: {
-  groupRef: RefObject<Group | null>;
-  triggerRef: RefObject<HTMLElement | null>;
-}) {
-  useGsapContext(() => {
-    if (!groupRef.current || !triggerRef.current) return;
-    const group = groupRef.current;
-
-    // One ScrollTrigger driving both properties directly off scroll progress
-    // (0 -> 1), instead of two separate gsap.to() tweens each spinning up
-    // their own ScrollTrigger on the same trigger/start/end — that duplicate
-    // setup was the bug: the rotation one wasn't reliably taking effect.
-    // Negative Y-rotation turns the figure toward the viewer's left as the
-    // user scrolls down; flip the sign here if it reads backwards live.
-    ScrollTrigger.create({
-      trigger: triggerRef.current,
-      start: "top top",
-      end: "bottom top",
-      scrub: true,
-      onUpdate: (self) => {
-        group.position.y = -0.9 * self.progress;
-        group.rotation.y = -0.9 * self.progress;
-      },
-    });
-  }, []);
-
-  return null;
-}
-
 export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElement | null> }) {
-  const groupRef = useRef<Group>(null);
   const tiltRef = useRef<Group>(null);
+  const scrollTriggerRef = useRef<ScrollTrigger | null>(null);
+
+  /**
+   * A callback ref instead of `useRef` + a `useLayoutEffect` with `[]` deps.
+   * The previous version raced Suspense: the model (loaded via useGLTF)
+   * takes a moment to resolve, and the one-shot effect ran, saw a still-null
+   * group ref, bailed out via its early return, and — having no dependency
+   * that would fire it again — never retried. React calls a callback ref
+   * exactly when the node is actually attached to the tree, Suspense
+   * resolution included, so there's no race left to lose.
+   */
+  const setScrollGroup = useCallback(
+    (node: Group | null) => {
+      scrollTriggerRef.current?.kill();
+      scrollTriggerRef.current = null;
+
+      if (!node || !triggerRef.current) return;
+
+      // Negative Y-rotation turns the figure toward the viewer's left as the
+      // user scrolls down; flip the sign here if it reads backwards live.
+      scrollTriggerRef.current = ScrollTrigger.create({
+        trigger: triggerRef.current,
+        start: "top top",
+        end: "bottom top",
+        scrub: true,
+        onUpdate: (self) => {
+          node.position.y = -0.9 * self.progress;
+          node.rotation.y = -0.9 * self.progress;
+        },
+      });
+    },
+    [triggerRef],
+  );
 
   return (
     <Canvas
@@ -125,20 +122,13 @@ export function GoldBlobScene({ triggerRef }: { triggerRef: RefObject<HTMLElemen
     >
       <Suspense fallback={null}>
         {/* Outer group: scroll parallax only, in world space. */}
-        <group ref={groupRef} position={[1.6, -0.35, 0]}>
+        <group ref={setScrollGroup} position={[1.6, -0.35, 0]}>
           {/* Inner group: pointer tilt, isolated so it doesn't fight the scroll tween. */}
           <group ref={tiltRef}>
             <Rig />
             <HeroFigure />
             <Sparkles count={90} scale={6} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
           </group>
-
-          {/* Both live inside the same Suspense boundary as HeroFigure (not as siblings of it outside
-              Suspense) — React only commits this whole subtree once the GLTF has resolved, so by the
-              time these mount and run their effects, groupRef/tiltRef are already attached. Outside
-              Suspense, their one-shot effect could run before the model loaded, see null refs, bail
-              out via the early return, and never get a second chance. */}
-          <ScrollParallax groupRef={groupRef} triggerRef={triggerRef} />
           <PointerTilt groupRef={tiltRef} />
         </group>
       </Suspense>
