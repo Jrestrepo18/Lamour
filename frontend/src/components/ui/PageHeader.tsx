@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
+import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import type { Photo } from "@/lib/photos";
@@ -51,14 +52,16 @@ export function PageHeader({
               desktop: a framed portrait in the right column. */}
           {photo && (
             <div className="relative -mx-5 h-[38svh] min-h-60 overflow-hidden sm:-mx-8 lg:order-last lg:mx-0 lg:aspect-[4/5] lg:h-auto lg:max-h-[26rem] lg:min-h-0 lg:animate-rise lg:rounded-[2rem] lg:shadow-[0_30px_60px_-30px_rgba(43,32,25,0.5)] lg:[animation-delay:150ms]">
-              <Image
-                src={photo.src}
-                alt={photo.alt}
-                fill
-                priority
-                sizes="(min-width: 1024px) 32vw, 100vw"
-                className="animate-hero-settle object-cover lg:animate-none"
-              />
+              <ParallaxMedia distance={12}>
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  fill
+                  priority
+                  sizes="(min-width: 1024px) 32vw, 100vw"
+                  className="animate-hero-settle object-cover lg:animate-none"
+                />
+              </ParallaxMedia>
               <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
             </div>
           )}

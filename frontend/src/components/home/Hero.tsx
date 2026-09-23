@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
+import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
 
 const HERO = PHOTOS.oilBack;
@@ -28,15 +29,17 @@ export function Hero() {
       <Container className="relative grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
         {/* Photo — first on phones (full-bleed), right column on desktop */}
         <div className="relative -mx-5 h-[clamp(18rem,51svh,32rem)] overflow-hidden sm:-mx-8 lg:order-last lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(43,32,25,0.55)]">
-          <Image
-            src={HERO.src}
-            alt={HERO.alt}
-            fill
-            priority
-            fetchPriority="high"
-            sizes="(min-width: 1024px) 46vw, 100vw"
-            className="animate-hero-settle object-cover object-[50%_35%]"
-          />
+          <ParallaxMedia>
+            <Image
+              src={HERO.src}
+              alt={HERO.alt}
+              fill
+              priority
+              fetchPriority="high"
+              sizes="(min-width: 1024px) 46vw, 100vw"
+              className="animate-hero-settle object-cover object-[50%_35%]"
+            />
+          </ParallaxMedia>
           {/* Phone: soft wash under the transparent header + fade into the text sheet */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-espresso/25 to-transparent lg:hidden" />

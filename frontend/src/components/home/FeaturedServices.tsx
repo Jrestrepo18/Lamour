@@ -48,6 +48,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
             const photo = VISUALS[i % VISUALS.length];
             return (
               <li key={service.id} className="border-b border-ink/10">
+                <Reveal delay={0.08 * i} from="right">
                 <Link href={`/reservar?service=${service.slug}`} className="group flex items-center gap-4 py-4">
                   <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-silk">
                     <FadeInImage
@@ -72,6 +73,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   </span>
                   <ChevronRight size={18} className="shrink-0 text-bronze" aria-hidden />
                 </Link>
+                </Reveal>
               </li>
             );
           })}

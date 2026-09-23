@@ -125,6 +125,7 @@ export function SensesSection() {
                   }}
                   className="w-[78%] max-w-[20rem] shrink-0 snap-start sm:w-[45%] lg:w-auto lg:max-w-none"
                 >
+                  <Reveal delay={0.08 * i}>
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-silk shadow-[0_24px_50px_-30px_rgba(43,32,25,0.55)]">
                     <Image
                       src={sense.photo.src}
@@ -139,6 +140,7 @@ export function SensesSection() {
                   </div>
                   <h3 className="mt-5 font-serif text-2xl font-semibold text-ink">{sense.name}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-[var(--tone-body)]">{sense.line}</p>
+                  </Reveal>
                 </li>
               ))}
             </ol>

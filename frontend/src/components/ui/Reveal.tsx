@@ -1,18 +1,45 @@
-import type { CSSProperties, ReactNode } from "react";
+"use client";
+
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import clsx from "clsx";
 import type { RevealDirection as Direction } from "@/lib/motion";
 
 /**
- * Scroll reveal driven entirely by CSS (`animation-timeline: view()`, see
- * globals.css) — no JavaScript, no hydration wait. Anything already on
- * screen at load is painted fully visible on the first frame (so it can
- * count as LCP), and everything below fades/slides in as it enters the
- * viewport. Browsers without scroll-driven animations, and reduced-motion
- * users, simply get the content with no animation.
+ * One IntersectionObserver shared by every Reveal on the page — cheaper than
+ * one per element, and supported everywhere (iOS Safari included, unlike CSS
+ * scroll-driven animations, which is why this replaced them).
+ */
+const callbacks = new Map<Element, () => void>();
+let observer: IntersectionObserver | null = null;
+
+function observe(el: Element, onEnter: () => void) {
+  observer ??= new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        callbacks.get(entry.target)?.();
+        callbacks.delete(entry.target);
+        observer?.unobserve(entry.target);
+      }
+    },
+    { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+  );
+  callbacks.set(el, onEnter);
+  observer.observe(el);
+  return () => {
+    callbacks.delete(el);
+    observer?.unobserve(el);
+  };
+}
+
+/**
+ * Fade/slide-in as an element scrolls into view — on phones and desktop alike.
  *
- * `delay` (seconds, as before) is mapped onto the scroll range: a larger
- * value starts the 200px reveal window a little further in, which keeps the
- * staggered rhythm of card grids.
+ * Server-rendered fully visible, so nothing waits for JavaScript and above-the-
+ * fold content still counts as LCP immediately. After hydration, only elements
+ * that are still *below* the fold are tucked away and then revealed when they
+ * enter the viewport (they're off-screen, so hiding them causes no flicker).
+ * Reduced-motion users get the content with no animation.
  */
 export function Reveal({
   children,
@@ -25,11 +52,24 @@ export function Reveal({
   className?: string;
   from?: Direction;
 }) {
-  const start = Math.round(Math.min(120, delay * 240));
-  const style = delay > 0 ? ({ "--reveal-start": `${start}px` } as CSSProperties) : undefined;
+  const ref = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState<"idle" | "pending" | "in">("idle");
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.92) return;
+    setState("pending");
+    return observe(el, () => setState("in"));
+  }, []);
 
   return (
-    <div className={clsx("reveal", from !== "up" && `reveal-${from}`, className)} style={style}>
+    <div
+      ref={ref}
+      data-reveal={state}
+      className={clsx("reveal", from !== "up" && `reveal-${from}`, className)}
+      style={delay > 0 ? ({ "--reveal-delay": `${Math.min(delay, 0.5)}s` } as CSSProperties) : undefined}
+    >
       {children}
     </div>
   );
