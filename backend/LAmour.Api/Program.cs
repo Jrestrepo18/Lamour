@@ -7,6 +7,9 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Machine-local secrets (e.g. SeedAdmin:Password) — git-ignored, optional, overrides appsettings.json.
+builder.Configuration.AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.local.json", optional: true, reloadOnChange: false);
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter());
@@ -74,7 +77,8 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<LAmourDbContext>();
-    SeedData.EnsureSeeded(db);
+    var seedLogger = scope.ServiceProvider.GetRequiredService<ILoggerFactory>().CreateLogger("SeedData");
+    SeedData.EnsureSeeded(db, app.Configuration, seedLogger);
 }
 
 if (app.Environment.IsDevelopment())

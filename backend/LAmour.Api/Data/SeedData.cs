@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using LAmour.Api.Models;
 using LAmour.Api.Services;
 
@@ -5,16 +6,30 @@ namespace LAmour.Api.Data;
 
 public static class SeedData
 {
-    public static void EnsureSeeded(LAmourDbContext db)
+    public static void EnsureSeeded(LAmourDbContext db, IConfiguration config, ILogger logger)
     {
         db.Database.EnsureCreated();
 
         if (!db.AdminUsers.Any())
         {
+            // Initial admin credentials come from configuration (SeedAdmin:Username / SeedAdmin:Password,
+            // or env vars SeedAdmin__Username / SeedAdmin__Password) — never a password committed to the repo.
+            // Without one, a random password is generated and printed once so the panel is still reachable.
+            var username = config["SeedAdmin:Username"] is { Length: > 0 } u ? u : "admin";
+            var password = config["SeedAdmin:Password"];
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                password = Convert.ToBase64String(RandomNumberGenerator.GetBytes(12));
+                logger.LogWarning(
+                    "SeedAdmin:Password no está configurada. Se creó el admin '{Username}' con la contraseña " +
+                    "temporal: {Password} — guárdala y cámbiala, no se volverá a mostrar.",
+                    username, password);
+            }
+
             db.AdminUsers.Add(new AdminUser
             {
-                Username = "admin",
-                PasswordHash = PasswordHasher.Hash("Lamour2024!"),
+                Username = username,
+                PasswordHash = PasswordHasher.Hash(password),
                 FullName = "Administración L'AMOUR",
                 Role = "Admin"
             });

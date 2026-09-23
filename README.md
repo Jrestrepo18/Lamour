@@ -37,7 +37,9 @@ Al iniciar, la base de datos SQLite (`lamour.db`) se crea automáticamente y se 
 
 - Las 5 categorías y 16 servicios descritos en el brief (incluye la nota obligatoria de estimulación en masajes eróticos y el Masaje Voyerista "El Arte de Mirar").
 - 4 masajistas de ejemplo.
-- Un usuario administrador: **usuario `admin`, contraseña `Lamour2024!`** — cámbialos en producción (`Data/SeedData.cs`).
+- Un usuario administrador inicial. Sus credenciales se leen de configuración — nunca van en el repositorio:
+  - `SeedAdmin:Username` (por defecto `admin`) y `SeedAdmin:Password`, en `appsettings.Development.local.json` (ignorado por git) o como variables de entorno `SeedAdmin__Username` / `SeedAdmin__Password`.
+  - Si no defines la contraseña, la API genera una aleatoria al crear la base de datos y la muestra **una sola vez** en la consola.
 
 ### Configuración (`appsettings.json`)
 
