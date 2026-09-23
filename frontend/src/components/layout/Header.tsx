@@ -20,8 +20,6 @@ export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  // The homepage hero is a light, airy scene now; every other route still opens on a dark PageHeader.
-  const topIsDark = pathname !== "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -66,12 +64,12 @@ export function Header() {
             : "max-w-none rounded-none border-transparent bg-transparent px-6 py-6 sm:px-10",
         )}
       >
-        <Link href="/" className="flex flex-col leading-none">
-          <span className={clsx("font-serif text-xl font-bold tracking-wide transition-colors", scrolled || !topIsDark ? "text-ink" : "text-ivory")}>
+        <Link href="/" aria-label="L'AMOUR — Inicio" className="flex flex-col leading-none">
+          <span className="font-serif text-xl font-bold tracking-wide text-ink">
             L&apos;AMOUR
           </span>
           {!scrolled && (
-            <span className="mt-0.5 text-[0.55rem] font-medium uppercase tracking-[0.35em] text-gold">
+            <span className="mt-0.5 text-[0.55rem] font-medium uppercase tracking-[0.35em] text-bronze">
               Estética y Sentidos
             </span>
           )}
@@ -80,29 +78,23 @@ export function Header() {
         <nav className="hidden items-center gap-7 md:flex">
           {NAV_LINKS.map((link) => {
             const active = link.href === "/" ? pathname === "/" : pathname?.startsWith(link.href);
-            const lightText = scrolled || !topIsDark;
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className={clsx(
-                  "group relative text-sm transition-colors",
-                  lightText ? (active ? "text-ink" : "text-ink-soft hover:text-ink") : active ? "text-ivory" : "text-ivory/70 hover:text-ivory",
-                )}
+                aria-current={active ? "page" : undefined}
+                className={clsx("group relative text-sm transition-colors", active ? "text-ink" : "text-ink-soft hover:text-ink")}
               >
                 {link.label}
                 {active ? (
                   <motion.span
                     layoutId="nav-active"
-                    className={clsx("absolute -bottom-1.5 left-0 right-0 h-px", lightText ? "bg-terracotta" : "bg-gold")}
+                    className="absolute -bottom-1.5 left-0 right-0 h-px bg-gold"
                   />
                 ) : (
                   <span
                     aria-hidden
-                    className={clsx(
-                      "absolute -bottom-1.5 left-0 right-0 h-px origin-center scale-x-0 transition-transform duration-300 ease-out group-hover:scale-x-100",
-                      lightText ? "bg-ink-soft/50" : "bg-ivory/50",
-                    )}
+                    className="absolute -bottom-1.5 left-0 right-0 h-px origin-center scale-x-0 bg-ink-soft/50 transition-transform duration-300 ease-out group-hover:scale-x-100"
                   />
                 )}
               </Link>
@@ -111,7 +103,7 @@ export function Header() {
         </nav>
 
         <div className="hidden md:block">
-          <LinkButton href="/reservar" size="md" className="!px-5 !py-2 text-xs">
+          <LinkButton href="/reservar" size="sm" className="px-5">
             Reservar
           </LinkButton>
         </div>
@@ -121,10 +113,7 @@ export function Header() {
           aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
-          className={clsx(
-            "-m-2.5 flex items-center justify-center p-2.5 md:hidden",
-            scrolled || !topIsDark ? "text-ink" : "text-ivory",
-          )}
+          className="-m-2.5 flex items-center justify-center p-2.5 text-ink md:hidden"
           onClick={() => setMenuOpen((v) => !v)}
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -144,7 +133,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="rounded-xl px-3 py-3 text-sm text-ink-soft hover:bg-silk/60 hover:text-ink"
+              className="rounded-xl px-3 py-3 text-base text-ink-soft hover:bg-silk/60 hover:text-ink"
             >
               {link.label}
             </Link>

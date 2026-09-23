@@ -34,7 +34,8 @@ export function LenisProvider({ children }: { children: ReactNode }) {
       duration: 1.2,
       smoothWheel: true,
       wheelMultiplier: 1,
-      anchors: true,
+      // Offset keeps anchor targets clear of the fixed header (Lenis ignores CSS scroll-padding).
+      anchors: { offset: -110 },
       respectReducedMotion: true,
     });
 

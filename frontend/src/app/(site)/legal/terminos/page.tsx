@@ -2,16 +2,17 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { LegalArticle, LegalSection } from "@/components/legal/LegalArticle";
 
 export const metadata = {
-  title: "Términos y Condiciones | L'AMOUR",
+  title: "Términos y Condiciones",
+  alternates: { canonical: "/legal/terminos" },
   robots: { index: false, follow: true },
 };
 
 export default function TerminosPage() {
   return (
     <>
-      <PageHeader eyebrow="Documento legal" title="Términos y Condiciones" compact />
+      <PageHeader path="/legal/terminos" eyebrow="Documento legal" title="Términos y Condiciones" compact />
       <LegalArticle>
-        <p className="text-xs uppercase tracking-widest text-terracotta">
+        <p className="eyebrow">
           Última actualización: [fecha de publicación]
         </p>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft">

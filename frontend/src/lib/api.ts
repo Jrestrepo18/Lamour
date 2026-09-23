@@ -12,6 +12,13 @@ import type {
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5080/api";
 
+/**
+ * Public catalog (services, masseuses) is cached and regenerated at most once a
+ * minute, so public pages are served pre-rendered instead of hitting the API
+ * on every visit. Admin edits show up on the site within this window.
+ */
+const CATALOG_REVALIDATE_SECONDS = 60;
+
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -30,7 +37,9 @@ async function request<T>(path: string, options: RequestInit = {}, token?: strin
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
-    cache: "no-store",
+    // Live by default (availability, bookings, admin). Public catalog reads opt
+    // into ISR by passing `next: { revalidate }` instead.
+    ...(options.next ? {} : { cache: "no-store" as const }),
   });
 
   if (!res.ok) {
@@ -51,7 +60,9 @@ function isConnectionFailure(err: unknown) {
 
 export async function getServiceCategories(): Promise<{ data: ServiceCategory[]; isDemo: boolean }> {
   try {
-    const data = await request<ServiceCategory[]>("/service-categories");
+    const data = await request<ServiceCategory[]>("/service-categories", {
+      next: { revalidate: CATALOG_REVALIDATE_SECONDS },
+    });
     return { data, isDemo: false };
   } catch (err) {
     if (!isConnectionFailure(err)) throw err;
@@ -62,7 +73,7 @@ export async function getServiceCategories(): Promise<{ data: ServiceCategory[];
 
 export async function getMasseuses(): Promise<{ data: Masseuse[]; isDemo: boolean }> {
   try {
-    const data = await request<Masseuse[]>("/masseuses");
+    const data = await request<Masseuse[]>("/masseuses", { next: { revalidate: CATALOG_REVALIDATE_SECONDS } });
     return { data, isDemo: false };
   } catch (err) {
     if (!isConnectionFailure(err)) throw err;
@@ -171,4 +182,25 @@ export async function adminUpsertService(payload: Omit<Service, "id" | "highligh
 
 export async function adminDeleteService(id: number, token: string) {
   return request<void>(`/admin/services/${id}`, { method: "DELETE" }, token);
+}
+
+// ---------- Uploads ----------
+
+/** Multipart upload, so it can't go through request() — that forces a JSON Content-Type header. */
+export async function adminUploadImage(file: File, token: string): Promise<{ url: string }> {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch(`${API_URL}/admin/uploads`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.text().catch(() => "");
+    throw new ApiError(body || `Error ${res.status}`, res.status);
+  }
+
+  return res.json() as Promise<{ url: string }>;
 }

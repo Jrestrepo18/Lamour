@@ -35,7 +35,6 @@ export function ScheduleStep({
 }) {
   const [slots, setSlots] = useState<AvailabilitySlot[] | null>(null);
   const [loading, setLoading] = useState(true);
-  const [isDemo, setIsDemo] = useState(false);
 
   const duration = service.durationMinutes + extraMinutes;
   const dateStr = format(date, "yyyy-MM-dd");
@@ -49,11 +48,9 @@ export function ScheduleStep({
     async function load() {
       const primaryRes = await getAvailability(primary.id, dateStr, duration);
       let merged = primaryRes.data;
-      let demo = primaryRes.isDemo;
 
       if (secondary) {
         const secondaryRes = await getAvailability(secondary.id, dateStr, duration);
-        demo = demo || secondaryRes.isDemo;
         const secondaryAvailable = new Set(
           secondaryRes.data.filter((s) => s.available).map((s) => s.start),
         );
@@ -62,7 +59,6 @@ export function ScheduleStep({
 
       if (!cancelled) {
         setSlots(merged);
-        setIsDemo(demo);
         setLoading(false);
       }
     }
@@ -77,12 +73,12 @@ export function ScheduleStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl text-ink">Elige tu horario</h2>
+      <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Elige tu horario</h2>
       <p className="mt-1 text-sm text-ink-soft">Disponibilidad en tiempo real, sin cruces de agenda.</p>
 
       {service.allowsExtraTime && (
         <div className="mt-6">
-          <p className="mb-2 text-xs font-sans font-semibold uppercase tracking-wide text-gold-dark">
+          <p className="mb-2 text-xs font-sans font-semibold uppercase tracking-wide text-bronze">
             Tiempo adicional (opcional)
           </p>
           <div className="flex gap-2">
@@ -90,10 +86,11 @@ export function ScheduleStep({
               <button
                 key={m}
                 type="button"
+                aria-pressed={extraMinutes === m}
                 onClick={() => onExtraMinutesChange(m)}
                 className={clsx(
-                  "rounded-full border px-4 py-2 text-xs font-sans",
-                  extraMinutes === m ? "border-gold bg-gold text-ivory" : "border-silk text-ink-soft hover:border-gold/40",
+                  "inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-sans",
+                  extraMinutes === m ? "border-ink bg-ink text-ivory" : "border-ink/15 text-ink-soft hover:border-gold",
                 )}
               >
                 {m === 0 ? "Sin extra" : `+${m} min`}
@@ -103,17 +100,21 @@ export function ScheduleStep({
         </div>
       )}
 
-      <div className="mt-6 -mx-1 flex gap-2 overflow-x-auto pb-2">
+      <div
+        className="mt-6 -mx-1 flex gap-2 overflow-x-auto pb-2"
+        style={{ maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)" }}
+      >
         {days.map((d) => {
           const active = isSameDay(d, date);
           return (
             <button
               key={d.toISOString()}
               type="button"
+              aria-pressed={active}
               onClick={() => onDateChange(d)}
               className={clsx(
-                "flex shrink-0 flex-col items-center rounded-xl border px-3.5 py-2.5 transition-colors",
-                active ? "border-gold bg-gold text-ivory" : "border-silk text-ink-soft hover:border-gold/40",
+                "flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-3.5 py-2.5 transition-colors",
+                active ? "border-ink bg-ink text-ivory" : "border-ink/15 text-ink-soft hover:border-gold",
               )}
             >
               <span className="text-[0.6rem] font-sans uppercase tracking-wide">
@@ -125,7 +126,7 @@ export function ScheduleStep({
         })}
       </div>
 
-      <div className="mt-6">
+      <div className="mt-6" aria-live="polite">
         {loading ? (
           <div className="flex items-center justify-center gap-2 py-12 text-sm text-ink-soft">
             <Loader2 size={18} className="animate-spin text-gold" />
@@ -140,12 +141,13 @@ export function ScheduleStep({
                 <button
                   key={s.start}
                   type="button"
+                  aria-pressed={selectedStart === s.start}
                   onClick={() => onSelectSlot(s)}
                   className={clsx(
-                    "rounded-lg border px-3 py-2.5 text-sm font-sans transition-colors",
+                    "flex min-h-11 items-center justify-center rounded-lg border px-3 py-2.5 text-sm font-sans transition-colors",
                     selectedStart === s.start
-                      ? "border-gold bg-gold text-ivory"
-                      : "border-silk text-ink hover:border-gold/40",
+                      ? "border-ink bg-ink text-ivory"
+                      : "border-ink/15 text-ink hover:border-gold",
                   )}
                 >
                   {formatTime(s.start)}
@@ -157,12 +159,6 @@ export function ScheduleStep({
         {!loading && slots?.every((s) => !s.available) && (
           <p className="py-8 text-center text-sm text-ink-soft">
             No hay horarios disponibles este día. Prueba otra fecha.
-          </p>
-        )}
-
-        {isDemo && (
-          <p className="mt-4 text-xs text-ink-soft/60">
-            Mostrando horarios de demostración — conecta la API para ver disponibilidad real.
           </p>
         )}
       </div>

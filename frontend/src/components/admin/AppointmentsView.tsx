@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import clsx from "clsx";
 import { AlertCircle, Loader2, MapPin, MessageCircle, Phone, RefreshCw, Users } from "lucide-react";
 import { adminGetAppointments, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
 import { formatCOP, formatDateLong, formatTime } from "@/lib/format";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { StatusBadge } from "./StatusBadge";
+import { AdminPageHeader } from "./AdminPageHeader";
+import { chipClass, surfaceClass } from "@/lib/ui";
+import { Button } from "@/components/ui/Button";
 
 const TABS: { value: AppointmentStatus | "All"; label: string }[] = [
   { value: "Pending", label: "Pendientes" },
@@ -63,31 +65,25 @@ export function AppointmentsView({ token }: { token: string }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-2xl text-ink">Citas</h1>
-          <p className="text-sm text-ink-soft">Gestiona las reservas y confirma la asignación a cada masajista.</p>
-        </div>
-        <button
-          type="button"
-          onClick={load}
-          className="flex items-center gap-2 rounded-full border border-silk px-4 py-2 text-xs font-sans text-ink-soft hover:border-gold/40"
-        >
-          <RefreshCw size={14} />
-          Actualizar
-        </button>
-      </div>
+      <AdminPageHeader
+        title="Citas"
+        description="Gestiona las reservas y confirma la asignación a cada masajista."
+        action={
+          <Button variant="secondary" size="sm" onClick={load}>
+            <RefreshCw size={14} aria-hidden />
+            Actualizar
+          </Button>
+        }
+      />
 
-      <div className="mt-6 flex flex-wrap gap-2">
+      <div className="mt-8 flex flex-wrap gap-2">
         {TABS.map((t) => (
           <button
             key={t.value}
             type="button"
             onClick={() => setTab(t.value)}
-            className={clsx(
-              "rounded-full border px-4 py-2 text-xs font-sans font-medium",
-              tab === t.value ? "border-gold bg-gold text-ivory" : "border-silk text-ink-soft hover:border-gold/40",
-            )}
+            aria-pressed={tab === t.value}
+            className={chipClass(tab === t.value)}
           >
             {t.label}
           </button>
@@ -95,7 +91,7 @@ export function AppointmentsView({ token }: { token: string }) {
       </div>
 
       {error && (
-        <div className="mt-6 flex items-start gap-2 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+        <div className="mt-6 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
           {error}
         </div>
@@ -103,7 +99,7 @@ export function AppointmentsView({ token }: { token: string }) {
 
       {!appointments && !error && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-gold" size={26} />
+          <Loader2 className="animate-spin text-bronze" size={26} aria-label="Cargando" />
         </div>
       )}
 
@@ -113,66 +109,51 @@ export function AppointmentsView({ token }: { token: string }) {
 
       <div className="mt-6 space-y-3">
         {filtered.map((a) => (
-          <div key={a.id} className="rounded-2xl border border-silk bg-white/60 p-5">
+          <div key={a.id} className={`${surfaceClass} p-6`}>
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="font-serif text-lg text-ink">{a.serviceName}</p>
+                  <p className="font-serif text-lg font-semibold text-ink">{a.serviceName}</p>
                   <StatusBadge status={a.status} />
                 </div>
                 <p className="mt-1 text-sm capitalize text-ink-soft">
                   {formatDateLong(a.startsAt)} · {formatTime(a.startsAt)} ({a.durationMinutes} min)
                 </p>
               </div>
-              <span className="font-serif text-lg text-ink">{formatCOP(a.totalPrice)}</span>
+              <span className="font-serif text-lg font-semibold text-ink">{formatCOP(a.totalPrice)}</span>
             </div>
 
             <div className="mt-4 grid grid-cols-1 gap-3 text-sm text-ink-soft sm:grid-cols-2">
               <p className="flex items-center gap-2">
-                <Users size={14} className="text-gold-dark" />
+                <Users size={14} className="text-bronze" aria-hidden />
                 {a.masseuseName}
                 {a.secondMasseuseName ? ` y ${a.secondMasseuseName}` : ""}
               </p>
               <p className="flex items-center gap-2">
-                <Phone size={14} className="text-gold-dark" />
+                <Phone size={14} className="text-bronze" aria-hidden />
                 {a.clientName} · {a.clientPhone}
               </p>
               <p className="flex items-start gap-2 sm:col-span-2">
-                <MapPin size={14} className="mt-0.5 shrink-0 text-gold-dark" />
+                <MapPin size={14} className="mt-0.5 shrink-0 text-bronze" />
                 {a.address}, {a.neighborhood}, {a.city}
               </p>
             </div>
 
-            <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-silk pt-4">
+            <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-ink/10 pt-4">
               {a.status === "Pending" && (
-                <button
-                  type="button"
-                  disabled={busyId === a.id}
-                  onClick={() => updateStatus(a.id, "Confirmed")}
-                  className="rounded-full bg-gold px-4 py-2 text-xs font-sans font-medium text-ivory hover:bg-gold-dark disabled:opacity-50"
-                >
+                <Button size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Confirmed")}>
                   {busyId === a.id ? "Confirmando…" : "Confirmar cita"}
-                </button>
+                </Button>
               )}
               {a.status === "Confirmed" && (
-                <button
-                  type="button"
-                  disabled={busyId === a.id}
-                  onClick={() => updateStatus(a.id, "Completed")}
-                  className="rounded-full border border-silk px-4 py-2 text-xs font-sans font-medium text-ink-soft hover:border-gold/40 disabled:opacity-50"
-                >
+                <Button variant="secondary" size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Completed")}>
                   Marcar como completada
-                </button>
+                </Button>
               )}
               {(a.status === "Pending" || a.status === "Confirmed") && (
-                <button
-                  type="button"
-                  disabled={busyId === a.id}
-                  onClick={() => updateStatus(a.id, "Cancelled")}
-                  className="rounded-full border border-red-200 px-4 py-2 text-xs font-sans font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
-                >
+                <Button variant="danger" size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Cancelled")}>
                   Cancelar
-                </button>
+                </Button>
               )}
 
               {whatsappLinks?.id === a.id &&
@@ -182,7 +163,7 @@ export function AppointmentsView({ token }: { token: string }) {
                     href={link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-4 py-2 text-xs font-sans font-medium text-white hover:bg-emerald-700"
+                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-emerald-700 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-emerald-800"
                   >
                     <MessageCircle size={14} />
                     Avisar por WhatsApp {whatsappLinks.links.length > 1 ? `(${i === 0 ? "1ª" : "2ª"} masajista)` : ""}

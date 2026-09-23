@@ -1,15 +1,19 @@
-"use client";
-
-import { motion } from "framer-motion";
-import { type ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import clsx from "clsx";
 import type { RevealDirection as Direction } from "@/lib/motion";
 
-const OFFSETS: Record<Direction, { x?: number; y?: number }> = {
-  up: { y: 30 },
-  left: { x: -36 },
-  right: { x: 36 },
-};
-
+/**
+ * Scroll reveal driven entirely by CSS (`animation-timeline: view()`, see
+ * globals.css) — no JavaScript, no hydration wait. Anything already on
+ * screen at load is painted fully visible on the first frame (so it can
+ * count as LCP), and everything below fades/slides in as it enters the
+ * viewport. Browsers without scroll-driven animations, and reduced-motion
+ * users, simply get the content with no animation.
+ *
+ * `delay` (seconds, as before) is mapped onto the scroll range: a larger
+ * value starts the 200px reveal window a little further in, which keeps the
+ * staggered rhythm of card grids.
+ */
 export function Reveal({
   children,
   delay = 0,
@@ -21,17 +25,12 @@ export function Reveal({
   className?: string;
   from?: Direction;
 }) {
-  const offset = OFFSETS[from];
+  const start = Math.round(Math.min(120, delay * 240));
+  const style = delay > 0 ? ({ "--reveal-start": `${start}px` } as CSSProperties) : undefined;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, ...offset }}
-      whileInView={{ opacity: 1, x: 0, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.8, delay, ease: [0.16, 1, 0.3, 1] }}
-      className={className}
-    >
+    <div className={clsx("reveal", from !== "up" && `reveal-${from}`, className)} style={style}>
       {children}
-    </motion.div>
+    </div>
   );
 }

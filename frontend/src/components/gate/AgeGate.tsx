@@ -1,79 +1,86 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
 import { ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 
+/**
+ * Age confirmation. Server-rendered (so it needs no JS to appear), hidden by
+ * CSS via `html[data-age-ok]` for visitors who already confirmed. Light, warm
+ * glass over the real page instead of a black wall — the first impression
+ * is the brand's calm, not a blocking screen.
+ */
 export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
   const [declined, setDeclined] = useState(false);
+  const confirmRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    confirmRef.current?.focus();
+  }, []);
 
   return (
-    <motion.div
-      key="age-gate"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0, transition: { duration: 0.5 } }}
-      transition={{ duration: 0.6 }}
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-ink px-5 py-10"
+    <div
+      id="age-gate"
+      data-lenis-prevent
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-ivory/70 px-5 py-10 backdrop-blur-xl animate-fade-in"
     >
-      <div className="pointer-events-none absolute inset-0 opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle at 30% 20%, #E4D2AE 0%, transparent 45%)" }} />
-
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        className="relative w-full max-w-md rounded-3xl border border-gold/20 bg-[#1c1712] p-8 text-center shadow-2xl sm:p-10"
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="age-gate-title"
+        aria-describedby="age-gate-desc"
+        className="relative w-full max-w-md rounded-[2rem] border border-gold/25 bg-ivory/95 p-8 text-center shadow-[0_40px_80px_-30px_rgba(43,32,25,0.45)] sm:p-10"
       >
+        <p className="font-serif text-2xl font-bold tracking-wide text-ink">L&apos;AMOUR</p>
+        <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-bronze">Estética y Sentidos</p>
+        <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-gold to-transparent" />
+
         {declined ? (
           <>
-            <h1 className="font-serif text-2xl text-ivory">Acceso restringido</h1>
-            <p className="mt-4 text-sm leading-relaxed text-ivory/60">
+            <h2 id="age-gate-title" className="mt-6 font-serif text-2xl font-semibold text-ink">
+              Acceso restringido
+            </h2>
+            <p id="age-gate-desc" className="mt-4 text-sm leading-relaxed text-ink-soft">
               Este sitio contiene información sobre servicios exclusivos para personas mayores de edad. Si no
               cumples este requisito, te pedimos abandonar la página.
             </p>
           </>
         ) : (
           <>
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gold/10 text-gold">
-              <ShieldCheck size={26} strokeWidth={1.5} />
+            <span className="mx-auto mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-gold/15 text-bronze">
+              <ShieldCheck size={22} strokeWidth={1.6} />
             </span>
-            <h1 className="mt-5 font-serif text-2xl text-ivory">Confirmación de edad</h1>
-            <p className="mt-4 text-sm leading-relaxed text-ivory/65">
-              El contenido de <strong className="text-ivory">L&apos;AMOUR — Estética y Sentidos</strong> incluye
-              servicios de naturaleza sensorial e íntima, dirigidos exclusivamente a personas mayores de 18 años.
+            <h2 id="age-gate-title" className="mt-4 font-serif text-2xl font-semibold text-ink">
+              Confirmación de edad
+            </h2>
+            <p id="age-gate-desc" className="mt-3 text-sm leading-relaxed text-ink-soft">
+              Nuestros servicios son de naturaleza sensorial e íntima, dirigidos exclusivamente a personas
+              mayores de 18 años.
             </p>
-            <p className="mt-3 text-xs leading-relaxed text-ivory/45">
-              Al continuar confirmas que eres mayor de edad y aceptas nuestra{" "}
-              <Link href="/legal/privacidad" className="text-gold underline underline-offset-2 hover:text-champagne">
+            <p className="mt-3 text-xs leading-relaxed text-ink-soft">
+              Al continuar aceptas nuestra{" "}
+              <Link href="/legal/privacidad" className="text-bronze underline underline-offset-2 hover:text-ink">
                 Política de Tratamiento de Datos
               </Link>{" "}
-              y{" "}
-              <Link href="/legal/terminos" className="text-gold underline underline-offset-2 hover:text-champagne">
+              y los{" "}
+              <Link href="/legal/terminos" className="text-bronze underline underline-offset-2 hover:text-ink">
                 Términos y Condiciones
               </Link>
               .
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <button
-                type="button"
-                onClick={onConfirm}
-                className="flex-1 rounded-full bg-terracotta px-6 py-3 text-sm font-medium text-ivory transition-colors hover:bg-terracotta-dark"
-              >
-                Sí, soy mayor de 18 años
-              </button>
-              <button
-                type="button"
-                onClick={() => setDeclined(true)}
-                className="flex-1 rounded-full border border-ivory/20 px-6 py-3 text-sm font-medium text-ivory/70 transition-colors hover:border-ivory/40 hover:text-ivory"
-              >
-                No
-              </button>
+              <Button ref={confirmRef} onClick={onConfirm} className="flex-1">
+                Soy mayor de 18 años
+              </Button>
+              <Button variant="secondary" onClick={() => setDeclined(true)} className="sm:w-28">
+                Salir
+              </Button>
             </div>
           </>
         )}
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }

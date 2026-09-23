@@ -7,6 +7,10 @@ import type { Service, ServiceCategory } from "@/lib/types";
 import { formatCOP, formatDuration } from "@/lib/format";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { fieldClass, labelClass, surfaceClass } from "@/lib/ui";
+import { ImageUploadField } from "./ImageUploadField";
+import { GalleryUploadField } from "./GalleryUploadField";
+import { AdminPageHeader } from "./AdminPageHeader";
 
 type FormState = {
   serviceCategoryId: number;
@@ -17,7 +21,7 @@ type FormState = {
   durationMinutes: number;
   price: number;
   imageUrl: string;
-  imageGallery: string;
+  imageGallery: string[];
   highlights: string;
   requiresTwoTherapists: boolean;
   hasSensoryDressOption: boolean;
@@ -37,7 +41,7 @@ function emptyForm(categoryId: number): FormState {
     durationMinutes: 60,
     price: 150000,
     imageUrl: "",
-    imageGallery: "",
+    imageGallery: [],
     highlights: "",
     requiresTwoTherapists: false,
     hasSensoryDressOption: false,
@@ -95,7 +99,7 @@ export function ServicesView({ token }: { token: string }) {
       durationMinutes: s.durationMinutes,
       price: s.price,
       imageUrl: s.imageUrl ?? "",
-      imageGallery: s.imageGallery.join("; "),
+      imageGallery: s.imageGallery,
       highlights: s.highlights.join("; "),
       requiresTwoTherapists: s.requiresTwoTherapists,
       hasSensoryDressOption: s.hasSensoryDressOption,
@@ -119,7 +123,7 @@ export function ServicesView({ token }: { token: string }) {
         durationMinutes: form.durationMinutes,
         price: form.price,
         imageUrl: form.imageUrl.trim() || null,
-        imageGallery: form.imageGallery.split(";").map((u) => u.trim()).filter(Boolean),
+        imageGallery: form.imageGallery.map((u) => u.trim()).filter(Boolean),
         highlights: form.highlights.split(";").map((h) => h.trim()).filter(Boolean),
         requiresTwoTherapists: form.requiresTwoTherapists,
         hasSensoryDressOption: form.hasSensoryDressOption,
@@ -153,19 +157,19 @@ export function ServicesView({ token }: { token: string }) {
 
   return (
     <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-2xl text-ink">Servicios</h1>
-          <p className="text-sm text-ink-soft">Crea, edita precios y desactiva servicios al instante.</p>
-        </div>
-        <Button size="md" onClick={openNew} disabled={categories.length === 0}>
-          <Plus size={16} />
-          Nuevo servicio
-        </Button>
-      </div>
+      <AdminPageHeader
+        title="Servicios"
+        description="Crea, edita precios y desactiva servicios al instante."
+        action={
+          <Button onClick={openNew} disabled={categories.length === 0}>
+            <Plus size={16} aria-hidden />
+            Nuevo servicio
+          </Button>
+        }
+      />
 
       {error && (
-        <div className="mt-6 flex items-start gap-2 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+        <div className="mt-6 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
           {error}
         </div>
@@ -173,11 +177,11 @@ export function ServicesView({ token }: { token: string }) {
 
       {!services && !error && (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-gold" size={26} />
+          <Loader2 className="animate-spin text-bronze" size={26} aria-label="Cargando" />
         </div>
       )}
 
-      <div className="mt-6 overflow-x-auto rounded-2xl border border-silk">
+      <div className={`${surfaceClass} mt-8 overflow-x-auto`}>
         <table className="w-full min-w-[640px] text-left text-sm">
           <thead className="bg-silk/40 text-xs font-sans uppercase tracking-wide text-ink-soft">
             <tr>
@@ -189,10 +193,10 @@ export function ServicesView({ token }: { token: string }) {
               <th className="px-4 py-3" />
             </tr>
           </thead>
-          <tbody className="divide-y divide-silk">
+          <tbody className="divide-y divide-ink/10">
             {services?.map((s) => (
-              <tr key={s.id} className="bg-white/50">
-                <td className="px-4 py-3 font-serif text-ink">{s.name}</td>
+              <tr key={s.id} className="transition-colors hover:bg-white/60">
+                <td className="px-4 py-3 font-medium text-ink">{s.name}</td>
                 <td className="px-4 py-3 text-ink-soft">
                   {categories.find((c) => c.id === s.serviceCategoryId)?.name ?? "—"}
                 </td>
@@ -202,7 +206,7 @@ export function ServicesView({ token }: { token: string }) {
                   <span
                     className={
                       "rounded-full px-2 py-0.5 text-[0.65rem] font-sans font-semibold " +
-                      (s.isActive ? "bg-emerald-100 text-emerald-700" : "bg-silk text-ink-soft")
+                      (s.isActive ? "bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200" : "bg-silk text-ink-soft")
                     }
                   >
                     {s.isActive ? "Activo" : "Oculto"}
@@ -210,10 +214,10 @@ export function ServicesView({ token }: { token: string }) {
                 </td>
                 <td className="px-4 py-3">
                   <div className="flex gap-2">
-                    <button type="button" onClick={() => openEdit(s)} className="text-ink-soft hover:text-gold-dark">
+                    <button type="button" onClick={() => openEdit(s)} aria-label={`Editar ${s.name}`} className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-silk hover:text-ink">
                       <Pencil size={15} />
                     </button>
-                    <button type="button" onClick={() => handleDelete(s.id)} className="text-ink-soft hover:text-red-600">
+                    <button type="button" onClick={() => handleDelete(s.id)} aria-label={`Eliminar ${s.name}`} className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-red-50 hover:text-red-600">
                       <Trash2 size={15} />
                     </button>
                   </div>
@@ -229,7 +233,7 @@ export function ServicesView({ token }: { token: string }) {
           <div className="space-y-3">
             <Field label="Categoría">
               <select
-                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                className={fieldClass}
                 value={form.serviceCategoryId}
                 onChange={(e) => setForm((f) => ({ ...f, serviceCategoryId: Number(e.target.value) }))}
               >
@@ -242,23 +246,30 @@ export function ServicesView({ token }: { token: string }) {
             </Field>
             <Field label="Nombre">
               <input
-                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                className={fieldClass}
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
               />
             </Field>
-            <Field label="Descripción corta">
+            <Field label="Descripción corta (se ve en las tarjetas del catálogo)">
               <input
-                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                className={fieldClass}
                 value={form.shortDescription}
                 onChange={(e) => setForm((f) => ({ ...f, shortDescription: e.target.value }))}
+              />
+            </Field>
+            <Field label="Descripción larga (se ve al abrir el detalle: qué es, qué incluye, para quién es)">
+              <textarea
+                className={`${fieldClass} min-h-24 resize-none`}
+                value={form.longDescription}
+                onChange={(e) => setForm((f) => ({ ...f, longDescription: e.target.value }))}
               />
             </Field>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Duración (min)">
                 <input
                   type="number"
-                  className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                  className={fieldClass}
                   value={form.durationMinutes}
                   onChange={(e) => setForm((f) => ({ ...f, durationMinutes: Number(e.target.value) }))}
                 />
@@ -266,29 +277,27 @@ export function ServicesView({ token }: { token: string }) {
               <Field label="Precio (COP)">
                 <input
                   type="number"
-                  className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                  className={fieldClass}
                   value={form.price}
                   onChange={(e) => setForm((f) => ({ ...f, price: Number(e.target.value) }))}
                 />
               </Field>
             </div>
-            <Field label="URL de foto principal (opcional)">
-              <input
-                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
-                value={form.imageUrl}
-                onChange={(e) => setForm((f) => ({ ...f, imageUrl: e.target.value }))}
-              />
-            </Field>
-            <Field label="Galería de fotos adicionales (URLs separadas por ;)">
-              <textarea
-                className="min-h-16 w-full resize-none rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
-                value={form.imageGallery}
-                onChange={(e) => setForm((f) => ({ ...f, imageGallery: e.target.value }))}
-              />
-            </Field>
+            <ImageUploadField
+              label="Foto principal"
+              value={form.imageUrl}
+              onChange={(url) => setForm((f) => ({ ...f, imageUrl: url }))}
+              token={token}
+            />
+            <GalleryUploadField
+              label="Galería adicional (para el carrusel del modal de detalle)"
+              urls={form.imageGallery}
+              onChange={(urls) => setForm((f) => ({ ...f, imageGallery: urls }))}
+              token={token}
+            />
             <Field label="Highlights (separados por ;)">
               <input
-                className="w-full rounded-lg border border-silk px-3 py-2 text-sm outline-none focus:border-gold"
+                className={fieldClass}
                 value={form.highlights}
                 onChange={(e) => setForm((f) => ({ ...f, highlights: e.target.value }))}
               />
@@ -314,7 +323,7 @@ export function ServicesView({ token }: { token: string }) {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="flex flex-col gap-1 text-xs font-sans font-medium text-ink-soft">
+    <label className={labelClass}>
       {label}
       {children}
     </label>

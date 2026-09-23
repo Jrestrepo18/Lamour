@@ -1,132 +1,100 @@
-"use client";
-
-import { useRef } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { motion, type Variants } from "framer-motion";
-import { ArrowUpRight, MapPin } from "lucide-react";
+import { ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
-import { Hero3D } from "@/components/three/Hero3D";
+import { PHOTOS } from "@/lib/photos";
+
+const HERO = PHOTOS.oilBack;
 
 /**
- * One orchestrated entrance, not five loose effects: every element below is
- * a child of a single stagger container in the JSX tree, so they all fire
- * off one shared timeline (rule → line 1 → line 2 → paragraph → CTA →
- * coverage caption), each offset by `staggerChildren`.
+ * Photographic hero, designed mobile-first (the main acquisition channel).
+ *
+ * Phone: the photo runs full-bleed across the top ~60% of the screen and the
+ * copy rises over it as an ivory sheet, with a full-width CTA in thumb reach.
+ * Desktop: editorial split — copy on the warm gradient, the photo as a tall
+ * rounded frame on the right with a small glass "discretion" note.
+ *
+ * Server component with CSS-only entrance animations: nothing here waits for
+ * JavaScript, so the photo and headline paint (and count as LCP) immediately.
+ * The 3D statue now lives in the Manifesto section.
  */
-const container: Variants = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.15, delayChildren: 0.25 } },
-};
-
-const revealLine: Variants = {
-  hidden: { y: "100%" },
-  show: { y: "0%", transition: { duration: 1.2, ease: [0.16, 1, 0.3, 1] } },
-};
-
-const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  show: { opacity: 1, y: 0, transition: { duration: 1, ease: [0.16, 1, 0.3, 1] } },
-};
-
 export function Hero() {
-  const sectionRef = useRef<HTMLElement>(null);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative min-h-dvh overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk"
-    >
-      {/* Soft breathing light behind the piece — warmth, not drama */}
-      <div className="pointer-events-none absolute right-[10%] top-1/2 h-[24rem] w-[24rem] -translate-y-1/2 rounded-full bg-gold/25 blur-[120px]" />
-
-      {/* Aura waves: slow, soft glow pulses behind the figure — blurred radial light, not a hard-edged
-          ring, so it reads as an aura rather than the water-ripple lines that didn't land before. Three
-          instances staggered in time keep one always mid-expansion, so it never reads as "done". */}
-      <div className="pointer-events-none absolute right-[10%] top-1/2 -translate-y-1/2">
-        {[0, 1, 2].map((i) => (
-          <motion.div
-            key={i}
-            className="absolute left-1/2 top-1/2 h-[18rem] w-[18rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-            style={{ background: "radial-gradient(circle, rgba(212,175,55,0.4) 0%, transparent 72%)" }}
-            animate={{ scale: [0.7, 2.1], opacity: [0.55, 0] }}
-            transition={{ duration: 8, delay: i * (8 / 3), repeat: Infinity, ease: "easeOut" }}
-          />
-        ))}
-      </div>
-
-      {/* Grain on the flat gradient — under the 3D piece, never over it (Fase 0). */}
+    <section className="relative overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk">
+      <div className="pointer-events-none absolute -left-32 top-1/3 hidden h-[28rem] w-[28rem] rounded-full bg-gold/20 blur-[140px] lg:block" />
       <Grain />
 
-      {/* The "full-bleed image": the user's own 3D figure, parallaxed by GSAP as the page scrolls past. */}
-      <div className="absolute inset-0">
-        <Hero3D triggerRef={sectionRef} />
-      </div>
+      <Container className="relative grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
+        {/* Photo — first on phones (full-bleed), right column on desktop */}
+        <div className="relative -mx-5 h-[clamp(18rem,51svh,32rem)] overflow-hidden sm:-mx-8 lg:order-last lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(43,32,25,0.55)]">
+          <Image
+            src={HERO.src}
+            alt={HERO.alt}
+            fill
+            priority
+            fetchPriority="high"
+            sizes="(min-width: 1024px) 46vw, 100vw"
+            className="animate-hero-settle object-cover object-[50%_35%]"
+          />
+          {/* Phone: soft wash under the transparent header + fade into the text sheet */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-espresso/25 to-transparent lg:hidden" />
 
-      {/* Cinematic vignette: edges settle toward espresso instead of staying flat all the way to the
-          frame, so the scene reads as a lit space with depth rather than a sticker pasted on a gradient. */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(ellipse 80% 70% at 50% 45%, transparent 45%, rgba(20,13,8,0.16) 100%)",
-        }}
-      />
+          <p className="absolute left-5 top-[5.5rem] inline-flex animate-rise items-center gap-1.5 rounded-full bg-ivory/85 px-3 py-1.5 text-xs font-medium text-ink shadow-sm backdrop-blur [animation-delay:500ms] sm:left-8 lg:hidden">
+            <MapPin size={12} className="text-bronze" aria-hidden />
+            Medellín · a domicilio
+          </p>
 
-      <motion.div
-        variants={container}
-        initial="hidden"
-        animate="show"
-        className="relative z-10 flex min-h-dvh flex-col justify-center pt-20 pb-20 sm:pt-24 sm:pb-28"
-      >
-        <Container>
-          <div className="max-w-3xl">
-            <h1 className="text-display font-serif font-bold">
-              <span className="block overflow-hidden">
-                <motion.span variants={revealLine} className="block text-ink-soft">
-                  Estética
-                </motion.span>
-              </span>
-              <span className="block overflow-hidden">
-                <motion.span variants={revealLine} className="block text-ink">
-                  y Sentidos
-                </motion.span>
-              </span>
-            </h1>
-
-            <motion.p variants={fadeUp} className="text-body mt-5 max-w-md text-ink-soft sm:mt-9">
-              Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu
-              espacio. Una pausa para respirar.
-            </motion.p>
-
-            <motion.div variants={fadeUp} className="mt-6 sm:mt-10">
-              <Link href="/reservar" className="group inline-flex items-center gap-4">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gold text-espresso transition-transform duration-300 group-hover:scale-105 sm:h-14 sm:w-14">
-                  <ArrowUpRight size={20} className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:size-[22px]" />
-                </span>
-                <span className="rounded-full border border-ink/15 py-3 pl-5 pr-6 text-sm font-semibold text-ink transition-colors duration-300 group-hover:border-gold sm:py-4 sm:pl-6 sm:pr-7 sm:text-base">
-                  reservar mi experiencia
-                </span>
-              </Link>
-            </motion.div>
-          </div>
-        </Container>
-
-        <Container className="absolute inset-x-0 bottom-0 flex flex-wrap items-end justify-between gap-4 pb-6 sm:gap-6 sm:pb-10">
-          <motion.div variants={fadeUp} className="text-label flex items-center gap-2 font-medium text-ink-soft/70">
-            <MapPin size={13} className="text-gold" />
-            Medellín y su área metropolitana
-          </motion.div>
-
-          <motion.div variants={fadeUp} className="hidden max-w-[14rem] text-right sm:block">
-            <p className="text-label font-medium uppercase tracking-wider text-gold">¿Qué transmite esto?</p>
-            <p className="mt-1 font-serif text-lg font-semibold text-ink">Quietud</p>
-            <p className="text-label mt-1 leading-relaxed text-ink-soft/75">
-              Presencia sin prisa. Calma que se siente antes del primer contacto.
+          {/* Desktop: glass note on the photo */}
+          <div className="absolute bottom-6 left-6 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/30 bg-ivory/75 p-4 shadow-lg backdrop-blur-md [animation-delay:700ms] lg:block">
+            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+              <ShieldCheck size={16} className="text-bronze" aria-hidden />
+              Discreción total
             </p>
-          </motion.div>
-        </Container>
-      </motion.div>
+            <p className="mt-1 text-xs leading-relaxed text-ink-soft">
+              Sin señalética ni uniformes. Solo tu experiencia, en tu espacio.
+            </p>
+          </div>
+        </div>
+
+        {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
+        <div className="relative -mx-5 -mt-8 rounded-t-[2rem] bg-ivory px-5 pb-12 pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
+          <h1 className="eyebrow animate-rise">Spa de masajes a domicilio en Medellín</h1>
+          <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
+            <span className="block text-ink-soft">Estética</span>
+            <span className="block text-ink">y Sentidos</span>
+          </p>
+
+          <p className="mt-4 max-w-md animate-rise text-base leading-relaxed text-ink-soft [animation-delay:160ms] sm:text-lg lg:mt-8">
+            Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu
+            espacio. Una pausa para respirar.
+          </p>
+
+          <div className="mt-6 flex animate-rise flex-col gap-3 [animation-delay:240ms] sm:flex-row sm:items-center sm:gap-6 lg:mt-10">
+            <Link
+              href="/reservar"
+              className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-ink pl-7 pr-2 text-base font-semibold text-ivory shadow-[0_16px_36px_-16px_rgba(43,32,25,0.8)] transition-colors duration-300 hover:bg-espresso sm:justify-start"
+            >
+              Reservar mi experiencia
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-ink transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight size={18} aria-hidden />
+              </span>
+            </Link>
+            <Link
+              href="/servicios"
+              className="inline-flex min-h-11 items-center justify-center text-sm font-medium text-ink underline decoration-gold/60 decoration-1 underline-offset-8 transition-colors hover:decoration-ink"
+            >
+              Ver servicios y precios
+            </Link>
+          </div>
+
+          <p className="mt-8 hidden animate-rise items-center gap-2 text-sm text-ink-soft [animation-delay:320ms] lg:flex">
+            <MapPin size={14} className="text-bronze" aria-hidden />
+            Medellín y su área metropolitana · 9:00 a.m. – 9:00 p.m.
+          </p>
+        </div>
+      </Container>
     </section>
   );
 }

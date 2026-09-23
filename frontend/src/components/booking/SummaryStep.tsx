@@ -29,11 +29,11 @@ export function SummaryStep({
 
   return (
     <div>
-      <h2 className="font-serif text-2xl text-ink">Confirma tu experiencia</h2>
+      <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Confirma tu experiencia</h2>
       <p className="mt-1 text-sm text-ink-soft">Revisa los detalles antes de enviar tu solicitud de reserva.</p>
 
-      <div className="mt-6 space-y-4 rounded-2xl border border-silk bg-white/60 p-6">
-        <div className="flex items-start justify-between gap-3 border-b border-silk pb-4">
+      <div className="mt-6 space-y-4 rounded-2xl border border-ink/15 bg-white/60 p-6">
+        <div className="flex items-start justify-between gap-3 border-b border-ink/15 pb-4">
           <div className="flex items-start gap-3">
             <Sparkles size={18} className="mt-0.5 shrink-0 text-gold" />
             <div>
@@ -44,7 +44,7 @@ export function SummaryStep({
           <span className="font-serif text-xl text-ink">{formatCOP(total)}</span>
         </div>
 
-        <div className="flex items-start gap-3 border-b border-silk pb-4">
+        <div className="flex items-start gap-3 border-b border-ink/15 pb-4">
           <Users size={18} className="mt-0.5 shrink-0 text-gold" />
           <p className="text-sm text-ink">
             {primary.stageName}
@@ -52,7 +52,7 @@ export function SummaryStep({
           </p>
         </div>
 
-        <div className="flex items-start gap-3 border-b border-silk pb-4">
+        <div className="flex items-start gap-3 border-b border-ink/15 pb-4">
           <CalendarClock size={18} className="mt-0.5 shrink-0 text-gold" />
           <p className="text-sm capitalize text-ink">
             {formatDateLong(startsAt)} · {formatTime(startsAt)}
@@ -70,7 +70,7 @@ export function SummaryStep({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 border-t border-silk pt-4 text-xs text-ink-soft">
+        <div className="grid grid-cols-2 gap-3 border-t border-ink/15 pt-4 text-xs text-ink-soft">
           <p>Pago: <span className="text-ink">{PAYMENT_LABELS[details.paymentMethod]}</span></p>
           {service.hasSensoryDressOption && (
             <p>Vestidura sensorial: <span className="text-ink">{details.sensoryDressRequested ? "Sí" : "No"}</span></p>
@@ -85,7 +85,10 @@ export function SummaryStep({
       </div>
 
       {error && (
-        <div className="mt-4 flex items-start gap-2 rounded-xl border border-red-300 bg-red-50 p-4 text-sm text-red-700">
+        <div
+          role="alert"
+          className="mt-4 flex items-start gap-2 rounded-xl border border-bronze/30 bg-gold/10 p-4 text-sm text-bronze"
+        >
           <AlertCircle size={16} className="mt-0.5 shrink-0" />
           {error}
         </div>

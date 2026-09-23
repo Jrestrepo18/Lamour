@@ -84,6 +84,15 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Serve admin uploads from an explicit provider. The default UseStaticFiles() binds to
+// WebRootPath at startup, which is null when wwwroot doesn't exist yet (first run) — the
+// files would then be saved but return 404 until the API was restarted.
+var webRoot = app.Environment.WebRootPath ?? Path.Combine(app.Environment.ContentRootPath, "wwwroot");
+Directory.CreateDirectory(Path.Combine(webRoot, "uploads"));
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(webRoot),
+});
 app.UseCors("Frontend");
 app.UseAuthentication();
 app.UseAuthorization();

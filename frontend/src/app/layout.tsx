@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SiteGate } from "@/components/gate/SiteGate";
 import { LenisProvider } from "@/components/motion/LenisProvider";
+import { AGE_GATE_BOOT_SCRIPT } from "@/lib/age-gate";
+import { SITE } from "@/lib/seo";
 
 /**
  * One family, used at contrasting weights (400 body / 700 display) instead
@@ -23,15 +25,54 @@ const generalSans = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "L'AMOUR — Estética y Sentidos | Spa a domicilio en Medellín",
-  description:
-    "Masajes tántricos, terapias de relajación, experiencias en pareja y recuperación muscular a domicilio en Medellín y su área metropolitana. Reserva tu ritual L'AMOUR.",
+  metadataBase: new URL(SITE.url),
+  title: {
+    default: "L'AMOUR | Spa y masajes a domicilio en Medellín",
+    template: "%s | L'AMOUR Medellín",
+  },
+  description: SITE.description,
+  keywords: [...SITE.keywords],
+  applicationName: SITE.shortName,
+  authors: [{ name: SITE.name }],
+  creator: SITE.name,
+  category: "health & beauty",
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: SITE.locale,
+    url: "/",
+    siteName: SITE.name,
+    title: "L'AMOUR | Spa y masajes a domicilio en Medellín",
+    description: SITE.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "L'AMOUR | Spa y masajes a domicilio en Medellín",
+    description: SITE.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  formatDetection: { telephone: false },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#fdfbf7",
+  colorScheme: "light",
+  // Lets the sticky mobile booking bar pad itself above the iPhone home indicator.
+  viewportFit: "cover",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="es" className={`${generalSans.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-ivory text-ink">
+    // suppressHydrationWarning: the <head> boot script may add data-age-ok before React hydrates.
+    <html lang="es-CO" className={`${generalSans.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: AGE_GATE_BOOT_SCRIPT }} />
+      </head>
+      <body className="flex min-h-full flex-col bg-ivory text-ink">
         <LenisProvider>
           <SiteGate>{children}</SiteGate>
         </LenisProvider>

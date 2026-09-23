@@ -6,6 +6,9 @@ import { ChevronDown } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { faqJsonLd } from "@/lib/seo";
+import { PHOTOS } from "@/lib/photos";
 
 const FAQS = [
   {
@@ -38,12 +41,17 @@ export function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 sm:py-28">
+    <section id="faq" className="py-16 sm:py-32">
+      <JsonLd data={faqJsonLd(FAQS)} />
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
           <div>
             <Reveal>
-              <SectionHeading eyebrow="Preguntas frecuentes" title="Resolvemos tus dudas" align="left" />
+              <SectionHeading
+                eyebrow="Preguntas frecuentes"
+                title="Resolvemos tus dudas"
+                description="Todo lo que necesitas saber antes de reservar tu primera experiencia."
+              />
             </Reveal>
             <Reveal
               from="left"
@@ -51,10 +59,10 @@ export function FaqSection() {
               className="mx-auto mt-8 hidden w-full max-w-xs overflow-hidden rounded-[1.5rem] shadow-xl lg:block"
             >
               <Image
-                src="/images/herbal-compress-massage.jpg"
-                alt="Masaje con compresas herbales tibias"
-                width={1693}
-                height={2540}
+                src={PHOTOS.oilBottle.src}
+                alt={PHOTOS.oilBottle.alt}
+                width={PHOTOS.oilBottle.w}
+                height={PHOTOS.oilBottle.h}
                 sizes="(min-width: 1024px) 25vw, 0px"
                 className="aspect-[3/4] w-full object-cover"
               />
@@ -69,22 +77,28 @@ export function FaqSection() {
                   <div className="py-5">
                     <button
                       type="button"
+                      id={`faq-q-${i}`}
                       onClick={() => setOpenIndex(open ? null : i)}
                       aria-expanded={open}
-                      className="flex w-full items-center justify-between gap-4 text-left"
+                      aria-controls={`faq-a-${i}`}
+                      className="flex min-h-11 w-full cursor-pointer items-center justify-between gap-4 text-left"
                     >
-                      <span className="font-serif text-lg text-ink sm:text-xl">{item.q}</span>
+                      <span className="font-serif text-lg font-medium text-ink sm:text-xl">{item.q}</span>
                       <ChevronDown
                         size={20}
-                        className={`shrink-0 text-gold transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+                        aria-hidden
+                        className={`shrink-0 text-bronze transition-transform duration-300 ${open ? "rotate-180" : ""}`}
                       />
                     </button>
                     <div
+                      id={`faq-a-${i}`}
+                      role="region"
+                      aria-labelledby={`faq-q-${i}`}
                       className={`grid transition-all duration-300 ease-out ${
                         open ? "mt-3 grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                       }`}
                     >
-                      <p className="overflow-hidden text-sm leading-relaxed text-[var(--tone-body)]">{item.a}</p>
+                      <p className="overflow-hidden text-base leading-relaxed text-[var(--tone-body)]">{item.a}</p>
                     </div>
                   </div>
                 </Reveal>

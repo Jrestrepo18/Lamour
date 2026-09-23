@@ -14,14 +14,13 @@
   --color-ink-soft: #6b5a4a; /* Tinta suavizada para texto secundario */
 
   /**
-   * Tokens heredados de la sesión anterior (pre-Fase 0). Se quedan definidos
-   * a propósito para que las secciones que Fase 2 todavía no ha tocado no se
-   * rompan visualmente. Cada uno se retira cuando su sección se reconstruye
-   * — no antes — siguiendo el criterio de "una sección a la vez".
+   * Bronce — el único acento para TEXTO sobre fondos claros (eyebrows, enlaces,
+   * íconos informativos). El oro (#d4af37) no llega a AA como texto; el bronce
+   * sí: 6.0:1 sobre marfil y 4.7:1 sobre beige seda.
    */
+  --color-bronze: #7a5c17;
+  /* Oro profundo: solo decorativo (degradados, hovers de relleno), nunca texto pequeño. */
   --color-gold-dark: #b3901f;
-  --color-terracotta: #a5502a;
-  --color-terracotta-dark: #7c3b1e;
 
   /**
    * Secondary/body text tone, overridden locally (and animated on scroll) by
@@ -40,8 +39,7 @@
   --color-ink-soft: var(--color-ink-soft);
   --color-espresso: var(--color-espresso);
   --color-gold-dark: var(--color-gold-dark);
-  --color-terracotta: var(--color-terracotta);
-  --color-terracotta-dark: var(--color-terracotta-dark);
+  --color-bronze: var(--color-bronze);
 
   /* Una sola familia a distintos pesos — ver nota en layout.tsx */
   --font-serif: var(--font-general-sans);
@@ -63,10 +61,16 @@
   --text-label: clamp(0.7rem, 0.68rem + 0.1vw, 0.75rem);
   --text-label--line-height: 1.4;
 
-  --animate-fade-up: fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-up: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Above-the-fold entrance: transform only — opacity:0 would hide text from LCP until it finishes. */
+  --animate-rise: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  --animate-fade-in: fade-in 0.5s ease-out both;
+  /* Transform-only (never opacity) so the hero photo still counts as LCP on its first frame. */
+  --animate-hero-settle: hero-settle 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* The statue's slow "breath" on phones, where the live 3D scene isn't loaded. */
+  --animate-breathe: breathe 7s ease-in-out infinite;
   --animate-shimmer: shimmer 2.5s linear infinite;
   --animate-radar-pulse: radar-pulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
-  --animate-marquee: marquee 32s linear infinite;
 
   @keyframes fade-up {
     from {
@@ -76,6 +80,43 @@
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes rise {
+    from {
+      transform: translateY(18px);
+    }
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes hero-settle {
+    from {
+      transform: scale(1.06);
+    }
+    to {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes breathe {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-10px) scale(1.015);
+    }
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
     }
   }
 
@@ -99,17 +140,11 @@
       opacity: 0;
     }
   }
+}
 
-  /* MarqueeBand: the track holds two identical copies of the phrase list side
-     by side, so shifting exactly -50% loops seamlessly. */
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
-    }
-    to {
-      transform: translateX(-50%);
-    }
-  }
+html {
+  /* Anchors (#faq, #como-funciona…) land below the fixed header, not under it. */
+  scroll-padding-top: 8rem;
 }
 
 body {
@@ -127,9 +162,103 @@ body {
   text-wrap: balance;
 }
 
+/* One eyebrow style for every section and page — a short gold rule + bronze small caps. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  color: var(--color-bronze);
+  @media (width < 40rem) {
+    letter-spacing: 0.22em;
+  }
+  &::before {
+    content: "";
+    width: 1.75rem;
+    height: 1px;
+    background: var(--color-gold);
+    flex-shrink: 0;
+  }
+}
+
+/* Visible, on-brand keyboard focus everywhere (never removed, only restyled). */
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-bronze);
+  outline-offset: 3px;
+}
+
+/*
+ * Scroll reveal (components/ui/Reveal.tsx), pure CSS. Elements already inside
+ * the viewport at load sit past the entry range, so they render fully visible
+ * on the first frame; the rest animate in as they enter from the bottom.
+ */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal-up linear both;
+      animation-timeline: view();
+      /* A fixed-length window (not a % of the element): tall blocks would otherwise stay
+         faded until their bottom edge entered the viewport. */
+      animation-range: entry var(--reveal-start, 0px) entry calc(var(--reveal-start, 0px) + 200px);
+    }
+    .reveal-left {
+      animation-name: reveal-left;
+    }
+    .reveal-right {
+      animation-name: reveal-right;
+    }
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-left {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes reveal-right {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Age gate is server-rendered; the <head> boot script flags confirmed visitors. */
+html[data-age-ok] #age-gate {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
   }
 }
 

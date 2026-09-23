@@ -2,16 +2,17 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { LegalArticle, LegalSection } from "@/components/legal/LegalArticle";
 
 export const metadata = {
-  title: "Política de Tratamiento de Datos | L'AMOUR",
+  title: "Política de Tratamiento de Datos",
+  alternates: { canonical: "/legal/privacidad" },
   robots: { index: false, follow: true },
 };
 
 export default function PrivacidadPage() {
   return (
     <>
-      <PageHeader eyebrow="Documento legal" title="Tratamiento de Datos" compact />
+      <PageHeader path="/legal/privacidad" eyebrow="Documento legal" title="Tratamiento de Datos" compact />
       <LegalArticle>
-        <p className="text-xs uppercase tracking-widest text-terracotta">
+        <p className="eyebrow">
           Última actualización: [fecha de publicación]
         </p>
         <p className="mt-4 text-sm leading-relaxed text-ink-soft">

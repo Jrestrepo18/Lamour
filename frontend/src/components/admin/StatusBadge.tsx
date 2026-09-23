@@ -2,10 +2,10 @@ import clsx from "clsx";
 import type { AppointmentStatus } from "@/lib/types";
 
 const STYLES: Record<AppointmentStatus, string> = {
-  Pending: "bg-amber-100 text-amber-800 border-amber-300",
-  Confirmed: "bg-emerald-100 text-emerald-800 border-emerald-300",
-  Completed: "bg-blue-100 text-blue-800 border-blue-300",
-  Cancelled: "bg-red-100 text-red-700 border-red-300",
+  Pending: "bg-gold/15 text-bronze border-gold/40",
+  Confirmed: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  Completed: "bg-silk text-ink border-ink/15",
+  Cancelled: "bg-red-50 text-red-700 border-red-200",
 };
 
 const LABELS: Record<AppointmentStatus, string> = {
@@ -17,7 +17,7 @@ const LABELS: Record<AppointmentStatus, string> = {
 
 export function StatusBadge({ status }: { status: AppointmentStatus }) {
   return (
-    <span className={clsx("rounded-full border px-2.5 py-1 text-[0.65rem] font-sans font-semibold uppercase tracking-wide", STYLES[status])}>
+    <span className={clsx("rounded-full border px-2.5 py-1 text-[0.7rem] font-semibold uppercase tracking-wide", STYLES[status])}>
       {LABELS[status]}
     </span>
   );

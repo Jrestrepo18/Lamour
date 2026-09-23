@@ -9,16 +9,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (!ready) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-ivory">
-        <Loader2 className="animate-spin text-gold" size={28} />
+      <div className="flex min-h-dvh items-center justify-center bg-ivory" role="status" aria-label="Cargando panel">
+        <Loader2 className="animate-spin text-bronze" size={28} aria-hidden />
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-ivory">
+    <div className="min-h-dvh bg-gradient-to-br from-ivory via-ivory to-champagne/25 lg:flex">
       <Sidebar fullName={fullName} />
-      <main className="flex-1 overflow-x-hidden px-6 py-8 sm:px-10 sm:py-10">{children}</main>
+      <main className="min-w-0 flex-1 px-5 py-8 sm:px-10 sm:py-12">
+        <div className="mx-auto max-w-5xl">{children}</div>
+      </main>
     </div>
   );
 }
