@@ -3,8 +3,7 @@
 import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import type { Masseuse } from "@/lib/types";
-import { LinkButton } from "@/components/ui/Button";
-import { DetailModal } from "./DetailModal";
+import { MasseuseProfile } from "./MasseuseProfile";
 
 function initials(name: string) {
   return name.slice(0, 1).toUpperCase();
@@ -68,26 +67,7 @@ export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
         </div>
       </button>
 
-      <DetailModal
-        open={open}
-        onClose={() => setOpen(false)}
-        eyebrow={masseuse.age != null ? `${masseuse.age} años` : undefined}
-        title={masseuse.stageName}
-        gallery={gallery}
-        fallback={<Monogram name={masseuse.stageName} />}
-        footer={
-          <LinkButton href={`/reservar?masseuse=${masseuse.id}`} className="w-full">
-            Reservar con {masseuse.stageName}
-            <ArrowUpRight size={16} />
-          </LinkButton>
-        }
-      >
-        {masseuse.bio ? (
-          <p className="text-sm leading-relaxed text-ink-soft">{masseuse.bio}</p>
-        ) : (
-          <p className="text-sm italic leading-relaxed text-ink-soft/60">Sin biografía por ahora.</p>
-        )}
-      </DetailModal>
+      {open && <MasseuseProfile masseuse={masseuse} photos={gallery} onClose={() => setOpen(false)} />}
     </>
   );
 }

@@ -88,6 +88,8 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   href={`/reservar?service=${service.slug}`}
                   className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem] bg-silk shadow-[0_24px_50px_-30px_rgba(43,32,25,0.6)]"
                 >
+                  {/* Slow "reel" drift; each card starts at a different point of the cycle. */}
+                  <div className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
                   <FadeInImage
                     src={service.imageUrl ?? photo.src}
                     alt={service.imageUrl ? service.name : photo.alt}
@@ -96,6 +98,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                     className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
                     unoptimized={!!service.imageUrl}
                   />
+                  </div>
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-espresso/90 via-espresso/30 to-transparent" />
 
                   <span className="absolute left-5 top-5 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink backdrop-blur">

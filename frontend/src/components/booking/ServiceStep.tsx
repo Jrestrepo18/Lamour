@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import clsx from "clsx";
-import { Check, Clock3, Users } from "lucide-react";
+import { Check, Clock3, Heart, Users } from "lucide-react";
+import { useFavorites } from "@/hooks/useFavorites";
 import type { Service, ServiceCategory } from "@/lib/types";
 import { formatCOP, formatDuration } from "@/lib/format";
 
@@ -16,7 +17,17 @@ export function ServiceStep({
   onSelect: (service: Service) => void;
 }) {
   const [activeCategory, setActiveCategory] = useState(categories[0]?.id ?? 0);
-  const category = categories.find((c) => c.id === activeCategory) ?? categories[0];
+  const { favorites } = useFavorites();
+
+  // "♡ Guardados": the services the visitor saved while browsing, as a pseudo-category.
+  const SAVED_ID = -1;
+  const savedServices = categories.flatMap((c) => c.services).filter((s) => favorites.includes(s.slug));
+  const savedCategory: ServiceCategory | null =
+    savedServices.length > 0
+      ? { id: SAVED_ID, name: "Guardados", slug: "guardados", description: null, highlight: null, displayOrder: -1, isActive: true, services: savedServices }
+      : null;
+  const tabs = savedCategory ? [savedCategory, ...categories] : categories;
+  const category = tabs.find((c) => c.id === activeCategory) ?? categories[0];
 
   return (
     <div>
@@ -24,11 +35,12 @@ export function ServiceStep({
       <p className="mt-1 text-sm text-ink-soft">Selecciona la experiencia que deseas vivir.</p>
 
       <div className="mt-6 flex flex-wrap gap-2">
-        {categories.map((c) => (
+        {tabs.map((c) => (
           <button
             key={c.id}
             type="button"
             onClick={() => setActiveCategory(c.id)}
+            aria-pressed={c.id === activeCategory}
             className={clsx(
               "inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-sans font-medium uppercase tracking-wide transition-colors",
               c.id === activeCategory
@@ -36,7 +48,11 @@ export function ServiceStep({
                 : "border-ink/15 bg-white/50 text-ink-soft hover:border-gold hover:text-ink",
             )}
           >
+            {c.id === SAVED_ID && (
+              <Heart size={13} className="mr-1.5 fill-[#c0392b] text-[#c0392b]" aria-hidden />
+            )}
             {c.name}
+            {c.id === SAVED_ID && <span className="ml-1.5 opacity-70">({savedServices.length})</span>}
           </button>
         ))}
       </div>

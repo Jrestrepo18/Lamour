@@ -69,6 +69,12 @@
   --animate-hero-settle: hero-settle 1.8s cubic-bezier(0.16, 1, 0.3, 1) both;
   /* The statue's slow "breath" on phones, where the live 3D scene isn't loaded. */
   --animate-breathe: breathe 7s ease-in-out infinite;
+  /* Instagram-style double-tap heart. */
+  --animate-heart-pop: heart-pop 0.9s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+  /* DM "typing…" dots. */
+  --animate-typing: typing 1s ease-in-out infinite;
+  /* Slow "reel-like" drift on still photos (Ken Burns). */
+  --animate-kenburns: kenburns 16s ease-in-out infinite alternate;
   --animate-shimmer: shimmer 2.5s linear infinite;
   --animate-radar-pulse: radar-pulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
 
@@ -98,6 +104,51 @@
     }
     to {
       transform: scale(1);
+    }
+  }
+
+  @keyframes heart-pop {
+    0% {
+      opacity: 0;
+      transform: scale(0.2);
+    }
+    15% {
+      opacity: 1;
+      transform: scale(1.2);
+    }
+    30% {
+      transform: scale(0.95);
+    }
+    45%,
+    70% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    100% {
+      opacity: 0;
+      transform: scale(1) translateY(-12px);
+    }
+  }
+
+  @keyframes typing {
+    0%,
+    60%,
+    100% {
+      transform: translateY(0);
+      opacity: 0.45;
+    }
+    30% {
+      transform: translateY(-4px);
+      opacity: 1;
+    }
+  }
+
+  @keyframes kenburns {
+    from {
+      transform: scale(1) translate3d(0, 0, 0);
+    }
+    to {
+      transform: scale(1.1) translate3d(-2%, -2%, 0);
     }
   }
 

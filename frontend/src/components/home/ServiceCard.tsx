@@ -3,11 +3,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import { ArrowUpRight, ChevronRight, Clock3, Users } from "lucide-react";
+import { ArrowUpRight, Clock3, Users } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { formatCOP, formatDuration } from "@/lib/format";
 import { fallbackPhoto } from "@/lib/photos";
 import { LinkButton } from "@/components/ui/Button";
+import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { DetailModal } from "./DetailModal";
 
 /**
@@ -35,14 +36,16 @@ export function ServiceCard({
   return (
     <>
       {/* One element, two layouts: a compact "menu" row on phones (thumbnail, name,
-          one-line description, duration · price) and a photo card from sm up. */}
+          one-line description, duration · price) and a photo card from sm up. The ♡ sits
+          beside it (not inside — buttons can't nest), over the row's end / the card photo. */}
+      <div className="relative h-full">
       <button
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         className={clsx(
-          "group flex h-full w-full cursor-pointer items-center gap-4 border-b py-4 text-left transition-[transform,box-shadow,border-color] duration-500 ease-out",
-          "sm:flex-col sm:items-stretch sm:gap-0 sm:overflow-hidden sm:rounded-[1.75rem] sm:border sm:py-0 sm:hover:-translate-y-1",
+          "group flex h-full w-full cursor-pointer items-center gap-4 border-b py-4 pr-12 text-left transition-[transform,box-shadow,border-color] duration-500 ease-out",
+          "sm:flex-col sm:items-stretch sm:gap-0 sm:overflow-hidden sm:rounded-[1.75rem] sm:border sm:py-0 sm:pr-0 sm:hover:-translate-y-1",
           dark
             ? "border-ivory/10 sm:bg-white/[0.04] sm:hover:border-champagne/30 sm:hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)]"
             : "border-ink/10 sm:bg-white/70 sm:shadow-[0_18px_40px_-32px_rgba(43,32,25,0.5)] sm:hover:border-gold/40 sm:hover:shadow-[0_30px_60px_-30px_rgba(43,32,25,0.55)]",
@@ -130,18 +133,22 @@ export function ServiceCard({
           </div>
         </div>
 
-        <ChevronRight
-          size={18}
-          aria-hidden
-          className={clsx("shrink-0 sm:hidden", dark ? "text-champagne/70" : "text-bronze")}
-        />
       </button>
+      <FavoriteButton
+        slug={service.slug}
+        name={service.name}
+        tone={dark ? "dark" : "plain"}
+        className="absolute right-0 top-1/2 -translate-y-1/2 sm:hidden"
+      />
+      <FavoriteButton slug={service.slug} name={service.name} className="absolute right-4 top-4 hidden sm:flex" />
+      </div>
 
       <DetailModal
         open={open}
         onClose={() => setOpen(false)}
         eyebrow={service.isCoupleExperience ? "Experiencia en pareja" : formatDuration(service.durationMinutes)}
         title={service.name}
+        favorite={{ slug: service.slug, name: service.name }}
         gallery={gallery}
         fallback={<Image src={stand.src} alt={stand.alt} fill sizes="(min-width: 640px) 42rem, 100vw" className="object-cover" />}
         footer={

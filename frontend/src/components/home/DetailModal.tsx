@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
+import { FavoriteButton } from "@/components/ui/FavoriteButton";
+import { useFavorites } from "@/hooks/useFavorites";
 import { useLenisInstance } from "@/components/motion/LenisProvider";
 
 const FOCUSABLE_SELECTOR =
@@ -22,6 +24,7 @@ export function DetailModal({
   onClose,
   eyebrow,
   title,
+  favorite,
   gallery,
   fallback,
   footer,
@@ -31,6 +34,8 @@ export function DetailModal({
   onClose: () => void;
   eyebrow?: string;
   title: string;
+  /** Enables ♡ next to the title and Instagram-style double-tap-to-save on the photo. */
+  favorite?: { slug: string; name: string };
   gallery: string[];
   fallback: ReactNode;
   footer: ReactNode;
@@ -42,6 +47,23 @@ export function DetailModal({
   const galleryRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const lenis = useLenisInstance();
+  const { add: addFavorite } = useFavorites();
+  const [burst, setBurst] = useState(0);
+  const lastTap = useRef(0);
+
+  // Double tap (touch or mouse) on the photo saves it, with the heart "pop" — the
+  // pointer timing is tracked by hand because mobile browsers don't reliably fire dblclick.
+  function onPhotoTap(e: React.PointerEvent) {
+    if (!favorite || (e.target as Element).closest("button")) return;
+    const now = Date.now();
+    if (now - lastTap.current < 320) {
+      addFavorite(favorite.slug);
+      setBurst((b) => b + 1);
+      lastTap.current = 0;
+    } else {
+      lastTap.current = now;
+    }
+  }
 
   // Focus in on open (moving keyboard/screen-reader focus into the dialog),
   // trap Tab inside it while open, and hand focus back to whatever opened it
@@ -142,7 +164,10 @@ export function DetailModal({
               <X size={18} />
             </button>
 
-            <div className="relative h-56 w-full shrink-0 overflow-hidden bg-silk sm:h-72">
+            <div
+              className="relative h-56 w-full shrink-0 touch-manipulation overflow-hidden bg-silk sm:h-72"
+              onPointerUp={onPhotoTap}
+            >
               {gallery.length > 0 ? (
                 <div
                   ref={galleryRef}
@@ -161,6 +186,21 @@ export function DetailModal({
                 </div>
               ) : (
                 fallback
+              )}
+
+              {burst > 0 && (
+                <span
+                  key={burst}
+                  aria-hidden
+                  className="pointer-events-none absolute inset-0 flex items-center justify-center"
+                >
+                  <Heart size={96} className="animate-heart-pop fill-ivory text-ivory drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)]" />
+                </span>
+              )}
+              {favorite && burst > 0 && (
+                <span role="status" className="sr-only">
+                  {favorite.name} guardado
+                </span>
               )}
 
               {gallery.length > 1 && (
@@ -206,7 +246,13 @@ export function DetailModal({
               {eyebrow && (
                 <p className="eyebrow">{eyebrow}</p>
               )}
-              <h2 className="mt-3 font-serif text-3xl font-semibold tracking-tight text-ink">{title}</h2>
+              <div className="mt-3 flex items-start justify-between gap-3">
+                <h2 className="font-serif text-3xl font-semibold tracking-tight text-ink">{title}</h2>
+                {favorite && <FavoriteButton slug={favorite.slug} name={favorite.name} tone="plain" className="-mr-2 shrink-0" />}
+              </div>
+              {favorite && (
+                <p className="mt-1 text-xs text-ink-soft">Toca dos veces la foto para guardarlo.</p>
+              )}
               <div className="mt-4 space-y-5">{children}</div>
             </div>
 

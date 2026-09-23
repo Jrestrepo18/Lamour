@@ -127,13 +127,15 @@ export function SensesSection() {
                 >
                   <Reveal delay={0.08 * i}>
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[1.75rem] bg-silk shadow-[0_24px_50px_-30px_rgba(43,32,25,0.55)]">
-                    <Image
-                      src={sense.photo.src}
-                      alt={sense.photo.alt}
-                      fill
-                      sizes="(min-width: 1024px) 19vw, (min-width: 640px) 45vw, 78vw"
-                      className="object-cover transition-transform duration-[1.2s] ease-out hover:scale-105"
-                    />
+                    <div className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 3}s` }}>
+                      <Image
+                        src={sense.photo.src}
+                        alt={sense.photo.alt}
+                        fill
+                        sizes="(min-width: 1024px) 19vw, (min-width: 640px) 45vw, 78vw"
+                        className="object-cover"
+                      />
+                    </div>
                     <span className="absolute left-4 top-4 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink backdrop-blur">
                       0{i + 1}
                     </span>
