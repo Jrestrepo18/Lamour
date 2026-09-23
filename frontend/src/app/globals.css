@@ -215,6 +215,16 @@ body {
   transition-delay: var(--reveal-delay, 0s);
 }
 
+/* Story viewer progress bar (TrustHighlights) — global, since it's referenced from an inline style. */
+@keyframes story-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
 /* Age gate is server-rendered; the <head> boot script flags confirmed visitors. */
 html[data-age-ok] #age-gate {
   display: none;

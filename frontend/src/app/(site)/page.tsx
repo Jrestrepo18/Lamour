@@ -8,7 +8,7 @@ import { CoverageSection } from "@/components/home/CoverageSection";
 import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
 import { ScrollTint } from "@/components/home/ScrollTint";
-import { TrustBar } from "@/components/home/TrustBar";
+import { TrustHighlights } from "@/components/home/TrustHighlights";
 
 const FEATURED_SLUGS = ["ritual-lamour-full-nuru", "masaje-sensorial", "masaje-voyerista"];
 
@@ -24,7 +24,7 @@ export default async function HomePage() {
     <>
       <Hero />
       <ScrollTint>
-        <TrustBar />
+        <TrustHighlights />
         <Manifesto />
         <FeaturedServices services={featured} />
         <SensesSection />
