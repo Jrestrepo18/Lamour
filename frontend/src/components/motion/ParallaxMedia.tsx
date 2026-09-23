@@ -11,7 +11,16 @@ import { useGsapContext } from "@/hooks/useGsapContext";
  * skipped entirely under prefers-reduced-motion. The image is pre-scaled so
  * the drift never reveals the frame's edge.
  */
-export function ParallaxMedia({ children, distance = 14 }: { children: ReactNode; distance?: number }) {
+export function ParallaxMedia({
+  children,
+  distance = 14,
+  mode = "exit",
+}: {
+  children: ReactNode;
+  distance?: number;
+  /** "exit": drift while a top-of-page frame scrolls away. "through": drift across the whole pass of a mid-page section. */
+  mode?: "exit" | "through";
+}) {
   const ref = useRef<HTMLDivElement>(null);
 
   useGsapContext(() => {
@@ -19,19 +28,25 @@ export function ParallaxMedia({ children, distance = 14 }: { children: ReactNode
     if (!el) return;
     const mm = gsap.matchMedia();
     mm.add("(prefers-reduced-motion: no-preference)", () => {
+      const through = mode === "through";
       gsap.fromTo(
         el,
-        { yPercent: 0, scale: 1.12 },
+        { yPercent: through ? -distance / 2 : 0, scale: 1.12 },
         {
-          yPercent: distance,
+          yPercent: through ? distance / 2 : distance,
           scale: 1.12,
           ease: "none",
-          scrollTrigger: { trigger: el.parentElement, start: "top top", end: "bottom top", scrub: true },
+          scrollTrigger: {
+            trigger: el.parentElement,
+            start: through ? "top bottom" : "top top",
+            end: "bottom top",
+            scrub: true,
+          },
         },
       );
     });
     return () => mm.revert();
-  }, [distance]);
+  }, [distance, mode]);
 
   return (
     <div ref={ref} className="absolute inset-0 will-change-transform">
