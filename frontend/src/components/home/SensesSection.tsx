@@ -113,7 +113,6 @@ export function SensesSection() {
           <div
             ref={trackRef}
             onScroll={onScroll}
-            data-lenis-prevent
             className="-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-px-5 px-5 pb-2 [scrollbar-width:none] sm:-mx-8 sm:scroll-px-8 sm:px-8 lg:mx-0 lg:grid lg:snap-none lg:grid-cols-5 lg:gap-5 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden"
           >
             <ol className="contents">
@@ -136,7 +135,7 @@ export function SensesSection() {
                         className="object-cover"
                       />
                     </div>
-                    <span className="absolute left-4 top-4 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink backdrop-blur">
+                    <span className="absolute left-4 top-4 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink">
                       0{i + 1}
                     </span>
                   </div>

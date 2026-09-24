@@ -101,10 +101,10 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   </div>
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-espresso/90 via-espresso/30 to-transparent" />
 
-                  <span className="absolute left-5 top-5 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink backdrop-blur">
+                  <span className="absolute left-5 top-5 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink">
                     0{i + 1}
                   </span>
-                  <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink backdrop-blur transition-transform duration-300 group-hover:rotate-45">
+                  <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink transition-transform duration-300 group-hover:rotate-45">
                     <ArrowUpRight size={17} />
                   </span>
 

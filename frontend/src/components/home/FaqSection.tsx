@@ -122,7 +122,7 @@ export function FaqSection() {
           </div>
 
           <Reveal delay={0.1}>
-            <div className="overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white/75 shadow-[0_24px_60px_-36px_rgba(43,32,25,0.55)] backdrop-blur-sm">
+            <div className="overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white/75 shadow-[0_24px_60px_-36px_rgba(43,32,25,0.55)]">
               {/* Chat header */}
               <div className="flex items-center gap-3 border-b border-ink/10 px-5 py-4">
                 <span className="relative">

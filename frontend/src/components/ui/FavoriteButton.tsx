@@ -30,7 +30,7 @@ export function FavoriteButton({
       aria-label={saved ? `Quitar ${name} de guardados` : `Guardar ${name}`}
       className={clsx(
         "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-[transform,background-color] duration-200 active:scale-90",
-        tone === "glass" && "bg-ivory/90 shadow-md backdrop-blur",
+        tone === "glass" && "bg-ivory/90 shadow-md",
         tone === "plain" && "hover:bg-silk/60",
         tone === "dark" && "hover:bg-ivory/10",
         className,

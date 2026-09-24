@@ -44,13 +44,13 @@ export function Hero() {
           <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-espresso/25 to-transparent lg:hidden" />
 
-          <p className="absolute left-5 top-[5.5rem] inline-flex animate-rise items-center gap-1.5 rounded-full bg-ivory/85 px-3 py-1.5 text-xs font-medium text-ink shadow-sm backdrop-blur [animation-delay:500ms] sm:left-8 lg:hidden">
+          <p className="absolute left-5 top-[5.5rem] inline-flex animate-rise items-center gap-1.5 rounded-full bg-ivory/95 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] sm:left-8 lg:hidden">
             <MapPin size={12} className="text-bronze" aria-hidden />
             Medellín · a domicilio
           </p>
 
           {/* Desktop: glass note on the photo */}
-          <div className="absolute bottom-6 left-6 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/30 bg-ivory/75 p-4 shadow-lg backdrop-blur-md [animation-delay:700ms] lg:block">
+          <div className="absolute bottom-6 left-6 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/30 bg-ivory/95 p-4 shadow-lg [animation-delay:700ms] lg:block">
             <p className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ShieldCheck size={16} className="text-bronze" aria-hidden />
               Discreción total

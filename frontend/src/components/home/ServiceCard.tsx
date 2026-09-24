@@ -74,7 +74,7 @@ export function ServiceCard({
 
           {service.requiresTwoTherapists && (
             <span
-              className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-ivory/90 px-1.5 py-0.5 text-[0.65rem] font-semibold text-ink backdrop-blur sm:hidden"
+              className="absolute bottom-1 right-1 inline-flex items-center gap-0.5 rounded-full bg-ivory/90 px-1.5 py-0.5 text-[0.65rem] font-semibold text-ink sm:hidden"
             >
               <Users size={10} aria-hidden />
               <span aria-hidden>2</span>
@@ -82,14 +82,14 @@ export function ServiceCard({
             </span>
           )}
           {service.requiresTwoTherapists && (
-            <span className="absolute left-4 top-4 hidden items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-ink backdrop-blur sm:inline-flex">
+            <span className="absolute left-4 top-4 hidden items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-ink sm:inline-flex">
               <Users size={12} aria-hidden /> 2 masajistas
             </span>
           )}
 
           <span
             aria-hidden
-            className="absolute bottom-4 right-4 hidden h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md backdrop-blur transition-transform duration-300 group-hover:rotate-45 sm:flex"
+            className="absolute bottom-4 right-4 hidden h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md transition-transform duration-300 group-hover:rotate-45 sm:flex"
           >
             <ArrowUpRight size={17} />
           </span>

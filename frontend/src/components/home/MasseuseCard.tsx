@@ -14,7 +14,7 @@ function Monogram({ name }: { name: string }) {
   return (
     <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-champagne via-silk to-champagne/60">
       <div className="absolute inset-3 rounded-[1rem] border border-gold/40 sm:inset-4 sm:rounded-[1.25rem]" />
-      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/60 bg-ivory/50 backdrop-blur-sm sm:h-28 sm:w-28">
+      <div className="flex h-20 w-20 items-center justify-center rounded-full border border-gold/60 bg-ivory/50 sm:h-28 sm:w-28">
         <span className="font-serif text-4xl font-semibold text-bronze sm:text-5xl">{initials(name)}</span>
       </div>
     </div>
@@ -54,7 +54,7 @@ export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-espresso/85 via-espresso/10 to-transparent" />
         <span
           aria-hidden
-          className="absolute right-3 top-3 hidden h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md backdrop-blur transition-transform duration-300 group-hover:rotate-45 sm:flex"
+          className="absolute right-3 top-3 hidden h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md transition-transform duration-300 group-hover:rotate-45 sm:flex"
         >
           <ArrowUpRight size={16} />
         </span>

@@ -61,7 +61,7 @@ export function TrustHighlights() {
   }
 
   return (
-    <section aria-label="Por qué elegir L'AMOUR" className="border-y border-ink/10 bg-white/40 backdrop-blur-sm">
+    <section aria-label="Por qué elegir L'AMOUR" className="border-y border-ink/10 bg-white/50">
       <Container className="py-8 sm:py-10">
         <ul className="flex items-start justify-between gap-2 sm:justify-center sm:gap-12">
           {HIGHLIGHTS.map((h, i) => (
@@ -104,8 +104,8 @@ export function TrustHighlights() {
         </ul>
       </Container>
 
-      {/* Portaled to <body>: this section's backdrop-blur creates a containing block
-          that would otherwise trap the viewer's position:fixed inside the strip. */}
+      {/* Portaled to <body> so no ancestor (a transform, filter or backdrop-filter
+          anywhere up the tree) can trap the viewer's position:fixed. */}
       {open !== null &&
         createPortal(
           <StoryViewer

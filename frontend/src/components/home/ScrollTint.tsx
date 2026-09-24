@@ -1,70 +1,73 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { gsap } from "@/lib/gsap";
+import { gsap, ScrollTrigger } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 
 /**
- * The gradual "gets darker as you scroll" effect: a single backdrop behind
- * several sections, tinting from ivory toward a deep warm caramel across the
- * whole span, with no per-section background of its own breaking it into
- * visible bands (see FeaturedServices/CoverageSection, which stay transparent
- * so this backdrop shows through uninterrupted).
+ * Body-text tone per stretch of the tint. Each value keeps WCAG AA (≥ 4.5:1)
+ * across its whole range of the ivory → caramel backdrop (worst cases 4.95,
+ * 5.34 and 4.86).
+ */
+const TONE_STEPS: { until: number; tone: string }[] = [
+  { until: 0.3, tone: "#6b5a4a" },
+  { until: 0.65, tone: "#52402f" },
+  { until: 1.01, tone: "#3d2f22" },
+];
+
+/**
+ * The gradual "gets warmer as you scroll" backdrop behind the home sections.
  *
- * It deliberately stops short of espresso-dark — every section wrapped here
- * still sets dark ink-colored text directly against this backdrop, and WCAG
- * AA (4.5:1) caps how far a background can darken under a fixed dark-ink
- * foreground. The real constraint is `--color-ink-soft` (the lighter
- * secondary-text tone): at the caramel end color below it would otherwise
- * drop under 4.5:1, so `--tone-body` (see globals.css) is animated in lockstep
- * from ink-soft to a darker, more saturated brown — same "dark text on light
- * background" pairing throughout, just recalibrated so it keeps working as
- * the background deepens. Headings (`text-ink`) are dark enough already to
- * stay safe across this whole range without any change.
+ * Performance matters here — this runs on every scroll frame across a very
+ * tall element — so:
+ *  - the colour shift is an **opacity** fade of a caramel layer over the ivory
+ *    base (compositor-only, no repaint), not an animated background-color;
+ *  - the body-text tone (`--tone-body`, see globals.css) changes in **three
+ *    discrete steps** as the scroll crosses each threshold, instead of being
+ *    interpolated per frame (a custom property on this wrapper is inherited by
+ *    every element below it, so a per-frame change re-styled the whole page).
  *
- * The dramatic final jump to full espresso still happens after this, at
- * FinalCta's own opaque background — see the gradient strip at its top that
- * picks up exactly where this backdrop leaves off, so that seam reads as a
- * continuation rather than a hard cut.
- *
- * The backdrop is `absolute` within this wrapper (sized to its full height
- * via inset-0 on a `relative` parent), not `fixed` to the viewport — so it
- * scrolls normally with the page and never touches the shared <body>
- * background used by every other route.
+ * The backdrop is `absolute` within this wrapper, so it scrolls with the page
+ * and never touches the shared <body> background used by every other route.
  */
 export function ScrollTint({ children }: { children: ReactNode }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const backdropRef = useRef<HTMLDivElement>(null);
+  const tintRef = useRef<HTMLDivElement>(null);
 
   useGsapContext(() => {
-    if (!wrapperRef.current || !backdropRef.current) return;
+    const wrapper = wrapperRef.current;
+    const tint = tintRef.current;
+    if (!wrapper || !tint) return;
 
-    gsap.to(backdropRef.current, {
-      backgroundColor: "#b89a73",
-      ease: "none",
-      scrollTrigger: {
-        trigger: wrapperRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
+    gsap.fromTo(
+      tint,
+      { opacity: 0 },
+      {
+        opacity: 1,
+        ease: "none",
+        scrollTrigger: { trigger: wrapper, start: "top top", end: "bottom bottom", scrub: true },
       },
-    });
+    );
 
-    gsap.to(wrapperRef.current, {
-      "--tone-body": "#3d2f22",
-      ease: "none",
-      scrollTrigger: {
-        trigger: wrapperRef.current,
-        start: "top top",
-        end: "bottom bottom",
-        scrub: true,
+    let current = "";
+    ScrollTrigger.create({
+      trigger: wrapper,
+      start: "top top",
+      end: "bottom bottom",
+      onUpdate: (self) => {
+        const tone = TONE_STEPS.find((s) => self.progress < s.until)!.tone;
+        if (tone !== current) {
+          current = tone;
+          wrapper.style.setProperty("--tone-body", tone);
+        }
       },
     });
   }, []);
 
   return (
     <div ref={wrapperRef} className="relative">
-      <div ref={backdropRef} className="absolute inset-0 -z-10 bg-ivory" />
+      <div aria-hidden className="absolute inset-0 -z-10 bg-ivory" />
+      <div ref={tintRef} aria-hidden className="absolute inset-0 -z-10 bg-[#b89a73] opacity-0 will-change-[opacity]" />
       {children}
     </div>
   );

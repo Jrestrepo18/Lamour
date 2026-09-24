@@ -40,7 +40,7 @@ export function CoverageSection() {
             {MUNICIPIOS.map((m) => (
               <li
                 key={m}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/10 bg-white/60 px-3.5 text-sm text-ink backdrop-blur-sm"
+                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/10 bg-white/60 px-3.5 text-sm text-ink"
               >
                 <MapPin size={13} className="text-bronze" aria-hidden />
                 {m}
