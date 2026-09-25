@@ -546,9 +546,9 @@ export async function setAppointmentStatus(id: string, status: AppointmentStatus
 
 // ---------- Admin users ----------
 
-/** usuarios/{email}: login with the email; inactive users can't sign in. */
-export async function findAdmin(email: string) {
-  const snap = await col(COL.usuarios).doc(email.toLowerCase()).get();
+/** usuarios/{usuario en minúsculas}: login is case-insensitive; inactive users can't sign in. */
+export async function findAdmin(username: string) {
+  const snap = await col(COL.usuarios).doc(username.trim().toLowerCase()).get();
   const d = snap.data();
   if (!d || d.activo === false) return undefined;
   return { username: snap.id, password_hash: String(d.passwordHash ?? ""), full_name: String(d.nombre ?? snap.id), role: String(d.rol ?? "ADMIN") };
