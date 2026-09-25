@@ -172,7 +172,7 @@ export function DetailModal({
                 <div
                   ref={galleryRef}
                   onScroll={onGalleryScroll}
-                  className="flex h-full snap-x snap-mandatory overflow-x-auto scroll-smooth"
+                  className="flex h-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden scroll-smooth"
                 >
                   {gallery.map((src, i) => (
                     <img

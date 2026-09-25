@@ -50,7 +50,9 @@ export function FeaturedServices({ services }: { services: Service[] }) {
           </Reveal>
         </div>
 
-        <ul className="-mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2 [scrollbar-width:none] sm:-mx-8 sm:mt-12 sm:scroll-px-8 sm:px-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
+        {/* overflow-y-hidden: a horizontal carousel must not become a vertical scroller too
+            (overflow-x:auto alone makes overflow-y auto), or vertical swipes get trapped. */}
+        <ul className="-mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto overflow-y-hidden scroll-px-5 px-5 pb-2 [scrollbar-width:none] sm:-mx-8 sm:mt-12 sm:scroll-px-8 sm:px-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
           {reels.map(({ service, photo }, i) => (
             <li key={service.id} className="w-[62%] max-w-[16rem] shrink-0 snap-start md:w-auto md:max-w-none">
               <Reveal delay={0.08 * i}>

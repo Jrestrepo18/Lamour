@@ -101,7 +101,7 @@ export function ScheduleStep({
       )}
 
       <div
-        className="mt-6 -mx-1 flex gap-2 overflow-x-auto pb-2"
+        className="mt-6 -mx-1 flex gap-2 overflow-x-auto overflow-y-hidden pb-2"
         style={{ maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)" }}
       >
         {days.map((d) => {
