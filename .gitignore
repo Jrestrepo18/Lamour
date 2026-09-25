@@ -18,3 +18,8 @@ _respaldo-auditoria/
 
 # Images uploaded from the admin panel at runtime (user content, not source).
 backend/LAmour.Api/wwwroot/uploads/
+
+# Firebase service-account keys (server secrets) — never commit.
+*firebase-adminsdk*.json
+firebase-admin*.json
+service-account*.json

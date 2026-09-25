@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
-import { getMasseuses } from "@/lib/api";
+import { getMasseuses } from "@/server/catalog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MasseusesSection } from "@/components/home/MasseusesSection";
 import { FinalCta } from "@/components/home/FinalCta";
 import { PHOTOS } from "@/lib/photos";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 const TITLE = "Nuestras masajistas certificadas";
 const DESCRIPTION =

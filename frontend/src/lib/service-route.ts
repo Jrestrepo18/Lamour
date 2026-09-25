@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound, permanentRedirect } from "next/navigation";
-import { getServiceCategories } from "./api";
+import { getServiceCategories } from "@/server/catalog";
 import { catalogSection, findService, sectionOf, servicePath, type CatalogSection } from "./catalog";
 import { SERVICE_CONTENT } from "./service-content";
 import { pageMetadata } from "./seo";

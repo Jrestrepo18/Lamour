@@ -16,7 +16,7 @@ import { PhotosField } from "./PhotosField";
 import { ConfirmDialog, ErrorBanner, LoadingBlock, SheetActions, SwitchRow } from "./kit";
 
 type FormState = {
-  serviceCategoryId: number;
+  serviceCategoryId: string;
   name: string;
   slug: string;
   shortDescription: string;
@@ -54,7 +54,7 @@ export function ServicesView({ token }: { token: string }) {
   const [categories, setCategories] = useState<ServiceCategory[]>([]);
   const [services, setServices] = useState<Service[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<number | "all">("all");
+  const [filter, setFilter] = useState<string | "all">("all");
   const [editing, setEditing] = useState<Service | "new" | null>(null);
 
   async function load() {
@@ -168,7 +168,7 @@ export function ServicesView({ token }: { token: string }) {
           token={token}
           categories={categories}
           service={editing === "new" ? null : editing}
-          defaultCategory={filter === "all" ? categories[0]?.id ?? 0 : filter}
+          defaultCategory={filter === "all" ? categories[0]?.id ?? "" : filter}
           onClose={() => setEditing(null)}
           onSaved={(saved, isNew) => {
             setServices((prev) => (isNew ? [...(prev ?? []), saved] : prev?.map((s) => (s.id === saved.id ? saved : s)) ?? [saved]));
@@ -196,7 +196,7 @@ function ServiceSheet({
   token: string;
   categories: ServiceCategory[];
   service: Service | null;
-  defaultCategory: number;
+  defaultCategory: string;
   onClose: () => void;
   onSaved: (saved: Service, isNew: boolean) => void;
   onDeleted: () => void;
@@ -336,7 +336,7 @@ function ServiceSheet({
                 <select
                   className={clsx(fieldClass, "cursor-pointer appearance-none pr-10")}
                   value={form.serviceCategoryId}
-                  onChange={(e) => set("serviceCategoryId", Number(e.target.value))}
+                  onChange={(e) => set("serviceCategoryId", e.target.value)}
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>

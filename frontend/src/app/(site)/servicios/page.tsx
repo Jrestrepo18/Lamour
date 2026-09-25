@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getServiceCategories } from "@/lib/api";
+import { getServiceCategories } from "@/server/catalog";
 import { catalogSection } from "@/lib/catalog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { AdultSectionDoor, CategoryNav, catalogSections } from "@/components/services/CatalogSections";
@@ -7,6 +7,9 @@ import { FinalCta } from "@/components/home/FinalCta";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { catalogJsonLd, pageMetadata } from "@/lib/seo";
 import { PHOTOS } from "@/lib/photos";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 const TITLE = "Servicios y precios de masajes a domicilio";
 const DESCRIPTION =

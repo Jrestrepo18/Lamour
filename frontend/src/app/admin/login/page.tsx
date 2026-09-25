@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       saveAdminSession(res.token, res.fullName);
       router.replace("/admin/dashboard");
     } catch {
-      setError("Usuario o contraseña incorrectos, o no se pudo conectar con el servidor.");
+      setError("Correo o contraseña incorrectos, o no se pudo conectar con el servidor.");
     } finally {
       setLoading(false);
     }
@@ -63,12 +63,14 @@ export default function AdminLoginPage() {
 
           <p className="eyebrow">Panel admin</p>
           <h1 className="mt-4 font-serif text-4xl font-semibold tracking-tight text-ink">Te damos la bienvenida</h1>
-          <p className="mt-2 text-sm text-ink-soft">Ingresa con tu usuario para gestionar L&apos;AMOUR.</p>
+          <p className="mt-2 text-sm text-ink-soft">Ingresa con tu correo de administración para gestionar L&apos;AMOUR.</p>
 
           <form onSubmit={handleSubmit} className="mt-8 space-y-5">
             <label className={labelClass}>
-              Usuario
+              Correo
               <input
+                type="email"
+                inputMode="email"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 className={fieldClass}

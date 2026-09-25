@@ -1,5 +1,6 @@
+/** Ids are Firestore document ids (service and category ids are their slugs). */
 export interface ServiceCategory {
-  id: number;
+  id: string;
   name: string;
   slug: string;
   description: string | null;
@@ -10,8 +11,8 @@ export interface ServiceCategory {
 }
 
 export interface Service {
-  id: number;
-  serviceCategoryId: number;
+  id: string;
+  serviceCategoryId: string;
   name: string;
   slug: string;
   shortDescription: string;
@@ -30,7 +31,7 @@ export interface Service {
 }
 
 export interface Masseuse {
-  id: number;
+  id: string;
   stageName: string;
   age: number | null;
   bio: string | null;
@@ -38,10 +39,16 @@ export interface Masseuse {
   photoGallery: string[];
   displayOrder: number;
   isActive: boolean;
+  /** Services she performs; empty means all of them. */
+  serviceIds: string[];
+  /** False when she only works at the spa (noDomicilios in Firebase) — then she isn't offered for home visits. */
+  offersHomeVisits: boolean;
 }
 
 export interface MasseuseAdmin extends Masseuse {
   whatsAppNumber: string;
+  /** She authorised publishing her photos (consentimientoImagen); without it the site shows none. */
+  imageConsent: boolean;
 }
 
 /** One working block on a weekday. dayOfWeek: 0 = domingo … 6 = sábado; times "HH:mm". */
@@ -66,7 +73,7 @@ export interface MasseuseSchedule {
 
 export type PaymentMethod = "Cash" | "Transfer" | "Card";
 
-export type AppointmentStatus = "Pending" | "Confirmed" | "Completed" | "Cancelled";
+export type AppointmentStatus = "Pending" | "Confirmed" | "Completed" | "Cancelled" | "NoShow";
 
 export interface AvailabilitySlot {
   start: string;
@@ -75,9 +82,9 @@ export interface AvailabilitySlot {
 }
 
 export interface AppointmentCreatePayload {
-  serviceId: number;
-  masseuseId: number;
-  secondMasseuseId?: number | null;
+  serviceId: string;
+  masseuseId: string;
+  secondMasseuseId?: string | null;
   startsAt: string;
   sensoryDressRequested: boolean;
   extraMinutes: number;
@@ -92,12 +99,13 @@ export interface AppointmentCreatePayload {
 }
 
 export interface Appointment {
-  id: number;
-  serviceId: number;
+  /** Booking code, e.g. "LA-0012". */
+  id: string;
+  serviceId: string;
   serviceName: string;
-  masseuseId: number;
+  masseuseId: string;
   masseuseName: string;
-  secondMasseuseId: number | null;
+  secondMasseuseId: string | null;
   secondMasseuseName: string | null;
   clientName: string;
   clientPhone: string;

@@ -1,6 +1,9 @@
 import { ServiceDetail } from "@/components/services/ServiceDetail";
 import { serviceRoute, type ServiceRouteProps } from "@/lib/service-route";
 
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
+
 const route = serviceRoute("adult");
 
 export const generateStaticParams = route.generateStaticParams;

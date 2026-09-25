@@ -1,13 +1,12 @@
 import type { Masseuse, ServiceCategory } from "./types";
 
 /**
- * Mirrors LAmour.Api/Data/SeedData.cs so the UI is fully explorable in local dev
- * even before the .NET backend is running. Real data always wins once
- * NEXT_PUBLIC_API_URL responds — see lib/api.ts.
+ * The site's catalog: shown in local dev without Firebase credentials, and the
+ * content loaded into Firebase (servicios / categorias) on first connection.
  */
 export const MOCK_CATEGORIES: ServiceCategory[] = [
   {
-    id: 1,
+    id: "eroticos-tantricos",
     name: "Masajes Eróticos & Tántricos",
     slug: "eroticos-tantricos",
     description: "Rituales sensoriales diseñados para liberar tensión y despertar los sentidos.",
@@ -16,8 +15,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     isActive: true,
     services: [
       {
-        id: 1,
-        serviceCategoryId: 1,
+        id: "ritual-lamour-full-nuru",
+        serviceCategoryId: "eroticos-tantricos",
         name: "Ritual L'AMOUR (Full Nuru)",
         slug: "ritual-lamour-full-nuru",
         shortDescription: "Nuestro ritual insignia: cuerpo a cuerpo con aceite Nuru premium de principio a fin.",
@@ -35,8 +34,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 2,
-        serviceCategoryId: 1,
+        id: "salvaje-cambio-de-roles",
+        serviceCategoryId: "eroticos-tantricos",
         name: "Salvaje (Cambio de Roles)",
         slug: "salvaje-cambio-de-roles",
         shortDescription: "Ella toma el control: una experiencia intensa donde los roles se invierten.",
@@ -54,8 +53,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 3,
-        serviceCategoryId: 1,
+        id: "masaje-cuatro-manos",
+        serviceCategoryId: "eroticos-tantricos",
         name: "Masaje a Cuatro Manos",
         slug: "masaje-cuatro-manos",
         shortDescription: "Dos masajistas, un solo ritmo: una sensación envolvente e inolvidable.",
@@ -75,7 +74,7 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     ],
   },
   {
-    id: 2,
+    id: "terapias-especiales",
     name: "Terapias Especiales",
     slug: "terapias-especiales",
     description: "Rituales con elementos térmicos y técnicas de contacto que profundizan la relajación.",
@@ -84,8 +83,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     isActive: true,
     services: [
       {
-        id: 4,
-        serviceCategoryId: 2,
+        id: "piedras-volcanicas",
+        serviceCategoryId: "terapias-especiales",
         name: "Piedras Volcánicas",
         slug: "piedras-volcanicas",
         shortDescription: "Calor profundo con piedras volcánicas para liberar la tensión muscular.",
@@ -103,8 +102,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 5,
-        serviceCategoryId: 2,
+        id: "aceites-calientes",
+        serviceCategoryId: "terapias-especiales",
         name: "Terapia con Aceites Calientes",
         slug: "aceites-calientes",
         shortDescription: "Aceites tibios deslizándose en movimientos largos y envolventes.",
@@ -122,8 +121,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 6,
-        serviceCategoryId: 2,
+        id: "ritual-contacto-total",
+        serviceCategoryId: "terapias-especiales",
         name: "Ritual de Contacto Total",
         slug: "ritual-contacto-total",
         shortDescription: "Un recorrido completo de contacto consciente por todo el cuerpo.",
@@ -141,8 +140,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 7,
-        serviceCategoryId: 2,
+        id: "piel-con-piel",
+        serviceCategoryId: "terapias-especiales",
         name: "Experiencia Piel con Piel",
         slug: "piel-con-piel",
         shortDescription: "Cercanía y calidez en su forma más pura.",
@@ -160,8 +159,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 8,
-        serviceCategoryId: 2,
+        id: "cuerpo-a-cuerpo",
+        serviceCategoryId: "terapias-especiales",
         name: "Cuerpo a Cuerpo",
         slug: "cuerpo-a-cuerpo",
         shortDescription: "Técnica clásica de deslizamiento corporal para una relajación absoluta.",
@@ -181,7 +180,7 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     ],
   },
   {
-    id: 3,
+    id: "sensoriales",
     name: "Masajes Sensoriales",
     slug: "sensoriales",
     description: "Sesiones de 60 minutos enfocadas en el placer de los sentidos, con tiempo adicional opcional.",
@@ -190,8 +189,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     isActive: true,
     services: [
       {
-        id: 9,
-        serviceCategoryId: 3,
+        id: "masaje-sensorial",
+        serviceCategoryId: "sensoriales",
         name: "Masaje Sensorial",
         slug: "masaje-sensorial",
         shortDescription: "60 minutos de estimulación de los sentidos, con opción de vestidura sensorial.",
@@ -211,7 +210,7 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     ],
   },
   {
-    id: 4,
+    id: "experiencias-pareja",
     name: "Experiencias en Pareja",
     slug: "experiencias-pareja",
     description: "Momentos diseñados para compartir, conectar y explorar en compañía.",
@@ -220,8 +219,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     isActive: true,
     services: [
       {
-        id: 10,
-        serviceCategoryId: 4,
+        id: "experiencia-en-pareja",
+        serviceCategoryId: "experiencias-pareja",
         name: "Experiencia en Pareja",
         slug: "experiencia-en-pareja",
         shortDescription: "Un masajista dedicado para cada persona, en la misma habitación.",
@@ -239,8 +238,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 11,
-        serviceCategoryId: 4,
+        id: "masaje-interactivo",
+        serviceCategoryId: "experiencias-pareja",
         name: "Masaje Interactivo",
         slug: "masaje-interactivo",
         shortDescription: "El terapeuta guía a la pareja para que se masajeen mutuamente.",
@@ -258,8 +257,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 12,
-        serviceCategoryId: 4,
+        id: "masaje-voyerista",
+        serviceCategoryId: "experiencias-pareja",
         name: "Masaje Voyerista",
         slug: "masaje-voyerista",
         shortDescription: "El Arte de Mirar: conexión a través de los sentidos.",
@@ -279,7 +278,7 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     ],
   },
   {
-    id: 5,
+    id: "relajacion-muscular",
     name: "Relajación y Muscular",
     slug: "relajacion-muscular",
     description: "Terapias clásicas enfocadas en el bienestar físico y la recuperación muscular.",
@@ -288,8 +287,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
     isActive: true,
     services: [
       {
-        id: 13,
-        serviceCategoryId: 5,
+        id: "relajacion-clasica",
+        serviceCategoryId: "relajacion-muscular",
         name: "Masaje de Relajación Clásico",
         slug: "relajacion-clasica",
         shortDescription: "Técnica sueca clásica para liberar el estrés del día a día.",
@@ -307,8 +306,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 14,
-        serviceCategoryId: 5,
+        id: "exfoliacion-corporal",
+        serviceCategoryId: "relajacion-muscular",
         name: "Exfoliación Corporal",
         slug: "exfoliacion-corporal",
         shortDescription: "Renueva tu piel con una exfoliación completa de cuerpo.",
@@ -326,8 +325,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 15,
-        serviceCategoryId: 5,
+        id: "masaje-pies-reflexologia",
+        serviceCategoryId: "relajacion-muscular",
         name: "Masaje en Pies (Reflexología)",
         slug: "masaje-pies-reflexologia",
         shortDescription: "Puntos de reflexología para aliviar la fatiga y activar la circulación.",
@@ -345,8 +344,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
         isActive: true,
       },
       {
-        id: 16,
-        serviceCategoryId: 5,
+        id: "recuperacion-muscular-profunda",
+        serviceCategoryId: "relajacion-muscular",
         name: "Recuperación Muscular Profunda",
         slug: "recuperacion-muscular-profunda",
         shortDescription: "Técnica de tejido profundo para deportistas y tensión crónica.",
@@ -368,8 +367,8 @@ export const MOCK_CATEGORIES: ServiceCategory[] = [
 ];
 
 export const MOCK_MASSEUSES: Masseuse[] = [
-  { id: 1, stageName: "Valentina", age: 28, bio: "Especialista en rituales tántricos y terapias de contacto total, con más de 5 años de experiencia.", photoUrl: null, photoGallery: [], displayOrder: 1, isActive: true },
-  { id: 2, stageName: "Isabella", age: 25, bio: "Experta en masajes sensoriales y experiencias en pareja, enfocada en la conexión y la calidez.", photoUrl: null, photoGallery: [], displayOrder: 2, isActive: true },
-  { id: 3, stageName: "Camila", age: 31, bio: "Terapeuta certificada en recuperación muscular y piedras volcánicas.", photoUrl: null, photoGallery: [], displayOrder: 3, isActive: true },
-  { id: 4, stageName: "Sofía", age: 27, bio: "Especialista en masajes a cuatro manos y rituales L'AMOUR.", photoUrl: null, photoGallery: [], displayOrder: 4, isActive: true },
+  { id: "1", stageName: "Valentina", age: 28, bio: "Especialista en rituales tántricos y terapias de contacto total, con más de 5 años de experiencia.", photoUrl: null, photoGallery: [], displayOrder: 1, isActive: true, serviceIds: [], offersHomeVisits: true },
+  { id: "2", stageName: "Isabella", age: 25, bio: "Experta en masajes sensoriales y experiencias en pareja, enfocada en la conexión y la calidez.", photoUrl: null, photoGallery: [], displayOrder: 2, isActive: true, serviceIds: [], offersHomeVisits: true },
+  { id: "3", stageName: "Camila", age: 31, bio: "Terapeuta certificada en recuperación muscular y piedras volcánicas.", photoUrl: null, photoGallery: [], displayOrder: 3, isActive: true, serviceIds: [], offersHomeVisits: true },
+  { id: "4", stageName: "Sofía", age: 27, bio: "Especialista en masajes a cuatro manos y rituales L'AMOUR.", photoUrl: null, photoGallery: [], displayOrder: 4, isActive: true, serviceIds: [], offersHomeVisits: true },
 ];

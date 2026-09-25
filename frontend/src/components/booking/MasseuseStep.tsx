@@ -26,7 +26,10 @@ export function MasseuseStep({
   onSelectSecondary: (m: Masseuse | null) => void;
 }) {
   const needsTwo = service.requiresTwoTherapists;
-  const active = masseuses.filter((m) => m.isActive);
+  // Only therapists who do this ritual (servicioIds; empty = all) and visit homes (the site only books a domicilio).
+  const active = masseuses.filter(
+    (m) => m.isActive && m.offersHomeVisits && (m.serviceIds.length === 0 || m.serviceIds.includes(service.id)),
+  );
 
   function toggle(m: Masseuse) {
     if (!needsTwo) {

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getServiceCategories } from "@/lib/api";
+import { getServiceCategories } from "@/server/catalog";
 import { findService, servicePath } from "@/lib/catalog";
 import { Hero } from "@/components/home/Hero";
 import { Manifesto } from "@/components/home/Manifesto";
@@ -11,6 +11,9 @@ import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
 import { ScrollTint } from "@/components/home/ScrollTint";
 import { TrustHighlights } from "@/components/home/TrustHighlights";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 

@@ -34,7 +34,7 @@ export function BookingFlow({
     return slug ? allServices.find((s) => s.slug === slug) ?? null : null;
   }, [searchParams, allServices]);
   const preselectedMasseuse = useMemo(() => {
-    const id = Number(searchParams.get("masseuse"));
+    const id = searchParams.get("masseuse");
     return id ? masseuses.find((m) => m.id === id) ?? null : null;
   }, [searchParams, masseuses]);
 

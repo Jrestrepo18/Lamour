@@ -1,8 +1,11 @@
 import type { MetadataRoute } from "next";
-import { getServiceCategories } from "@/lib/api";
+import { getServiceCategories } from "@/server/catalog";
 import { servicePath } from "@/lib/catalog";
 import { CITIES, cityPath } from "@/lib/cities";
 import { absoluteUrl } from "@/lib/seo";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 /**
  * Public, indexable routes only — /admin is disallowed in robots.ts; legal pages and

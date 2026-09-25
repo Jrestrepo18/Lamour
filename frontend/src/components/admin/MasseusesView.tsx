@@ -29,6 +29,7 @@ type ProfileForm = {
   whatsAppNumber: string;
   displayOrder: number;
   isActive: boolean;
+  imageConsent: boolean;
 };
 
 const EMPTY_FORM: ProfileForm = {
@@ -39,6 +40,7 @@ const EMPTY_FORM: ProfileForm = {
   whatsAppNumber: "",
   displayOrder: 0,
   isActive: true,
+  imageConsent: false,
 };
 
 function apiMessage(err: unknown, fallback: string) {
@@ -158,7 +160,7 @@ function ProfileSheet({
   nextOrder: number;
   onClose: () => void;
   onSaved: (saved: MasseuseAdmin, isNew: boolean) => void;
-  onDeleted: (id: number) => void;
+  onDeleted: (id: string) => void;
 }) {
   const [form, setForm] = useState<ProfileForm>(() =>
     masseuse
@@ -170,6 +172,7 @@ function ProfileSheet({
           whatsAppNumber: masseuse.whatsAppNumber,
           displayOrder: masseuse.displayOrder,
           isActive: masseuse.isActive,
+          imageConsent: masseuse.imageConsent,
         }
       : { ...EMPTY_FORM, displayOrder: nextOrder },
   );
@@ -203,6 +206,7 @@ function ProfileSheet({
           whatsAppNumber: phoneDigits,
           displayOrder: form.displayOrder,
           isActive: form.isActive,
+          imageConsent: form.imageConsent,
         },
         token,
         masseuse?.id,
@@ -293,6 +297,12 @@ function ProfileSheet({
               hint="Si la apagas, no aparece en el sitio ni se le puede reservar."
               checked={form.isActive}
               onChange={(v) => setForm((f) => ({ ...f, isActive: v }))}
+            />
+            <SwitchRow
+              label="Autorizó publicar sus fotos"
+              hint="Sin esta autorización sus fotos no se muestran en la web."
+              checked={form.imageConsent}
+              onChange={(v) => setForm((f) => ({ ...f, imageConsent: v }))}
             />
           </div>
 

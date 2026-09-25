@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/seo";
 import { Suspense } from "react";
-import { getMasseuses, getServiceCategories } from "@/lib/api";
+import { getMasseuses, getServiceCategories } from "@/server/catalog";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { BookingFlow } from "@/components/booking/BookingFlow";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 const TITLE = "Reservar masaje a domicilio";
 const DESCRIPTION =

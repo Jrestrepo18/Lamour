@@ -10,7 +10,7 @@ import { formatCOP, formatDuration } from "@/lib/format";
 import { chipClass } from "@/lib/ui";
 import { ServiceThumb, StepHeading, wrapRailClass } from "./parts";
 
-const SAVED_ID = -1;
+const SAVED_ID = "__guardados";
 
 /**
  * Categories as a one-line chip rail (not five stacked rows on a phone) and
@@ -27,7 +27,7 @@ export function ServiceStep({
   onSelect: (service: Service) => void;
 }) {
   const [activeCategory, setActiveCategory] = useState(
-    () => selected?.serviceCategoryId ?? categories[0]?.id ?? 0,
+    () => selected?.serviceCategoryId ?? categories[0]?.id ?? "",
   );
   const { favorites } = useFavorites();
 

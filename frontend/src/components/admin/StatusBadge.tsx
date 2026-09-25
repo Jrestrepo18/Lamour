@@ -6,6 +6,7 @@ const STYLES: Record<AppointmentStatus, string> = {
   Confirmed: "bg-emerald-50 text-emerald-800 border-emerald-200",
   Completed: "bg-silk text-ink border-ink/15",
   Cancelled: "bg-red-50 text-red-700 border-red-200",
+  NoShow: "bg-ink/[0.06] text-ink-soft border-ink/15",
 };
 
 const LABELS: Record<AppointmentStatus, string> = {
@@ -13,6 +14,7 @@ const LABELS: Record<AppointmentStatus, string> = {
   Confirmed: "Confirmada",
   Completed: "Completada",
   Cancelled: "Cancelada",
+  NoShow: "No asistió",
 };
 
 export function StatusBadge({ status }: { status: AppointmentStatus }) {

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
-import { getServiceCategories } from "@/lib/api";
+import { getServiceCategories } from "@/server/catalog";
 import { catalogSection, servicePath } from "@/lib/catalog";
 import { CITIES, cityPath, findCity } from "@/lib/cities";
 import { absoluteUrl, faqJsonLd, pageMetadata } from "@/lib/seo";
@@ -14,6 +14,9 @@ import { JsonLd } from "@/components/seo/JsonLd";
 import { FinalCta } from "@/components/home/FinalCta";
 import { BookingSteps } from "@/components/services/BookingSteps";
 import { FaqList } from "@/components/services/FaqList";
+
+/** Catalog pages regenerate at most once a minute (and right after an admin edit). */
+export const revalidate = 60;
 
 type Props = { params: Promise<{ municipio: string }> };
 

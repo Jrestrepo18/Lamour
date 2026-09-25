@@ -18,6 +18,7 @@ const TABS: { value: AppointmentStatus | "All"; label: string }[] = [
   { value: "Confirmed", label: "Confirmadas" },
   { value: "Completed", label: "Completadas" },
   { value: "Cancelled", label: "Canceladas" },
+  { value: "NoShow", label: "No asistió" },
   { value: "All", label: "Todas" },
 ];
 
@@ -42,8 +43,8 @@ export function AppointmentsView({ token }: { token: string }) {
   const [appointments, setAppointments] = useState<Appointment[] | null>(null);
   const [tab, setTab] = useState<AppointmentStatus | "All">("Pending");
   const [error, setError] = useState<string | null>(null);
-  const [busyId, setBusyId] = useState<number | null>(null);
-  const [whatsappLinks, setWhatsappLinks] = useState<{ id: number; links: string[] } | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [whatsappLinks, setWhatsappLinks] = useState<{ id: string; links: string[] } | null>(null);
   const [cancelling, setCancelling] = useState<Appointment | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -70,7 +71,7 @@ export function AppointmentsView({ token }: { token: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  async function updateStatus(id: number, status: AppointmentStatus) {
+  async function updateStatus(id: string, status: AppointmentStatus) {
     setBusyId(id);
     try {
       const result = await adminUpdateAppointmentStatus(id, status, token);
@@ -195,8 +196,9 @@ export function AppointmentsView({ token }: { token: string }) {
                   <p className="flex items-start gap-2 text-ink-soft">
                     <MapPin size={14} className="mt-0.5 shrink-0" aria-hidden />
                     <span>
-                      {a.address}
-                      {a.addressDetails && `, ${a.addressDetails}`} · {a.neighborhood}, {a.city}
+                      {[[a.address, a.addressDetails].filter(Boolean).join(", "), [a.neighborhood, a.city].filter(Boolean).join(", ")]
+                        .filter(Boolean)
+                        .join(" · ") || "Sin dirección registrada"}
                     </span>
                   </p>
                   <p className="text-ink-soft">
@@ -232,6 +234,16 @@ export function AppointmentsView({ token }: { token: string }) {
                         className="min-h-11 flex-1 cursor-pointer rounded-full border border-ink/15 bg-ivory px-5 text-sm font-semibold text-ink disabled:opacity-50 sm:flex-none"
                       >
                         Marcar completada
+                      </button>
+                    )}
+                    {a.status === "Confirmed" && whatsappLinks?.id !== a.id && (
+                      <button
+                        type="button"
+                        disabled={busyId === a.id}
+                        onClick={() => updateStatus(a.id, "NoShow")}
+                        className="min-h-11 cursor-pointer rounded-full px-4 text-sm font-semibold text-ink-soft disabled:opacity-50"
+                      >
+                        No asistió
                       </button>
                     )}
                     {whatsappLinks?.id === a.id &&

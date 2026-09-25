@@ -12,7 +12,8 @@ import type {
   ServiceCategory,
 } from "./types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5080/api";
+/** Same-origin API (Next.js route handlers under /api) unless pointed elsewhere explicitly. */
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
 
 /**
  * Public catalog (services, masseuses) is cached and regenerated at most once a
@@ -63,9 +64,9 @@ function expireAdminSession() {
   if (!window.location.pathname.startsWith("/admin/login")) window.location.assign("/admin/login");
 }
 
-/** True when the .NET API isn't reachable — lets the UI fall back to demo data instead of a blank page. */
+/** True when the API isn't reachable or has no database yet — the UI falls back to demo data instead of a blank page. */
 function isConnectionFailure(err: unknown) {
-  return !(err instanceof ApiError);
+  return !(err instanceof ApiError) || err.status === 503;
 }
 
 // ---------- Public catalog ----------
@@ -95,7 +96,7 @@ export async function getMasseuses(): Promise<{ data: Masseuse[]; isDemo: boolea
 }
 
 export async function getAvailability(
-  masseuseId: number,
+  masseuseId: string,
   date: string,
   durationMinutes: number,
 ): Promise<{ data: AvailabilitySlot[]; isDemo: boolean }> {
@@ -152,7 +153,7 @@ export async function adminGetAppointments(token: string) {
   return request<Appointment[]>("/appointments", {}, token);
 }
 
-export async function adminUpdateAppointmentStatus(id: number, status: string, token: string) {
+export async function adminUpdateAppointmentStatus(id: string, status: string, token: string) {
   return request<AppointmentConfirmationResult>(
     `/appointments/${id}/status`,
     { method: "PUT", body: JSON.stringify({ status }) },
@@ -165,26 +166,26 @@ export async function adminGetMasseuses(token: string) {
 }
 
 export async function adminUpsertMasseuse(
-  payload: Omit<MasseuseAdmin, "id">,
+  payload: Omit<MasseuseAdmin, "id" | "serviceIds" | "offersHomeVisits">,
   token: string,
-  id?: number,
+  id?: string,
 ) {
   return request<MasseuseAdmin>(
-    id ? `/admin/masseuses/${id}` : "/admin/masseuses",
+    id ? `/admin/masseuses/${encodeURIComponent(id)}` : "/admin/masseuses",
     { method: id ? "PUT" : "POST", body: JSON.stringify(payload) },
     token,
   );
 }
 
-export async function adminDeleteMasseuse(id: number, token: string) {
-  return request<void>(`/admin/masseuses/${id}`, { method: "DELETE" }, token);
+export async function adminDeleteMasseuse(id: string, token: string) {
+  return request<void>(`/admin/masseuses/${encodeURIComponent(id)}`, { method: "DELETE" }, token);
 }
 
-export async function adminGetSchedule(id: number, token: string) {
+export async function adminGetSchedule(id: string, token: string) {
   return request<MasseuseSchedule>(`/admin/masseuses/${id}/schedule`, {}, token);
 }
 
-export async function adminSaveSchedule(id: number, schedule: MasseuseSchedule, token: string) {
+export async function adminSaveSchedule(id: string, schedule: MasseuseSchedule, token: string) {
   return request<MasseuseSchedule>(
     `/admin/masseuses/${id}/schedule`,
     { method: "PUT", body: JSON.stringify(schedule) },
@@ -196,55 +197,48 @@ export async function adminGetServices(token: string) {
   return request<Service[]>("/admin/services", {}, token);
 }
 
-export async function adminUpsertService(payload: Omit<Service, "id" | "highlights"> & { highlights: string[] }, token: string, id?: number) {
+export async function adminUpsertService(payload: Omit<Service, "id" | "highlights"> & { highlights: string[] }, token: string, id?: string) {
   return request<Service>(
-    id ? `/admin/services/${id}` : "/admin/services",
+    id ? `/admin/services/${encodeURIComponent(id)}` : "/admin/services",
     { method: id ? "PUT" : "POST", body: JSON.stringify(payload) },
     token,
   );
 }
 
-export async function adminDeleteService(id: number, token: string) {
-  return request<void>(`/admin/services/${id}`, { method: "DELETE" }, token);
+export async function adminDeleteService(id: string, token: string) {
+  return request<void>(`/admin/services/${encodeURIComponent(id)}`, { method: "DELETE" }, token);
 }
 
 // ---------- Uploads ----------
 
-/** Multipart upload, so it can't go through request() — that forces a JSON Content-Type header. */
-export async function adminUploadImage(file: File, token: string): Promise<{ url: string }> {
-  const formData = new FormData();
-  formData.append("file", file);
-
-  const res = await fetch(`${API_URL}/admin/uploads`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
-
-  if (!res.ok) {
-    const body = await res.text().catch(() => "");
-    throw new ApiError(body || `Error ${res.status}`, res.status);
-  }
-
-  return res.json() as Promise<{ url: string }>;
-}
-
-/** Several photos in one request; the API validates each and reports the ones it rejected. */
+/**
+ * Uploads photos to Firebase Storage through the API, several in parallel, one
+ * per request (they're already shrunk on the device). Each file succeeds or
+ * fails on its own.
+ */
 export async function adminUploadImages(files: File[], token: string): Promise<{ urls: string[]; errors: string[] }> {
-  const formData = new FormData();
-  for (const file of files) formData.append("files", file);
+  const results = await Promise.allSettled(
+    files.map(async (file) => {
+      const form = new FormData();
+      form.append("file", file);
+      const res = await fetch(`${API_URL}/admin/uploads`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+        body: form,
+      });
+      if (!res.ok) {
+        if (res.status === 401) expireAdminSession();
+        throw new ApiError((await res.text().catch(() => "")) || `Error ${res.status}`, res.status);
+      }
+      return ((await res.json()) as { url: string }).url;
+    }),
+  );
 
-  const res = await fetch(`${API_URL}/admin/uploads/batch`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
+  const urls: string[] = [];
+  const errors: string[] = [];
+  results.forEach((r, i) => {
+    if (r.status === "fulfilled") urls.push(r.value);
+    else errors.push(`${files[i].name}: ${r.reason instanceof Error ? r.reason.message : "no se pudo subir"}`);
   });
-
-  if (!res.ok) {
-    if (res.status === 401) expireAdminSession();
-    const body = await res.text().catch(() => "");
-    throw new ApiError(body || `Error ${res.status}`, res.status);
-  }
-
-  return res.json() as Promise<{ urls: string[]; errors: string[] }>;
+  return { urls, errors };
 }
