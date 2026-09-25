@@ -30,6 +30,28 @@ function clientWhatsApp(phone: string) {
   return `https://wa.me/${digits.length === 10 ? `57${digits}` : digits}`;
 }
 
+/** Confirmation for the client, pre-written with the booking's details, ready to send from the admin's WhatsApp. */
+function clientConfirmation(a: Appointment) {
+  const firstName = a.clientName.trim().split(/\s+/)[0] ?? "";
+  const team = a.secondMasseuseName ? `${a.masseuseName} y ${a.secondMasseuseName}` : a.masseuseName;
+  const place = [[a.address, a.addressDetails].filter(Boolean).join(", "), [a.neighborhood, a.city].filter(Boolean).join(", ")]
+    .filter(Boolean)
+    .join(" · ");
+  const lines = [
+    `Hola ${firstName}, te escribimos de L'AMOUR ✨`,
+    "",
+    "Tu cita está confirmada:",
+    `• ${a.serviceName} · ${a.durationMinutes} min`,
+    `• ${capitalize(formatDateLong(a.startsAt))} a las ${formatTime(a.startsAt)}`,
+    team ? `• Con ${team}` : null,
+    place ? `• En ${place}` : null,
+    `• Valor: ${formatCOP(a.totalPrice)} · Pago: ${PAYMENT[a.paymentMethod] ?? a.paymentMethod}`,
+    "",
+    "Si necesitas cambiar algo, respóndenos por aquí.",
+  ].filter((l) => l !== null);
+  return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(lines.join("\n"))}`;
+}
+
 function dayLabel(iso: string) {
   const day = iso.slice(0, 10);
   const today = new Date().toLocaleDateString("en-CA");
@@ -259,6 +281,17 @@ export function AppointmentsView({ token }: { token: string }) {
                           Avisar a {i === 0 ? a.masseuseName : a.secondMasseuseName}
                         </a>
                       ))}
+                    {a.status === "Confirmed" && a.clientPhone && (
+                      <a
+                        href={clientConfirmation(a)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-[#25D366] bg-ivory px-5 text-sm font-semibold text-[#128C4B] transition-colors hover:bg-[#25D366]/10 sm:flex-none"
+                      >
+                        <WhatsAppIcon size={17} />
+                        Confirmar al cliente
+                      </a>
+                    )}
                     {(a.status === "Pending" || a.status === "Confirmed") && (
                       <button
                         type="button"
