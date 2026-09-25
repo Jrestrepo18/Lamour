@@ -3,6 +3,7 @@ import Link from "next/link";
 import { MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
@@ -97,14 +98,15 @@ export function Hero() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
+                <WhatsAppIcon size={19} className="text-[#25D366]" />
                 Mensaje
               </a>
             ) : (
               <Link
                 href="/servicios"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
                 Ver servicios
               </Link>

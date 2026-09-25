@@ -2,7 +2,8 @@
 
 import { useId, useMemo, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight, Check, MapPin, MessageCircle, Search, X } from "lucide-react";
+import { ArrowUpRight, Check, MapPin, Search, X } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { MUNICIPIOS, normalizePlace } from "@/lib/coverage";
 import { SITE } from "@/lib/seo";
 
@@ -124,7 +125,7 @@ export function CoverageSearch() {
               rel="noopener noreferrer"
               className="mt-3 inline-flex min-h-10 items-center gap-2 rounded-full bg-[#25D366] px-4 text-sm font-medium text-white"
             >
-              <MessageCircle size={16} fill="currentColor" strokeWidth={0} aria-hidden />
+              <WhatsAppIcon size={17} />
               Preguntar por WhatsApp
             </a>
           ) : (

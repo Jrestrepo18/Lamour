@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { ArrowUpRight, Check, Clock3, MapPin, MessageCircle, ShieldCheck, Users } from "lucide-react";
+import { ArrowUpRight, Check, Clock3, MapPin, ShieldCheck, Users } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import type { Service, ServiceCategory } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
@@ -189,7 +190,7 @@ export function ServiceDetail({
                   rel="noopener noreferrer"
                   className="mt-3 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-ink/15 px-5 text-sm font-semibold text-ink transition-colors hover:bg-white"
                 >
-                  <MessageCircle size={16} aria-hidden />
+                  <WhatsAppIcon size={17} className="text-[#25D366]" />
                   Preguntar por WhatsApp
                 </a>
               )}

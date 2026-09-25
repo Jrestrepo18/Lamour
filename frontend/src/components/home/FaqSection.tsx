@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
@@ -200,7 +201,7 @@ export function FaqSection() {
                         rel="noopener noreferrer"
                         className="inline-flex min-h-10 items-center gap-2 rounded-full bg-ink px-5 text-sm font-medium text-ivory"
                       >
-                        <MessageCircle size={16} aria-hidden />
+                        <WhatsAppIcon size={17} />
                         Escríbenos por WhatsApp
                       </a>
                     ) : (

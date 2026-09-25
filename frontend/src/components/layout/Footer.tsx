@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Clock3, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
+import { Clock3, MapPin, ShieldCheck } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/seo";
 import { CITIES, cityPath } from "@/lib/cities";
@@ -61,7 +62,7 @@ export function Footer() {
                 aria-label="WhatsApp de L'AMOUR"
                 className="flex h-11 w-11 items-center justify-center rounded-full border border-ivory/20 text-ivory/80 transition-colors hover:border-gold hover:text-gold"
               >
-                <MessageCircle size={18} />
+                <WhatsAppIcon size={19} />
               </a>
             )}
           </div>

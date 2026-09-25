@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
-import { ArrowUpRight, MessageCircle } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { SITE } from "@/lib/seo";
 
 /**
@@ -76,7 +77,7 @@ export function MobileBookingBar() {
               onBooking ? "flex-1" : "w-13",
             )}
           >
-            <MessageCircle size={20} fill="currentColor" strokeWidth={0} aria-hidden />
+            <WhatsAppIcon size={24} />
             {onBooking && "¿Dudas? Escríbenos por WhatsApp"}
           </a>
         )}

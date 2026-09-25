@@ -1,5 +1,6 @@
 import Image from "next/image";
-import { Check, MessageCircle } from "lucide-react";
+import { Check } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
@@ -61,7 +62,7 @@ export function HowItWorksSection() {
                         aria-hidden
                       >
                         {whatsapp ? (
-                          <MessageCircle size={22} fill="currentColor" strokeWidth={0} />
+                          <WhatsAppIcon size={23} />
                         ) : (
                           <Image src="/icon.svg" alt="" width={40} height={40} className="h-10 w-10" />
                         )}

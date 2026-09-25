@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AlertCircle, Loader2, MapPin, MessageCircle, Phone, RefreshCw, Users } from "lucide-react";
+import { AlertCircle, Loader2, MapPin, Phone, RefreshCw, Users } from "lucide-react";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { adminGetAppointments, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
 import { formatCOP, formatDateLong, formatTime } from "@/lib/format";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
@@ -165,7 +166,7 @@ export function AppointmentsView({ token }: { token: string }) {
                     rel="noopener noreferrer"
                     className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-emerald-700 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-emerald-800"
                   >
-                    <MessageCircle size={14} />
+                    <WhatsAppIcon size={15} />
                     Avisar por WhatsApp {whatsappLinks.links.length > 1 ? `(${i === 0 ? "1ª" : "2ª"} masajista)` : ""}
                   </a>
                 ))}
