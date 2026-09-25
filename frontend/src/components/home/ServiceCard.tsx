@@ -59,8 +59,8 @@ export function ServiceCard({
           "group flex h-full w-full cursor-pointer items-center gap-4 border-b py-4 pr-12 text-left transition-[transform,box-shadow,border-color] duration-500 ease-out",
           "sm:flex-col sm:items-stretch sm:gap-0 sm:overflow-hidden sm:rounded-[1.75rem] sm:border sm:py-0 sm:pr-0 sm:hover:-translate-y-1",
           dark
-            ? "border-ivory/10 sm:bg-white/[0.04] sm:hover:border-champagne/30 sm:hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)]"
-            : "border-ink/10 sm:bg-white/70 sm:shadow-[0_18px_40px_-32px_rgba(43,32,25,0.5)] sm:hover:border-gold/40 sm:hover:shadow-[0_30px_60px_-30px_rgba(43,32,25,0.55)]",
+            ? "border-ivory/10 sm:bg-marfil/[0.04] sm:hover:border-champagne/30 sm:hover:shadow-[0_30px_60px_-30px_rgba(0,0,0,0.8)]"
+            : "border-ink/10 sm:bg-marfil/70 sm:shadow-[0_18px_40px_-32px_rgba(23,23,23,0.5)] sm:hover:border-gold/40 sm:hover:shadow-[0_30px_60px_-30px_rgba(23,23,23,0.55)]",
         )}
       >
         <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-silk sm:aspect-[4/3] sm:h-auto sm:w-full sm:rounded-none">

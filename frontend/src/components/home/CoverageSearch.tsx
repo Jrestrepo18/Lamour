@@ -42,9 +42,9 @@ export function CoverageSearch() {
     return (
       <div className="mt-8" aria-live="polite">
         {/* Instagram story "location sticker" */}
-        <span className="inline-flex origin-bottom-left animate-sticker-pop items-center gap-2 rounded-xl bg-white px-4 py-2.5 shadow-[0_12px_30px_-12px_rgba(43,32,25,0.5)]">
+        <span className="inline-flex origin-bottom-left animate-sticker-pop items-center gap-2 rounded-xl bg-marfil px-4 py-2.5 shadow-[0_12px_30px_-12px_rgba(23,23,23,0.5)]">
           <MapPin size={18} className="text-bronze" aria-hidden />
-          <span className="bg-gradient-to-r from-bronze to-[#b3901f] bg-clip-text text-base font-extrabold uppercase tracking-wide text-transparent">
+          <span className="bg-gradient-to-r from-bronze to-[#a8871a] bg-clip-text text-base font-extrabold uppercase tracking-wide text-transparent">
             {picked}
           </span>
           <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-600 text-white">
@@ -58,7 +58,7 @@ export function CoverageSearch() {
         <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3">
           <Link
             href={`/reservar?city=${encodeURIComponent(picked)}`}
-            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-semibold text-ivory shadow-[0_12px_28px_-14px_rgba(43,32,25,0.8)] transition-colors hover:bg-espresso"
+            className="inline-flex min-h-12 items-center gap-2 rounded-full bg-ink px-6 text-sm font-semibold text-ivory shadow-[0_12px_28px_-14px_rgba(23,23,23,0.8)] transition-colors hover:bg-espresso"
           >
             Reservar en {picked}
             <ArrowUpRight size={16} aria-hidden />
@@ -93,7 +93,7 @@ export function CoverageSearch() {
           placeholder="Busca tu municipio"
           autoComplete="off"
           aria-controls={listId}
-          className="h-12 w-full rounded-xl bg-ink/[0.06] pl-11 pr-10 text-base text-ink placeholder:text-ink-soft/70 outline-none transition-[background-color,box-shadow] focus:bg-white focus:ring-2 focus:ring-gold/40 [&::-webkit-search-cancel-button]:hidden"
+          className="h-12 w-full rounded-xl bg-ink/[0.06] pl-11 pr-10 text-base text-ink placeholder:text-ink-soft/70 outline-none transition-[background-color,box-shadow] focus:bg-marfil focus:ring-2 focus:ring-gold/40 [&::-webkit-search-cancel-button]:hidden"
         />
         {query && (
           <button
@@ -112,7 +112,7 @@ export function CoverageSearch() {
       </p>
 
       {noMatch ? (
-        <div className="mt-3 rounded-xl bg-white/70 p-4 text-sm text-ink">
+        <div className="mt-3 rounded-xl bg-marfil/70 p-4 text-sm text-ink">
           <p>
             Aún no llegamos a <span className="font-semibold">{query.trim()}</span>, pero escríbenos y lo revisamos
             contigo.
@@ -140,9 +140,9 @@ export function CoverageSearch() {
               <button
                 type="button"
                 onClick={() => pick(m)}
-                className="flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-left transition-colors hover:bg-white/60"
+                className="flex min-h-14 w-full cursor-pointer items-center gap-3 rounded-xl px-2 text-left transition-colors hover:bg-marfil/60"
               >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/10 bg-white text-ink">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-ink/10 bg-marfil text-ink">
                   <MapPin size={17} aria-hidden />
                 </span>
                 <span className="min-w-0">

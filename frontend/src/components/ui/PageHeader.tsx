@@ -54,7 +54,7 @@ export function PageHeader({
           {/* Phones: the photo runs full-bleed above the title (same language as the home hero);
               desktop: a framed portrait in the right column. */}
           {photo && (
-            <div className="relative -mx-5 h-[38svh] min-h-60 overflow-hidden sm:-mx-8 lg:order-last lg:mx-0 lg:aspect-[4/5] lg:h-auto lg:max-h-[26rem] lg:min-h-0 lg:animate-rise lg:rounded-[2rem] lg:shadow-[0_30px_60px_-30px_rgba(43,32,25,0.5)] lg:[animation-delay:150ms]">
+            <div className="relative -mx-5 h-[38svh] min-h-60 overflow-hidden sm:-mx-8 lg:order-last lg:mx-0 lg:aspect-[4/5] lg:h-auto lg:max-h-[26rem] lg:min-h-0 lg:animate-rise lg:rounded-[2rem] lg:shadow-[0_30px_60px_-30px_rgba(23,23,23,0.5)] lg:[animation-delay:150ms]">
               <ParallaxMedia distance={12}>
                 <Image
                   src={photo.src}

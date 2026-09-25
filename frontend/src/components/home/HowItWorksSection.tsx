@@ -51,7 +51,7 @@ export function HowItWorksSection() {
               return (
                 <li key={step.title}>
                   <Reveal from="drop" delay={0.12 * i}>
-                    <div className="flex gap-3 rounded-[1.25rem] border border-ink/[0.07] bg-white/85 p-3.5 shadow-[0_14px_34px_-22px_rgba(43,32,25,0.55)] sm:p-4">
+                    <div className="flex gap-3 rounded-[1.25rem] border border-ink/[0.07] bg-marfil/85 p-3.5 shadow-[0_14px_34px_-22px_rgba(23,23,23,0.55)] sm:p-4">
                       {/* App icon */}
                       <span
                         className={

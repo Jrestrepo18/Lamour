@@ -50,7 +50,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
             aria-current={active ? "page" : undefined}
             className={clsx(
               "flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm font-medium transition-colors",
-              active ? "bg-ink text-ivory" : "text-ink-soft hover:bg-white/70 hover:text-ink",
+              active ? "bg-ink text-ivory" : "text-ink-soft hover:bg-marfil/70 hover:text-ink",
             )}
           >
             <link.icon size={17} aria-hidden />
@@ -67,7 +67,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
       <Link
         href="/"
         target="_blank"
-        className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm text-ink-soft transition-colors hover:bg-white/70 hover:text-ink"
+        className="flex min-h-11 items-center gap-3 rounded-xl px-3 text-sm text-ink-soft transition-colors hover:bg-marfil/70 hover:text-ink"
       >
         <ExternalLink size={17} aria-hidden />
         Ver sitio
@@ -75,7 +75,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
       <button
         type="button"
         onClick={handleLogout}
-        className="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-sm text-ink-soft transition-colors hover:bg-white/70 hover:text-ink"
+        className="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-sm text-ink-soft transition-colors hover:bg-marfil/70 hover:text-ink"
       >
         <LogOut size={17} aria-hidden />
         Cerrar sesión

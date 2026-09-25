@@ -195,7 +195,7 @@ export function ServicesView({ token }: { token: string }) {
           </thead>
           <tbody className="divide-y divide-ink/10">
             {services?.map((s) => (
-              <tr key={s.id} className="transition-colors hover:bg-white/60">
+              <tr key={s.id} className="transition-colors hover:bg-marfil/60">
                 <td className="px-4 py-3 font-medium text-ink">{s.name}</td>
                 <td className="px-4 py-3 text-ink-soft">
                   {categories.find((c) => c.id === s.serviceCategoryId)?.name ?? "—"}

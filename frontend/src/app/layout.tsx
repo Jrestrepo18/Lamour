@@ -57,7 +57,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#fdfbf7",
+  themeColor: "#f5f1e8",
   colorScheme: "light",
   // Lets the sticky mobile booking bar pad itself above the iPhone home indicator.
   viewportFit: "cover",

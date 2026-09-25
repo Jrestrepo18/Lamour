@@ -122,7 +122,7 @@ export function FaqSection() {
           </div>
 
           <Reveal delay={0.1}>
-            <div className="overflow-hidden rounded-[1.75rem] border border-ink/10 bg-white/75 shadow-[0_24px_60px_-36px_rgba(43,32,25,0.55)]">
+            <div className="overflow-hidden rounded-[1.75rem] border border-ink/10 bg-marfil/75 shadow-[0_24px_60px_-36px_rgba(23,23,23,0.55)]">
               {/* Chat header */}
               <div className="flex items-center gap-3 border-b border-ink/10 px-5 py-4">
                 <span className="relative">
@@ -144,7 +144,7 @@ export function FaqSection() {
                         "max-w-[85%] animate-fade-in px-4 py-2.5 text-[0.95rem] leading-relaxed",
                         m.from === "client"
                           ? "rounded-[1.25rem] rounded-br-md bg-ink text-ivory"
-                          : "rounded-[1.25rem] rounded-bl-md bg-[#f3e7c9] text-ink",
+                          : "rounded-[1.25rem] rounded-bl-md bg-[#efe4cf] text-ink",
                       )}
                     >
                       <span className="sr-only">{m.from === "client" ? "Tú: " : "L'AMOUR: "}</span>
@@ -158,7 +158,7 @@ export function FaqSection() {
                 {typing && (
                   <li className="flex items-start">
                     <span className="sr-only">L&apos;AMOUR está escribiendo…</span>
-                    <span aria-hidden className="flex gap-1 rounded-[1.25rem] rounded-bl-md bg-[#f3e7c9] px-4 py-3.5">
+                    <span aria-hidden className="flex gap-1 rounded-[1.25rem] rounded-bl-md bg-[#efe4cf] px-4 py-3.5">
                       {[0, 1, 2].map((d) => (
                         <span
                           key={d}
@@ -183,7 +183,7 @@ export function FaqSection() {
                           type="button"
                           onClick={() => ask(f.i)}
                           disabled={typing}
-                          className="min-h-10 cursor-pointer rounded-full border border-gold/50 bg-white px-4 py-2 text-left text-sm text-ink transition-colors hover:border-gold hover:bg-champagne/30 disabled:opacity-50"
+                          className="min-h-10 cursor-pointer rounded-full border border-gold/50 bg-marfil px-4 py-2 text-left text-sm text-ink transition-colors hover:border-gold hover:bg-champagne/30 disabled:opacity-50"
                         >
                           {f.q}
                         </button>

@@ -34,7 +34,7 @@ export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
-        className="group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_18px_40px_-30px_rgba(43,32,25,0.55)] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(43,32,25,0.6)] sm:rounded-[1.75rem]"
+        className="group relative block aspect-[3/4] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_18px_40px_-30px_rgba(23,23,23,0.55)] transition-[transform,box-shadow] duration-500 ease-out hover:-translate-y-1 hover:shadow-[0_30px_60px_-30px_rgba(23,23,23,0.6)] sm:rounded-[1.75rem]"
       >
         {showPhoto ? (
           // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host

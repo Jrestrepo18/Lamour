@@ -151,7 +151,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
               {/* Caption block */}
               <div className="absolute inset-x-0 bottom-0 pb-[max(1.5rem,env(safe-area-inset-bottom))] pl-5 pr-20">
                 <div className="flex items-center gap-2.5">
-                  <span className="rounded-full bg-[conic-gradient(from_210deg,#d4af37,#e8d8b0,#9c7a26,#d4af37)] p-[2px]">
+                  <span className="rounded-full bg-[conic-gradient(from_210deg,#c9a227,#d6b978,#a8871a,#c9a227)] p-[2px]">
                     <Image src="/icon.svg" alt="" width={28} height={28} className="h-7 w-7 rounded-full border-2 border-espresso" />
                   </span>
                   <span className="text-sm font-semibold text-ivory">L&apos;AMOUR</span>

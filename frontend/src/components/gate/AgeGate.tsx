@@ -31,7 +31,7 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
         aria-modal="true"
         aria-labelledby="age-gate-title"
         aria-describedby="age-gate-desc"
-        className="relative w-full max-w-md rounded-[2rem] border border-gold/25 bg-ivory/95 p-8 text-center shadow-[0_40px_80px_-30px_rgba(43,32,25,0.45)] sm:p-10"
+        className="relative w-full max-w-md rounded-[2rem] border border-gold/25 bg-ivory/95 p-8 text-center shadow-[0_40px_80px_-30px_rgba(23,23,23,0.45)] sm:p-10"
       >
         <p className="font-serif text-2xl font-bold tracking-wide text-ink">L&apos;AMOUR</p>
         <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-bronze">Estética y Sentidos</p>

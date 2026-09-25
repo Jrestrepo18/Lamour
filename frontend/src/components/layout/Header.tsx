@@ -60,7 +60,7 @@ export function Header() {
         className={clsx(
           "flex w-full items-center justify-between transition-all duration-500 ease-out",
           scrolled
-            ? "mx-4 max-w-3xl rounded-full border border-gold/15 bg-ivory/95 px-5 py-2.5 shadow-[0_8px_32px_-12px_rgba(42,33,25,0.25)]"
+            ? "mx-4 max-w-3xl rounded-full border border-gold/15 bg-ivory/95 px-5 py-2.5 shadow-[0_8px_32px_-12px_rgba(23,23,23,0.25)]"
             : "max-w-none rounded-none border-transparent bg-transparent px-6 py-6 sm:px-10",
         )}
       >

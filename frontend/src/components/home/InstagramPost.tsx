@@ -130,7 +130,7 @@ export function InstagramPost({
     >
       {/* Header */}
       <header className="flex items-center gap-3 px-5 py-3 sm:px-8 lg:px-0 lg:pt-0">
-        <span className="rounded-full bg-[conic-gradient(from_210deg,#d4af37,#e8d8b0,#9c7a26,#d4af37)] p-[2px]">
+        <span className="rounded-full bg-[conic-gradient(from_210deg,#c9a227,#d6b978,#a8871a,#c9a227)] p-[2px]">
           <span className="block rounded-full bg-ivory p-[2px]">
             <Image src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8 rounded-full" />
           </span>

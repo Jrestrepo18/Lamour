@@ -61,7 +61,7 @@ export function StatueFigure({ className }: { className?: string }) {
       {/* Aura: soft warm light behind the figure */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.35)_0%,rgba(232,216,176,0.25)_40%,transparent_70%)] blur-2xl"
+        className="pointer-events-none absolute left-1/2 top-1/2 h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(201,162,39,0.35)_0%,rgba(214,185,120,0.25)_40%,transparent_70%)] blur-2xl"
       />
 
       <div
@@ -76,7 +76,7 @@ export function StatueFigure({ className }: { className?: string }) {
           width={720}
           height={983}
           sizes="(min-width: 1024px) 30vw, 72vw"
-          className="h-[88%] w-auto animate-breathe drop-shadow-[0_30px_40px_rgba(43,32,25,0.25)]"
+          className="h-[88%] w-auto animate-breathe drop-shadow-[0_30px_40px_rgba(23,23,23,0.25)]"
         />
       </div>
 

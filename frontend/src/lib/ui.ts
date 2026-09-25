@@ -13,7 +13,7 @@ export const labelClass = "flex flex-col gap-1.5 text-sm font-medium text-ink";
 
 /** Raised content surface (cards, panels, form shells). */
 export const surfaceClass =
-  "rounded-[1.75rem] border border-ink/10 bg-white/70 shadow-[0_18px_40px_-32px_rgba(43,32,25,0.5)]";
+  "rounded-[1.75rem] border border-ink/10 bg-white/70 shadow-[0_18px_40px_-32px_rgba(23,23,23,0.5)]";
 
 /** Pill toggle / filter chip. */
 export function chipClass(active: boolean) {

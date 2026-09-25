@@ -41,15 +41,15 @@ export function FinalCta({ className }: { className?: string }) {
           style={{
             background: [
               // soft dark pool behind the text, fading out toward the edges
-              "radial-gradient(ellipse 75% 60% at 50% 55%, rgba(20,13,8,0.6) 0%, rgba(20,13,8,0.34) 55%, rgba(20,13,8,0.1) 100%)",
+              "radial-gradient(ellipse 75% 60% at 50% 55%, rgba(16,16,16,0.6) 0%, rgba(16,16,16,0.34) 55%, rgba(16,16,16,0.1) 100%)",
               // lead-out into the footer's ink
-              "linear-gradient(to bottom, rgba(43,32,25,0) 72%, #2b2019 100%)",
+              "linear-gradient(to bottom, rgba(23,23,23,0) 72%, #171717 100%)",
             ].join(", "),
           }}
         />
       </div>
 
-      <Container className="relative text-center [text-shadow:0_2px_24px_rgba(20,13,8,0.55)]">
+      <Container className="relative text-center [text-shadow:0_2px_24px_rgba(16,16,16,0.55)]">
         <Reveal>
           <p className="eyebrow justify-center !text-champagne">Tu momento te espera</p>
           <h2 className="mx-auto mt-5 max-w-2xl font-serif text-4xl font-semibold leading-tight tracking-tight text-ivory text-balance sm:text-6xl">

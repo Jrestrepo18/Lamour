@@ -61,7 +61,7 @@ export function TrustHighlights() {
   }
 
   return (
-    <section aria-label="Por qué elegir L'AMOUR" className="border-y border-ink/10 bg-white/50">
+    <section aria-label="Por qué elegir L'AMOUR" className="border-y border-ink/10 bg-marfil/50">
       <Container className="py-8 sm:py-10">
         <ul className="flex items-start justify-between gap-2 sm:justify-center sm:gap-12">
           {HIGHLIGHTS.map((h, i) => (
@@ -78,7 +78,7 @@ export function TrustHighlights() {
                     "block rounded-full p-[2.5px] transition-colors duration-500",
                     seen.has(i)
                       ? "bg-ink/15"
-                      : "bg-[conic-gradient(from_210deg,#d4af37,#e8d8b0,#9c7a26,#d4af37)]",
+                      : "bg-[conic-gradient(from_210deg,#c9a227,#d6b978,#a8871a,#c9a227)]",
                   )}
                 >
                   <span className="block rounded-full bg-ivory p-[3px]">

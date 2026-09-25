@@ -38,7 +38,7 @@ export function Hero() {
           bars, so the hero ends at the hours line and nothing from the next section peeks in. */}
       <Container className="relative flex min-h-[100lvh] flex-col lg:grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
         {/* Photo — first on phones (full-bleed), right column on desktop */}
-        <div className="relative -mx-5 min-h-56 flex-1 overflow-hidden sm:-mx-8 lg:order-last lg:flex-none lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(43,32,25,0.55)]">
+        <div className="relative -mx-5 min-h-56 flex-1 overflow-hidden sm:-mx-8 lg:order-last lg:flex-none lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(23,23,23,0.55)]">
           <ParallaxMedia>
             <Image
               src={HERO.src}
@@ -88,7 +88,7 @@ export function Hero() {
           <div className="mt-7 grid max-w-md animate-rise grid-cols-2 gap-2 [animation-delay:240ms] lg:mt-10">
             <Link
               href="/reservar"
-              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-[0.95rem] font-semibold text-ivory shadow-[0_12px_28px_-16px_rgba(43,32,25,0.8)] transition-colors duration-200 hover:bg-espresso active:scale-[0.98]"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-[0.95rem] font-semibold text-ivory shadow-[0_12px_28px_-16px_rgba(23,23,23,0.8)] transition-colors duration-200 hover:bg-espresso active:scale-[0.98]"
             >
               Reservar
             </Link>
@@ -97,14 +97,14 @@ export function Hero() {
                 href={whatsappHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-white/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-white active:scale-[0.98]"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
                 Mensaje
               </a>
             ) : (
               <Link
                 href="/servicios"
-                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-white/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-white active:scale-[0.98]"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
                 Ver servicios
               </Link>

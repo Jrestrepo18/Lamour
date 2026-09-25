@@ -104,7 +104,7 @@ export function MasseuseProfile({
         <div className="min-h-0 flex-1 overflow-y-auto pb-[max(1.25rem,env(safe-area-inset-bottom))]">
           {/* Profile header */}
           <div className="flex items-center gap-5 px-5 pt-3 sm:px-7">
-            <span className="shrink-0 rounded-full bg-[conic-gradient(from_210deg,#d4af37,#e8d8b0,#9c7a26,#d4af37)] p-[3px]">
+            <span className="shrink-0 rounded-full bg-[conic-gradient(from_210deg,#c9a227,#d6b978,#a8871a,#c9a227)] p-[3px]">
               <span className="block rounded-full bg-ivory p-[3px]">
                 <span className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-champagne via-silk to-champagne/60">
                   {avatar ? (

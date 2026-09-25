@@ -55,11 +55,11 @@ function HeroFigure({ onReady }: { onReady?: () => void }) {
 function Rig() {
   return (
     <>
-      <ambientLight intensity={0.55} color="#fdfbf7" />
-      <directionalLight position={[3.5, 3.5, 3]} intensity={1.8} color="#fdfbf7" />
+      <ambientLight intensity={0.55} color="#f5f1e8" />
+      <directionalLight position={[3.5, 3.5, 3]} intensity={1.8} color="#f5f1e8" />
       <pointLight position={[-2.5, -1, 1.5]} intensity={0.4} color="#c9a15a" />
       {/* Rim/back light: behind the figure, facing the camera, for the glowing edge */}
-      <pointLight position={[1.5, 0.5, -3.5]} intensity={1.2} color="#d4af37" />
+      <pointLight position={[1.5, 0.5, -3.5]} intensity={1.2} color="#c9a227" />
     </>
   );
 }
@@ -123,7 +123,7 @@ function Scene({ triggerRef, onReady }: { triggerRef: RefObject<HTMLElement | nu
       <group ref={tiltRef}>
         <Rig />
         <HeroFigure onReady={onReady} />
-        <Sparkles count={60} scale={4.5} size={1.8} speed={0.18} color="#e8d8b0" opacity={0.5} />
+        <Sparkles count={60} scale={4.5} size={1.8} speed={0.18} color="#d6b978" opacity={0.5} />
       </group>
       <PointerTilt groupRef={tiltRef} />
     </group>

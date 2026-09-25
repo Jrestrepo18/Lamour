@@ -45,7 +45,7 @@ export function ServiceStep({
               "inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-sans font-medium uppercase tracking-wide transition-colors",
               c.id === activeCategory
                 ? "border-ink bg-ink text-ivory"
-                : "border-ink/15 bg-white/50 text-ink-soft hover:border-gold hover:text-ink",
+                : "border-ink/15 bg-marfil/50 text-ink-soft hover:border-gold hover:text-ink",
             )}
           >
             {c.id === SAVED_ID && (
@@ -73,7 +73,7 @@ export function ServiceStep({
               onClick={() => onSelect(service)}
               className={clsx(
                 "flex cursor-pointer flex-col rounded-2xl border p-5 text-left transition-[border-color,background-color,box-shadow] duration-200",
-                isSelected ? "border-gold bg-gold/10 shadow-[0_0_0_1px_var(--color-gold)]" : "border-ink/10 bg-white/60 hover:border-gold/50",
+                isSelected ? "border-gold bg-gold/10 shadow-[0_0_0_1px_var(--color-gold)]" : "border-ink/10 bg-marfil/60 hover:border-gold/50",
               )}
             >
               <div className="flex items-start justify-between gap-2">

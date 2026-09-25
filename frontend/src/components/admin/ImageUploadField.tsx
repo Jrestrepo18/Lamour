@@ -41,7 +41,7 @@ export function ImageUploadField({
     <div className="flex flex-col gap-1.5 text-xs font-sans font-medium text-ink-soft">
       {label}
       <div className="flex items-center gap-3">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-ink/15 bg-white/60">
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-ink/15 bg-marfil/60">
           {value ? (
             // eslint-disable-next-line @next/next/no-img-element -- admin preview of an arbitrary uploaded/external URL, next/image needs a known remote host
             <img src={value} alt="" className="h-full w-full object-cover" />

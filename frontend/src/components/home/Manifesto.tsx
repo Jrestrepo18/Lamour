@@ -22,7 +22,7 @@ export function Manifesto() {
               <ScrollFocusText className="mt-6 font-serif text-[1.75rem] leading-[1.22] text-ink text-balance sm:text-5xl sm:leading-[1.15]">
                 Creemos en la pausa. En el contacto consciente. En regalarte, sin salir de casa, una experiencia
                 que despierta{" "}
-                <span className="bg-gradient-to-r from-bronze to-[#9c7a26] bg-clip-text font-semibold text-transparent">
+                <span className="bg-gradient-to-r from-bronze to-[#a8871a] bg-clip-text font-semibold text-transparent">
                   cada sentido.
                 </span>
               </ScrollFocusText>

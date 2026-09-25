@@ -73,7 +73,7 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
                   }}
                   aria-haspopup="dialog"
                   aria-label={`Ver reel: ${service.name}, ${formatCOP(service.price)}`}
-                  className="group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_24px_50px_-30px_rgba(43,32,25,0.6)] md:rounded-[1.5rem]"
+                  className="group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_24px_50px_-30px_rgba(23,23,23,0.6)] md:rounded-[1.5rem]"
                 >
                   <span className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
                     {service.imageUrl ? (

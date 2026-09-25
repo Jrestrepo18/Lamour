@@ -32,7 +32,7 @@ export function SummaryStep({
       <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Confirma tu experiencia</h2>
       <p className="mt-1 text-sm text-ink-soft">Revisa los detalles antes de enviar tu solicitud de reserva.</p>
 
-      <div className="mt-6 space-y-4 rounded-2xl border border-ink/15 bg-white/60 p-6">
+      <div className="mt-6 space-y-4 rounded-2xl border border-ink/15 bg-marfil/60 p-6">
         <div className="flex items-start justify-between gap-3 border-b border-ink/15 pb-4">
           <div className="flex items-start gap-3">
             <Sparkles size={18} className="mt-0.5 shrink-0 text-gold" />

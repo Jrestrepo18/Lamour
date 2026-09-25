@@ -15,18 +15,32 @@ import { SITE } from "@/lib/seo";
  */
 export function MobileBookingBar() {
   const pathname = usePathname();
-  const [shown, setShown] = useState(false);
   const onBooking = pathname?.startsWith("/reservar") ?? false;
   const whatsappHref = SITE.whatsapp
     ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, me gustaría más información sobre los servicios de L'AMOUR.")}`
     : null;
 
+  const [pastHero, setPastHero] = useState(false);
+  const [footerInView, setFooterInView] = useState(false);
+
   useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > window.innerHeight * 0.55);
+    const onScroll = () => setPastHero(window.scrollY > window.innerHeight * 0.55);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  // Step aside over the (black) footer: a black button on black disappears, and the
+  // closing "Tu momento te espera" section right above already offers its own CTA.
+  useEffect(() => {
+    const footer = document.getElementById("contacto");
+    if (!footer) return;
+    const io = new IntersectionObserver(([entry]) => setFooterInView(entry.isIntersecting));
+    io.observe(footer);
+    return () => io.disconnect();
+  }, [pathname]);
+
+  const shown = pastHero && !footerInView;
 
   if (onBooking && !whatsappHref) return null;
 
@@ -45,7 +59,7 @@ export function MobileBookingBar() {
         {!onBooking && (
           <Link
             href="/reservar"
-            className="pointer-events-auto flex min-h-13 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ivory shadow-[0_14px_34px_-10px_rgba(20,13,8,0.6)] ring-1 ring-gold/30 active:scale-[0.98]"
+            className="pointer-events-auto flex min-h-13 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ivory shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] ring-1 ring-gold/30 active:scale-[0.98]"
           >
             Reservar ahora
             <ArrowUpRight size={16} aria-hidden />
@@ -58,7 +72,7 @@ export function MobileBookingBar() {
             rel="noopener noreferrer"
             aria-label="Escríbenos por WhatsApp"
             className={clsx(
-              "pointer-events-auto flex min-h-13 items-center justify-center gap-2 rounded-full bg-[#25D366] text-sm font-medium text-white shadow-[0_14px_34px_-10px_rgba(20,13,8,0.6)] active:scale-[0.98]",
+              "pointer-events-auto flex min-h-13 items-center justify-center gap-2 rounded-full bg-[#25D366] text-sm font-medium text-white shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] active:scale-[0.98]",
               onBooking ? "flex-1" : "w-13",
             )}
           >

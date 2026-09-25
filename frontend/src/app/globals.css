@@ -2,31 +2,31 @@
 @import "lenis/dist/lenis.css";
 
 :root {
-  /* L'AMOUR — Estética y Sentidos: paleta oficial de marca (obligatoria) */
-  --color-ivory: #fdfbf7; /* Marfil — fondo general */
-  --color-silk: #e6dfd3; /* Beige seda — superficies y secciones alternas */
-  --color-champagne: #e8d8b0; /* Oro champagne — acentos suaves, degradados */
-  --color-gold: #d4af37; /* Oro esculpido — CTAs, bordes, detalles. NUNCA texto de cuerpo/botón sobre fondo claro (falla AA) */
-
-  /* Fase 0 — los dos tonos propuestos y aprobados, misma familia cálida (monocromía estricta) */
-  --color-ink: #2b2019; /* Café molido — texto sobre superficies claras */
-  --color-espresso: #140d08; /* Ébano cálido — fondo de secciones de contraste */
-  --color-ink-soft: #6b5a4a; /* Tinta suavizada para texto secundario */
-
-  /**
-   * Bronce — el único acento para TEXTO sobre fondos claros (eyebrows, enlaces,
-   * íconos informativos). El oro (#d4af37) no llega a AA como texto; el bronce
-   * sí: 6.0:1 sobre marfil y 4.7:1 sobre beige seda.
+  /*
+   * L'AMOUR — paleta oficial de la marca (definida por la dueña).
+   * Proporción de uso: 60 % blanco hueso · 20 % beige · 15 % negro · 5 % dorado.
    */
-  --color-bronze: #7a5c17;
-  /* Oro profundo: solo decorativo (degradados, hovers de relleno), nunca texto pequeño. */
-  --color-gold-dark: #b3901f;
+  --color-ivory: #f5f1e8; /* Blanco hueso — fondo general (60 %). Token histórico "ivory" = fondo. */
+  --color-silk: #e8dccb; /* Beige nude — fondos alternos y superficies suaves */
+  --color-beige: #d8c3a5; /* Beige cálido — secciones de acento y final del tinte de scroll (20 %) */
+  --color-champagne: #d6b978; /* Dorado champagne — acentos suaves; sobre negro (9.4:1) */
+  --color-gold: #c9a227; /* Dorado elegante — SOLO decoración sobre claro (2.2:1); sobre negro 7.4:1 (5 %) */
+  --color-marfil: #fffdf5; /* Marfil — tarjetas y superficies claras */
 
-  /**
-   * Secondary/body text tone, overridden locally (and animated on scroll) by
-   * ScrollTint's wrapper — see components/home/ScrollTint.tsx. Defaults here
-   * to plain --color-ink-soft so every use outside that wrapper is unaffected.
+  --color-ink: #171717; /* Negro elegante — títulos, botones, footer (15 %) */
+  --color-espresso: #101010; /* Negro profundo — velos y degradados sobre fotos */
+
+  /*
+   * Derivados para web (no están en la paleta porque son para lectura en pantalla):
+   * - ink-soft: gris cálido para párrafos; ≥ 4.6:1 sobre blanco hueso, nude y beige.
+   * - bronze: el mismo dorado, más profundo, para TEXTO dorado pequeño (5.8:1 sobre blanco hueso).
+   * - gold-dark: dorado profundo solo decorativo (degradados).
    */
+  --color-ink-soft: #57504a;
+  --color-bronze: #735a12;
+  --color-gold-dark: #a8871a;
+
+  /* Tono del texto secundario; ScrollTint lo hereda sin cambios (el gris cálido pasa en todo el recorrido). */
   --tone-body: var(--color-ink-soft);
 }
 
@@ -40,6 +40,8 @@
   --color-espresso: var(--color-espresso);
   --color-gold-dark: var(--color-gold-dark);
   --color-bronze: var(--color-bronze);
+  --color-beige: var(--color-beige);
+  --color-marfil: var(--color-marfil);
 
   /* Una sola familia a distintos pesos — ver nota en layout.tsx */
   --font-serif: var(--font-general-sans);
