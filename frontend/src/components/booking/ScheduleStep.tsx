@@ -2,15 +2,22 @@
 
 import { useEffect, useState } from "react";
 import clsx from "clsx";
-import { Loader2 } from "lucide-react";
 import { addDays, format, isSameDay } from "date-fns";
 import { es } from "date-fns/locale";
 import { getAvailability } from "@/lib/api";
 import { formatTime } from "@/lib/format";
+import { chipClass } from "@/lib/ui";
 import type { AvailabilitySlot, Masseuse, Service } from "@/lib/types";
+import { GroupLabel, StepHeading, railClass, wrapRailClass } from "./parts";
 
 const DAYS_AHEAD = 14;
 const EXTRA_TIME_OPTIONS = [0, 15, 30, 45];
+
+const DAYPARTS = [
+  { label: "Mañana", test: (h: number) => h < 12 },
+  { label: "Tarde", test: (h: number) => h >= 12 && h < 18 },
+  { label: "Noche", test: (h: number) => h >= 18 },
+];
 
 export function ScheduleStep({
   service,
@@ -69,29 +76,51 @@ export function ScheduleStep({
     };
   }, [primary.id, secondary, dateStr, duration]);
 
-  const days = Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(new Date(), i));
+  const today = new Date();
+  const days = Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));
+  const available = slots?.filter((s) => s.available) ?? [];
+  const who = secondary ? `${primary.stageName} y ${secondary.stageName}` : primary.stageName;
 
   return (
     <div>
-      <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Elige tu horario</h2>
-      <p className="mt-1 text-sm text-ink-soft">Disponibilidad en tiempo real, sin cruces de agenda.</p>
+      <StepHeading title="¿Cuándo te visitamos?" hint={`Solo ves los horarios en que ${who} ${secondary ? "están" : "está"} libre.`} />
+
+      <p className="mt-7 text-sm font-semibold capitalize text-ink">{format(date, "MMMM yyyy", { locale: es })}</p>
+      <div className={clsx(railClass, "mt-3")}>
+        {days.map((d, i) => {
+          const active = isSameDay(d, date);
+          return (
+            <button
+              key={d.toISOString()}
+              type="button"
+              aria-pressed={active}
+              aria-label={format(d, "EEEE d 'de' MMMM", { locale: es })}
+              onClick={() => onDateChange(d)}
+              className={clsx(
+                "flex w-[3.75rem] shrink-0 cursor-pointer flex-col items-center gap-0.5 rounded-2xl border py-2.5 transition-colors duration-200",
+                active ? "border-ink bg-ink text-ivory" : "border-ink/10 bg-marfil/60 text-ink hover:border-gold/60",
+              )}
+            >
+              <span className={clsx("text-[0.65rem] font-semibold uppercase tracking-wide", active ? "text-champagne" : "text-ink-soft")}>
+                {i === 0 ? "Hoy" : format(d, "EEE", { locale: es }).replace(".", "")}
+              </span>
+              <span className="font-serif text-lg font-semibold">{format(d, "d")}</span>
+            </button>
+          );
+        })}
+      </div>
 
       {service.allowsExtraTime && (
-        <div className="mt-6">
-          <p className="mb-2 text-xs font-sans font-semibold uppercase tracking-wide text-bronze">
-            Tiempo adicional (opcional)
-          </p>
-          <div className="flex gap-2">
+        <div className="mt-7">
+          <GroupLabel>¿Un poco más de tiempo?</GroupLabel>
+          <div className={clsx(wrapRailClass, "mt-3")}>
             {EXTRA_TIME_OPTIONS.map((m) => (
               <button
                 key={m}
                 type="button"
                 aria-pressed={extraMinutes === m}
                 onClick={() => onExtraMinutesChange(m)}
-                className={clsx(
-                  "inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-sans",
-                  extraMinutes === m ? "border-ink bg-ink text-ivory" : "border-ink/15 text-ink-soft hover:border-gold",
-                )}
+                className={clsx(chipClass(extraMinutes === m), "min-h-11 shrink-0 whitespace-nowrap")}
               >
                 {m === 0 ? "Sin extra" : `+${m} min`}
               </button>
@@ -100,66 +129,49 @@ export function ScheduleStep({
         </div>
       )}
 
-      <div
-        className="mt-6 -mx-1 flex gap-2 overflow-x-auto overflow-y-hidden pb-2"
-        style={{ maskImage: "linear-gradient(to right, transparent, black 12px, black calc(100% - 12px), transparent)" }}
-      >
-        {days.map((d) => {
-          const active = isSameDay(d, date);
-          return (
-            <button
-              key={d.toISOString()}
-              type="button"
-              aria-pressed={active}
-              onClick={() => onDateChange(d)}
-              className={clsx(
-                "flex min-h-11 shrink-0 flex-col items-center justify-center rounded-xl border px-3.5 py-2.5 transition-colors",
-                active ? "border-ink bg-ink text-ivory" : "border-ink/15 text-ink-soft hover:border-gold",
-              )}
-            >
-              <span className="text-[0.6rem] font-sans uppercase tracking-wide">
-                {format(d, "EEE", { locale: es })}
-              </span>
-              <span className="font-serif text-base">{format(d, "d")}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mt-6" aria-live="polite">
+      <div className="mt-8 space-y-7" aria-live="polite" aria-busy={loading}>
         {loading ? (
-          <div className="flex items-center justify-center gap-2 py-12 text-sm text-ink-soft">
-            <Loader2 size={18} className="animate-spin text-gold" />
-            Consultando disponibilidad de {primary.stageName}
-            {secondary ? ` y ${secondary.stageName}` : ""}…
-          </div>
-        ) : (
-          <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-6">
-            {slots
-              ?.filter((s) => s.available)
-              .map((s) => (
-                <button
-                  key={s.start}
-                  type="button"
-                  aria-pressed={selectedStart === s.start}
-                  onClick={() => onSelectSlot(s)}
-                  className={clsx(
-                    "flex min-h-11 items-center justify-center rounded-lg border px-3 py-2.5 text-sm font-sans transition-colors",
-                    selectedStart === s.start
-                      ? "border-ink bg-ink text-ivory"
-                      : "border-ink/15 text-ink hover:border-gold",
-                  )}
-                >
-                  {formatTime(s.start)}
-                </button>
+          <div>
+            <span className="sr-only">Consultando disponibilidad…</span>
+            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5" aria-hidden>
+              {Array.from({ length: 9 }).map((_, i) => (
+                <div key={i} className="h-12 animate-pulse rounded-xl bg-ink/[0.06]" />
               ))}
+            </div>
           </div>
-        )}
-
-        {!loading && slots?.every((s) => !s.available) && (
-          <p className="py-8 text-center text-sm text-ink-soft">
-            No hay horarios disponibles este día. Prueba otra fecha.
+        ) : available.length === 0 ? (
+          <p className="rounded-2xl bg-marfil/70 px-5 py-6 text-center text-sm text-ink-soft">
+            {isSameDay(date, today) ? "Hoy ya no quedan horarios." : "Este día no quedan horarios."} Prueba con otra fecha.
           </p>
+        ) : (
+          DAYPARTS.map((part) => {
+            const list = available.filter((s) => part.test(new Date(s.start).getHours()));
+            if (list.length === 0) return null;
+            return (
+              <div key={part.label} className="animate-fade-in">
+                <GroupLabel>{part.label}</GroupLabel>
+                <div className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
+                  {list.map((s) => {
+                    const on = selectedStart === s.start;
+                    return (
+                      <button
+                        key={s.start}
+                        type="button"
+                        aria-pressed={on}
+                        onClick={() => onSelectSlot(s)}
+                        className={clsx(
+                          "flex min-h-12 cursor-pointer items-center justify-center rounded-xl border text-sm font-medium transition-colors duration-200",
+                          on ? "border-ink bg-ink text-ivory" : "border-ink/10 bg-marfil/60 text-ink hover:border-gold/60",
+                        )}
+                      >
+                        {formatTime(s.start)}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
         )}
       </div>
     </div>

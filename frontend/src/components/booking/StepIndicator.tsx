@@ -1,47 +1,48 @@
 import clsx from "clsx";
-import { Check } from "lucide-react";
 
-const STEPS = ["Servicio", "Masajista", "Horario", "Tus Datos", "Confirmación"];
+export const STEPS = ["Servicio", "Masajista", "Horario", "Tus datos", "Confirmar"];
 
-export function StepIndicator({ current }: { current: number }) {
+/**
+ * Progress as Instagram story bars: one segment per step, filled in ink once
+ * done and in gold while current. Finished segments are buttons, so the
+ * visitor can hop back to any earlier step.
+ */
+export function StepIndicator({ current, onJump }: { current: number; onJump: (step: number) => void }) {
   return (
-    <ol aria-label="Progreso de la reserva" className="flex w-full items-center">
-      {STEPS.map((label, i) => {
-        const step = i + 1;
-        const done = step < current;
-        const active = step === current;
-        return (
-          <li
-            key={label}
-            aria-current={active ? "step" : undefined}
-            className="flex flex-1 items-center last:flex-none"
-          >
-            <div className="flex flex-col items-center gap-1.5">
-              <span
-                className={clsx(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-xs font-sans font-semibold transition-colors",
-                  done && "border-ink bg-ink text-ivory",
-                  active && "border-gold bg-gold/15 text-ink ring-4 ring-gold/15",
-                  !done && !active && "border-ink/15 text-ink-soft",
-                )}
+    <nav aria-label="Progreso de la reserva">
+      <ol className="flex gap-1.5">
+        {STEPS.map((label, i) => {
+          const step = i + 1;
+          const done = step < current;
+          const active = step === current;
+          return (
+            <li key={label} className="flex-1" aria-current={active ? "step" : undefined}>
+              <button
+                type="button"
+                disabled={!done}
+                onClick={() => onJump(step)}
+                aria-label={done ? `Volver a ${label}` : `${label}${active ? " (paso actual)" : ""}`}
+                className="block w-full cursor-pointer py-2 disabled:cursor-default"
               >
-                {done ? <Check size={14} /> : step}
-              </span>
-              <span
-                className={clsx(
-                  "hidden text-[0.65rem] font-sans uppercase tracking-wider sm:block",
-                  active ? "font-semibold text-ink" : "text-ink-soft",
-                )}
-              >
-                {label}
-              </span>
-            </div>
-            {step < STEPS.length && (
-              <div aria-hidden className={clsx("mx-2 h-px flex-1 transition-colors", done ? "bg-gold" : "bg-ink/10")} />
-            )}
-          </li>
-        );
-      })}
-    </ol>
+                <span className="block h-[3px] overflow-hidden rounded-full bg-ink/10">
+                  <span
+                    className={clsx(
+                      "block h-full rounded-full transition-[width,background-color] duration-500 ease-out",
+                      done ? "w-full bg-ink" : active ? "w-full bg-gold" : "w-0",
+                    )}
+                  />
+                </span>
+              </button>
+            </li>
+          );
+        })}
+      </ol>
+      <p className="mt-1 flex items-baseline justify-between text-xs">
+        <span className="font-semibold uppercase tracking-[0.22em] text-bronze">{STEPS[current - 1]}</span>
+        <span className="text-ink-soft">
+          Paso {current} de {STEPS.length}
+        </span>
+      </p>
+    </nav>
   );
 }

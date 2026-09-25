@@ -1,23 +1,24 @@
 "use client";
 
 import clsx from "clsx";
-import { fieldClass, labelClass } from "@/lib/ui";
+import { ChevronDown } from "lucide-react";
 import type { ChangeEvent } from "react";
+import { fieldClass, labelClass } from "@/lib/ui";
+import { MUNICIPIOS } from "@/lib/coverage";
 import type { PaymentMethod, Service } from "@/lib/types";
 import type { ClientDetails } from "./types";
+import { GroupLabel, StepHeading } from "./parts";
 
 const PAYMENT_OPTIONS: { value: PaymentMethod; label: string }[] = [
   { value: "Cash", label: "Efectivo" },
   { value: "Transfer", label: "Transferencia" },
-  { value: "Card", label: "Tarjeta (datáfono)" },
+  { value: "Card", label: "Datáfono" },
 ];
 
-// text-base (16px), not text-sm — anything smaller makes iOS Safari zoom the
-// whole page in when the field is focused, which then has to be manually
-// zoomed back out. That zoom-jump is exactly the kind of thing that tanks
-// completion on the one form in this flow that has to work on a phone.
+// Fields keep text-base (16px): anything smaller makes iOS Safari zoom the page on focus.
 const inputClass = fieldClass;
 
+/** The one real form in the flow, split into three short groups so it never reads as paperwork. */
 export function DetailsStep({
   service,
   details,
@@ -32,42 +33,51 @@ export function DetailsStep({
   }
 
   function handle(key: keyof ClientDetails) {
-    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => set(key, e.target.value as never);
+    return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => set(key, e.target.value as never);
   }
+
+  const cities = MUNICIPIOS.includes(details.city) ? MUNICIPIOS : [details.city, ...MUNICIPIOS];
 
   return (
     <div>
-      <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Tus datos</h2>
-      <p className="mt-1 text-sm text-ink-soft">Necesitamos esta información para confirmar tu cita a domicilio.</p>
+      <StepHeading title="Casi listo" hint="Solo lo necesario para confirmar tu cita y llegar a ti." />
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <fieldset className="mt-8 space-y-4">
+        <legend className="mb-4">
+          <GroupLabel>Contacto</GroupLabel>
+        </legend>
         <label className={labelClass}>
-          Nombre completo
+          Nombre
           <input
             className={inputClass}
             value={details.clientName}
             onChange={handle("clientName")}
-            placeholder="Ej. María González"
+            placeholder="Como quieres que te llamemos"
             autoComplete="name"
             required
           />
         </label>
-
         <label className={labelClass}>
-          Teléfono / WhatsApp
+          WhatsApp
           <input
             className={inputClass}
             value={details.clientPhone}
             onChange={handle("clientPhone")}
-            placeholder="Ej. 300 123 4567"
+            placeholder="300 123 4567"
             type="tel"
             inputMode="tel"
             autoComplete="tel"
             required
           />
+          <span className="text-xs font-normal text-ink-soft">Por aquí te confirmamos la cita.</span>
         </label>
+      </fieldset>
 
-        <label className={`${labelClass} sm:col-span-2`}>
+      <fieldset className="mt-9 space-y-4">
+        <legend className="mb-4">
+          <GroupLabel>¿Dónde te visitamos?</GroupLabel>
+        </legend>
+        <label className={labelClass}>
           Dirección
           <input
             className={inputClass}
@@ -78,85 +88,111 @@ export function DetailsStep({
             required
           />
         </label>
-
         <label className={labelClass}>
-          Barrio
-          <input
-            className={inputClass}
-            value={details.neighborhood}
-            onChange={handle("neighborhood")}
-            placeholder="Ej. El Poblado"
-            required
-          />
-        </label>
-
-        <label className={labelClass}>
-          Ciudad / Municipio
-          <input
-            className={inputClass}
-            value={details.city}
-            onChange={handle("city")}
-            autoComplete="address-level2"
-            required
-          />
-        </label>
-
-        <label className={`${labelClass} sm:col-span-2`}>
-          Detalles de la dirección (opcional)
+          <span>
+            Apto, torre o referencia <span className="font-normal text-ink-soft">(opcional)</span>
+          </span>
           <input
             className={inputClass}
             value={details.addressDetails}
             onChange={handle("addressDetails")}
-            placeholder="Apto, torre, referencia de acceso"
+            placeholder="Ej. Torre 2, apto 1204"
           />
         </label>
+        <div className="grid grid-cols-2 gap-3">
+          <label className={labelClass}>
+            Barrio
+            <input
+              className={inputClass}
+              value={details.neighborhood}
+              onChange={handle("neighborhood")}
+              placeholder="El Poblado"
+              required
+            />
+          </label>
+          <label className={labelClass}>
+            Municipio
+            <span className="relative">
+              <select
+                className={clsx(inputClass, "cursor-pointer appearance-none pr-10")}
+                value={details.city}
+                onChange={handle("city")}
+                autoComplete="address-level2"
+              >
+                {cities.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown size={16} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-soft" aria-hidden />
+            </span>
+          </label>
+        </div>
+      </fieldset>
 
-        <label className={`${labelClass} sm:col-span-2`}>
-          Notas para la masajista (opcional)
+      <fieldset className="mt-9 space-y-4">
+        <legend className="mb-4">
+          <GroupLabel>Tu experiencia</GroupLabel>
+        </legend>
+
+        {service.hasSensoryDressOption && (
+          <label className="flex cursor-pointer items-center justify-between gap-4 rounded-2xl bg-marfil/70 px-4 py-3.5">
+            <span className="text-sm text-ink">
+              Vestidura sensorial
+              <span className="block text-xs text-ink-soft">La sesión se realiza en panty.</span>
+            </span>
+            <input
+              type="checkbox"
+              checked={details.sensoryDressRequested}
+              onChange={(e) => set("sensoryDressRequested", e.target.checked)}
+              className="peer sr-only"
+            />
+            <span
+              aria-hidden
+              className="relative h-7 w-12 shrink-0 rounded-full bg-ink/15 transition-colors duration-200 after:absolute after:left-0.5 after:top-0.5 after:h-6 after:w-6 after:rounded-full after:bg-marfil after:shadow after:transition-transform after:duration-200 peer-checked:bg-ink peer-checked:after:translate-x-5 peer-focus-visible:ring-2 peer-focus-visible:ring-bronze"
+            />
+          </label>
+        )}
+
+        <label className={labelClass}>
+          <span>
+            Algo que tu terapeuta deba saber <span className="font-normal text-ink-soft">(opcional)</span>
+          </span>
           <textarea
-            className={clsx(inputClass, "min-h-20 resize-none")}
+            className={clsx(inputClass, "min-h-24 resize-none")}
             value={details.notes}
             onChange={handle("notes")}
-            placeholder="Alergias, preferencias, indicaciones de acceso al edificio…"
+            placeholder="Alergias, zonas a evitar, cómo entrar al edificio…"
           />
         </label>
-      </div>
 
-      {service.hasSensoryDressOption && (
-        <label className="mt-6 flex items-center gap-3 rounded-xl border border-ink/15 px-4 py-3.5">
-          <input
-            type="checkbox"
-            checked={details.sensoryDressRequested}
-            onChange={(e) => set("sensoryDressRequested", e.target.checked)}
-            className="h-4 w-4 accent-[var(--color-gold)]"
-          />
-          <span className="text-sm text-ink">
-            Deseo la sesión con <strong>vestidura sensorial</strong> (en panty)
-          </span>
-        </label>
-      )}
-
-      <div className="mt-6">
-        <p className="mb-3 text-sm font-medium text-ink">Método de pago</p>
-        <div className="flex flex-wrap gap-2">
-          {PAYMENT_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              aria-pressed={details.paymentMethod === opt.value}
-              onClick={() => set("paymentMethod", opt.value)}
-              className={clsx(
-                "inline-flex min-h-11 items-center justify-center rounded-full border px-4 py-2 text-xs font-sans",
-                details.paymentMethod === opt.value
-                  ? "border-ink bg-ink text-ivory"
-                  : "border-ink/15 text-ink-soft hover:border-gold",
-              )}
-            >
-              {opt.label}
-            </button>
-          ))}
+        <div>
+          <p className="mb-2 text-sm font-medium text-ink" id="pago-label">
+            ¿Cómo prefieres pagar?
+          </p>
+          <div role="radiogroup" aria-labelledby="pago-label" className="grid grid-cols-3 gap-1 rounded-2xl bg-ink/[0.06] p-1">
+            {PAYMENT_OPTIONS.map((opt) => {
+              const on = details.paymentMethod === opt.value;
+              return (
+                <button
+                  key={opt.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => set("paymentMethod", opt.value)}
+                  className={clsx(
+                    "min-h-11 cursor-pointer rounded-xl text-sm font-medium transition-[background-color,color,box-shadow] duration-200",
+                    on ? "bg-marfil text-ink shadow-[0_2px_8px_-2px_rgba(23,23,23,0.2)]" : "text-ink-soft hover:text-ink",
+                  )}
+                >
+                  {opt.label}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </fieldset>
     </div>
   );
 }

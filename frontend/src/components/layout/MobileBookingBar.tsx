@@ -43,7 +43,8 @@ export function MobileBookingBar() {
 
   const shown = pastHero && !footerInView;
 
-  if (onBooking && !whatsappHref) return null;
+  // The booking flow brings its own floating actions (and a WhatsApp link).
+  if (onBooking) return null;
 
   return (
     <div
@@ -57,28 +58,22 @@ export function MobileBookingBar() {
       )}
     >
       <div className="mx-auto flex max-w-md items-center gap-3">
-        {!onBooking && (
-          <Link
-            href="/reservar"
-            className="pointer-events-auto flex min-h-13 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ivory shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] ring-1 ring-gold/30 active:scale-[0.98]"
-          >
-            Reservar ahora
-            <ArrowUpRight size={16} aria-hidden />
-          </Link>
-        )}
+        <Link
+          href="/reservar"
+          className="pointer-events-auto flex min-h-13 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ivory shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] ring-1 ring-gold/30 active:scale-[0.98]"
+        >
+          Reservar ahora
+          <ArrowUpRight size={16} aria-hidden />
+        </Link>
         {whatsappHref && (
           <a
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
             aria-label="Escríbenos por WhatsApp"
-            className={clsx(
-              "pointer-events-auto flex min-h-13 items-center justify-center gap-2 rounded-full bg-[#25D366] text-sm font-medium text-white shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] active:scale-[0.98]",
-              onBooking ? "flex-1" : "w-13",
-            )}
+            className="pointer-events-auto flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] active:scale-[0.98]"
           >
             <WhatsAppIcon size={24} />
-            {onBooking && "¿Dudas? Escríbenos por WhatsApp"}
           </a>
         )}
       </div>

@@ -4,7 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react";
 import { Container } from "@/components/ui/Container";
-import { Button } from "@/components/ui/Button";
+import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { createAppointment } from "@/lib/api";
 import type { AvailabilitySlot, Masseuse, ServiceCategory, Service } from "@/lib/types";
 import { StepIndicator } from "./StepIndicator";
@@ -16,7 +16,8 @@ import { SummaryStep } from "./SummaryStep";
 import { SuccessScreen } from "./SuccessScreen";
 import { EMPTY_CLIENT_DETAILS, type ClientDetails } from "./types";
 import { findMunicipio } from "@/lib/coverage";
-import { surfaceClass } from "@/lib/ui";
+import { formatCOP } from "@/lib/format";
+import { SITE } from "@/lib/seo";
 
 export function BookingFlow({
   categories,
@@ -61,6 +62,7 @@ export function BookingFlow({
   const [confirmedAt, setConfirmedAt] = useState<string | null>(null);
   const [attemptedAdvance, setAttemptedAdvance] = useState(false);
   const formTopRef = useRef<HTMLDivElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
 
   const previousStep = useRef(step);
 
@@ -145,21 +147,47 @@ export function BookingFlow({
     }
   }
 
-  if (confirmedAt) {
+  useEffect(() => {
+    if (confirmedAt) successRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [confirmedAt]);
+
+  if (confirmedAt && service && primary) {
     return (
-      <Container className="max-w-2xl py-20">
-        <SuccessScreen clientName={details.clientName} startsAt={confirmedAt} />
+      <Container>
+        <div ref={successRef} className="mx-auto max-w-2xl scroll-mt-20">
+        <SuccessScreen
+          clientName={details.clientName}
+          startsAt={confirmedAt}
+          service={service}
+          primary={primary}
+          secondary={secondary}
+        />
+        </div>
       </Container>
     );
   }
 
+  const message = attemptedAdvance ? validationMessage() : null;
+  const whatsappHref = SITE.whatsapp
+    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, tengo una duda sobre mi reserva en L'AMOUR.")}`
+    : null;
+
+  function advance() {
+    if (!canAdvance()) {
+      setAttemptedAdvance(true);
+      return;
+    }
+    setStep((s) => Math.min(5, s + 1));
+  }
+
   return (
-    <Container className="max-w-3xl py-16 sm:py-20">
-      <div ref={formTopRef} className="mb-10 scroll-mt-28">
-        <StepIndicator current={step} />
+    <Container className="pb-10 pt-8 sm:pt-12">
+      <div className="mx-auto max-w-2xl">
+      <div ref={formTopRef} className="scroll-mt-24">
+        <StepIndicator current={step} onJump={setStep} />
       </div>
 
-      <div className={`${surfaceClass} p-6 sm:p-10`}>
+      <div key={step} className="mt-8 animate-fade-up">
         {step === 1 && <ServiceStep categories={categories} selected={service} onSelect={selectService} />}
 
         {step === 2 && service && (
@@ -186,7 +214,10 @@ export function BookingFlow({
             selectedStart={slot?.start ?? null}
             onSelectSlot={setSlot}
             extraMinutes={details.extraMinutes}
-            onExtraMinutesChange={(m) => setDetails((d) => ({ ...d, extraMinutes: m }))}
+            onExtraMinutesChange={(m) => {
+              setDetails((d) => ({ ...d, extraMinutes: m }));
+              setSlot(null);
+            }}
           />
         )}
 
@@ -194,57 +225,86 @@ export function BookingFlow({
 
         {step === 5 && service && primary && slot && (
           <SummaryStep
+            categories={categories}
             service={service}
             primary={primary}
             secondary={secondary}
             startsAt={slot.start}
             details={details}
             error={error}
+            onEdit={setStep}
           />
         )}
+      </div>
 
-        <div className="mt-10 border-t border-ink/10 pt-6">
-          {step < 5 && attemptedAdvance && validationMessage() && (
-            <p role="alert" className="mb-3 text-right text-sm font-medium text-bronze">{validationMessage()}</p>
-          )}
-          <div className="flex items-center justify-between">
+      {whatsappHref && (
+        <p className="mt-10 text-center text-sm text-ink-soft">
+          ¿Dudas?{" "}
+          <a
+            href={whatsappHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 font-semibold text-ink underline decoration-gold/60 underline-offset-4"
+          >
+            <WhatsAppIcon size={15} className="text-[#25D366]" />
+            Escríbenos
+          </a>
+        </p>
+      )}
+
+      {/* Floating actions: no strip behind them, same as the site's booking button.
+          Sticky inside the flow, so they ride along while scrolling and settle at its end. */}
+      <div className="pointer-events-none sticky bottom-0 z-30 -mx-1 mt-6 px-1 pb-[max(1rem,env(safe-area-inset-bottom))] pt-2">
+        {message && (
+          <p
+            role="alert"
+            key={message}
+            className="pointer-events-auto mx-auto mb-3 w-fit max-w-full animate-fade-up rounded-full bg-ink px-4 py-2 text-center text-sm text-ivory shadow-[0_12px_28px_-12px_rgba(16,16,16,0.6)]"
+          >
+            {message}
+          </p>
+        )}
+        <div className="flex items-center gap-3">
+          {step > 1 && (
             <button
               type="button"
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              disabled={step === 1}
-              className="inline-flex min-h-11 cursor-pointer items-center gap-1 text-sm font-medium text-ink-soft transition-colors hover:text-ink disabled:invisible"
+              aria-label="Paso anterior"
+              className="pointer-events-auto flex h-13 w-13 shrink-0 cursor-pointer items-center justify-center rounded-full bg-marfil text-ink shadow-[0_14px_34px_-12px_rgba(16,16,16,0.45)] ring-1 ring-ink/10 transition-transform active:scale-95"
             >
-              <ChevronLeft size={16} />
-              Atrás
+              <ChevronLeft size={20} aria-hidden />
             </button>
-
-            {step < 5 ? (
-              <Button
-                onClick={() => {
-                  if (!canAdvance()) {
-                    setAttemptedAdvance(true);
-                    return;
-                  }
-                  setStep((s) => Math.min(5, s + 1));
-                }}
-              >
-                Continuar
-                <ChevronRight size={16} />
-              </Button>
+          )}
+          <button
+            type="button"
+            onClick={step < 5 ? advance : handleSubmit}
+            disabled={submitting}
+            className="pointer-events-auto flex min-h-13 flex-1 cursor-pointer items-center justify-between gap-3 rounded-full bg-ink py-1.5 pl-6 pr-1.5 text-ivory shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] ring-1 ring-gold/30 transition-transform active:scale-[0.98] disabled:opacity-80"
+          >
+            <span className="flex items-center gap-2 text-[0.95rem] font-semibold">
+              {submitting ? (
+                <>
+                  <Loader2 size={16} className="animate-spin" aria-hidden />
+                  Enviando…
+                </>
+              ) : step < 5 ? (
+                "Continuar"
+              ) : (
+                "Enviar solicitud"
+              )}
+            </span>
+            {service ? (
+              <span className="rounded-full bg-ivory/10 px-3.5 py-2 text-sm font-semibold text-champagne">
+                {formatCOP(service.price)}
+              </span>
             ) : (
-              <Button onClick={handleSubmit} disabled={submitting}>
-                {submitting ? (
-                  <>
-                    <Loader2 size={16} className="animate-spin" />
-                    Enviando…
-                  </>
-                ) : (
-                  "Confirmar reserva"
-                )}
-              </Button>
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ivory/10">
+                <ChevronRight size={18} aria-hidden />
+              </span>
             )}
-          </div>
+          </button>
         </div>
+      </div>
       </div>
     </Container>
   );

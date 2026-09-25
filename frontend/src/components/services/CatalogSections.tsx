@@ -1,19 +1,11 @@
 import Link from "next/link";
 import { ArrowUpRight, ShieldCheck } from "lucide-react";
 import type { ServiceCategory } from "@/lib/types";
+import { CATEGORY_SHORT } from "@/lib/catalog";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
 import { CategorySection } from "@/components/home/CategorySection";
 import { CouplesSection } from "@/components/home/CouplesSection";
-
-/** Short chip labels — the full category names are too long for a one-line pill row on a phone. */
-const CATEGORY_SHORT: Record<string, string> = {
-  "eroticos-tantricos": "Tántricos",
-  "terapias-especiales": "Terapias especiales",
-  sensoriales: "Sensoriales",
-  "experiencias-pareja": "En pareja",
-  "relajacion-muscular": "Relajación",
-};
 
 const CATEGORY_EYEBROW: Record<string, string> = {
   "eroticos-tantricos": "Nuestro ritual insignia",

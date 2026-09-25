@@ -63,3 +63,12 @@ export function findService(categories: ServiceCategory[], slug: string) {
   }
   return null;
 }
+
+/** Short chip labels — the full category names are too long for a one-line pill row on a phone. */
+export const CATEGORY_SHORT: Record<string, string> = {
+  "eroticos-tantricos": "Tántricos",
+  "terapias-especiales": "Terapias especiales",
+  sensoriales: "Sensoriales",
+  "experiencias-pareja": "En pareja",
+  "relajacion-muscular": "Relajación",
+};

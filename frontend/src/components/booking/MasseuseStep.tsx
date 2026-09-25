@@ -1,13 +1,15 @@
 "use client";
 
 import clsx from "clsx";
-import { Check } from "lucide-react";
+import { BadgeCheck, Check } from "lucide-react";
 import type { Masseuse, Service } from "@/lib/types";
+import { StepHeading, StoryAvatar } from "./parts";
 
-function initials(name: string) {
-  return name.slice(0, 1).toUpperCase();
-}
-
+/**
+ * The team as story avatars: tap one and her ring lights up gold. Four-hands
+ * rituals take two taps — the first becomes the lead therapist (badge 1),
+ * the second her partner (badge 2); tapping a chosen one again releases her.
+ */
 export function MasseuseStep({
   masseuses,
   service,
@@ -20,104 +22,91 @@ export function MasseuseStep({
   service: Service;
   primary: Masseuse | null;
   secondary: Masseuse | null;
-  onSelectPrimary: (m: Masseuse) => void;
+  onSelectPrimary: (m: Masseuse | null) => void;
   onSelectSecondary: (m: Masseuse | null) => void;
 }) {
   const needsTwo = service.requiresTwoTherapists;
   const active = masseuses.filter((m) => m.isActive);
 
+  function toggle(m: Masseuse) {
+    if (!needsTwo) {
+      onSelectPrimary(m);
+      return;
+    }
+    if (primary?.id === m.id) {
+      // Releasing the lead promotes the partner, so "1" is always filled first.
+      onSelectPrimary(secondary);
+      onSelectSecondary(null);
+    } else if (secondary?.id === m.id) {
+      onSelectSecondary(null);
+    } else if (!primary) {
+      onSelectPrimary(m);
+    } else {
+      onSelectSecondary(m);
+    }
+  }
+
+  const chosen = [primary, secondary].filter(Boolean) as Masseuse[];
+
   return (
     <div>
-      <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-        {needsTwo ? "Elige tus dos masajistas" : "Elige tu masajista"}
-      </h2>
-      <p className="mt-1 text-sm text-ink-soft">
-        {needsTwo
-          ? `${service.name} requiere dos terapeutas trabajando en conjunto.`
-          : "Conoce a nuestro equipo certificado y elige con quién vivir la experiencia."}
-      </p>
+      <StepHeading
+        title={needsTwo ? "Elige a tus dos terapeutas" : "¿Con quién quieres vivirlo?"}
+        hint={
+          needsTwo
+            ? "Este ritual lo hacen dos terapeutas a la vez. La primera que toques será la principal."
+            : "Todas son terapeutas certificadas del equipo L'AMOUR."
+        }
+      />
 
-      <div className="mt-6">
-        {needsTwo && (
-          <p className="mb-3 text-xs font-sans font-semibold uppercase tracking-wide text-bronze">
-            Masajista principal
-          </p>
-        )}
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {active.map((m) => {
-            const isPrimary = primary?.id === m.id;
-            const isSecondary = secondary?.id === m.id;
-            return (
+      <ul className="mt-8 grid grid-cols-3 gap-x-3 gap-y-6 sm:grid-cols-4">
+        {active.map((m) => {
+          const order = primary?.id === m.id ? 1 : secondary?.id === m.id ? 2 : 0;
+          const selected = order > 0;
+          return (
+            <li key={m.id}>
               <button
-                key={m.id}
                 type="button"
-                aria-pressed={isPrimary}
-                onClick={() => onSelectPrimary(m)}
-                disabled={isSecondary}
-                className={clsx(
-                  "flex flex-col items-center rounded-2xl border p-4 text-center transition-all disabled:opacity-30",
-                  isPrimary ? "border-gold bg-gold/10" : "border-ink/15 hover:border-gold",
-                )}
+                aria-pressed={selected}
+                onClick={() => toggle(m)}
+                className="group flex w-full cursor-pointer flex-col items-center text-center"
               >
-                <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl text-bronze">
-                  {m.photoUrl ? (
-                    <img src={m.photoUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-                  ) : (
-                    initials(m.stageName)
-                  )}
-                  {isPrimary && (
-                    <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-ivory">
-                      <Check size={11} />
+                <span className="relative">
+                  <StoryAvatar
+                    masseuse={m}
+                    size={76}
+                    ring={selected}
+                    className={clsx("transition-transform duration-300", selected ? "scale-105" : "group-active:scale-95")}
+                  />
+                  {selected && (
+                    <span
+                      aria-hidden
+                      className="absolute -bottom-0.5 -right-0.5 flex h-7 w-7 animate-sticker-pop items-center justify-center rounded-full border-[3px] border-ivory bg-ink text-xs font-bold text-ivory"
+                    >
+                      {needsTwo ? order : <Check size={13} strokeWidth={3} />}
                     </span>
                   )}
                 </span>
-                <span className="mt-2 font-serif text-sm text-ink">{m.stageName}</span>
+                <span className="mt-2.5 flex items-center gap-1 text-sm font-semibold text-ink">
+                  {m.stageName}
+                  <BadgeCheck size={14} className="fill-gold text-ivory" aria-label="verificada" />
+                </span>
+                {m.age != null && <span className="text-xs text-ink-soft">{m.age} años</span>}
               </button>
-            );
-          })}
-        </div>
-      </div>
+            </li>
+          );
+        })}
+      </ul>
 
-      {needsTwo && (
-        <div className="mt-8">
-          <p className="mb-3 text-xs font-sans font-semibold uppercase tracking-wide text-bronze">
-            Segunda masajista
-          </p>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-            {active.map((m) => {
-              const isPrimary = primary?.id === m.id;
-              const isSecondary = secondary?.id === m.id;
-              return (
-                <button
-                  key={m.id}
-                  type="button"
-                  aria-pressed={isSecondary}
-                  onClick={() => onSelectSecondary(isSecondary ? null : m)}
-                  disabled={isPrimary}
-                  className={clsx(
-                    "flex flex-col items-center rounded-2xl border p-4 text-center transition-all disabled:opacity-30",
-                    isSecondary ? "border-gold bg-gold/10" : "border-ink/15 hover:border-gold",
-                  )}
-                >
-                  <span className="relative flex h-14 w-14 items-center justify-center overflow-hidden rounded-full border-2 border-gold/40 bg-gradient-to-br from-champagne/50 to-gold/20 font-serif text-xl text-bronze">
-                    {m.photoUrl ? (
-                      <img src={m.photoUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      initials(m.stageName)
-                    )}
-                    {isSecondary && (
-                      <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-ink text-ivory">
-                        <Check size={11} />
-                      </span>
-                    )}
-                  </span>
-                  <span className="mt-2 font-serif text-sm text-ink">{m.stageName}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      <p className="mt-8 min-h-5 text-sm text-ink-soft" aria-live="polite">
+        {chosen.length === 0
+          ? needsTwo
+            ? "Toca dos perfiles."
+            : "Toca un perfil para elegirla."
+          : needsTwo && chosen.length === 1
+            ? `${chosen[0].stageName} será la principal. Elige a su compañera.`
+            : `Vivirás tu ritual con ${chosen.map((c) => c.stageName).join(" y ")}.`}
+      </p>
     </div>
   );
 }

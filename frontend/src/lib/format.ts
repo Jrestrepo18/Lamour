@@ -26,3 +26,8 @@ export function formatDateLong(iso: string): string {
     month: "long",
   }).format(new Date(iso));
 }
+
+/** Upper-cases only the first letter ("viernes, 25 de…" → "Viernes, 25 de…"); CSS `capitalize` would hit every word. */
+export function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
