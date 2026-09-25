@@ -15,6 +15,7 @@ import { DetailsStep } from "./DetailsStep";
 import { SummaryStep } from "./SummaryStep";
 import { SuccessScreen } from "./SuccessScreen";
 import { EMPTY_CLIENT_DETAILS, type ClientDetails } from "./types";
+import { findMunicipio } from "@/lib/coverage";
 import { surfaceClass } from "@/lib/ui";
 
 export function BookingFlow({
@@ -50,7 +51,11 @@ export function BookingFlow({
   const [secondary, setSecondary] = useState<Masseuse | null>(null);
   const [date, setDate] = useState(new Date());
   const [slot, setSlot] = useState<AvailabilitySlot | null>(null);
-  const [details, setDetails] = useState<ClientDetails>(EMPTY_CLIENT_DETAILS);
+  // Arriving from the coverage search ("Reservar en Envigado") pre-fills the municipality.
+  const [details, setDetails] = useState<ClientDetails>(() => {
+    const city = findMunicipio(searchParams.get("city"));
+    return city ? { ...EMPTY_CLIENT_DETAILS, city } : EMPTY_CLIENT_DETAILS;
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [confirmedAt, setConfirmedAt] = useState<string | null>(null);

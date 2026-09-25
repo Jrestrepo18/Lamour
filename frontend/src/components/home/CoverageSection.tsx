@@ -1,16 +1,13 @@
-import { MapPin } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
-import { LinkButton } from "@/components/ui/Button";
 import { CoverageParallaxPhoto } from "./CoverageParallaxPhoto";
-
-const MUNICIPIOS = ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"];
+import { CoverageSearch } from "./CoverageSearch";
 
 /**
- * Coverage area. Phones: municipality chips over faint CSS "radar" rings (the
- * same coverage idea as the desktop photo circle, at a fraction of the height).
- * Desktop: list + the parallax photo circle with pulsing rings.
+ * Coverage area: an Instagram-style place search that answers "do you come to
+ * my area?" (see CoverageSearch). Phones get faint CSS "radar" rings behind it;
+ * desktop keeps the parallax photo circle with pulsing rings beside it.
  */
 export function CoverageSection() {
   return (
@@ -35,32 +32,8 @@ export function CoverageSection() {
             description="Atendemos citas a domicilio en Medellín y todo su Valle de Aburrá, con la misma discreción y calidad en cada rincón de la ciudad."
           />
 
-          {/* Phones: chips */}
-          <ul className="mt-7 flex flex-wrap gap-2 lg:hidden">
-            {MUNICIPIOS.map((m) => (
-              <li
-                key={m}
-                className="inline-flex min-h-9 items-center gap-1.5 rounded-full border border-ink/10 bg-white/60 px-3.5 text-sm text-ink"
-              >
-                <MapPin size={13} className="text-bronze" aria-hidden />
-                {m}
-              </li>
-            ))}
-          </ul>
-
-          {/* Desktop: two-column list */}
-          <ul className="mt-9 hidden grid-cols-2 gap-x-8 gap-y-3.5 border-t border-ink/10 pt-7 lg:grid">
-            {MUNICIPIOS.map((m) => (
-              <li key={m} className="flex items-center gap-3 text-base text-[var(--tone-body)]">
-                <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
-                {m}
-              </li>
-            ))}
-          </ul>
-
-          <LinkButton href="/reservar" size="lg" className="mt-8 w-full sm:mt-9 sm:w-auto">
-            Consultar disponibilidad en mi zona
-          </LinkButton>
+          {/* Instagram-style place search: answers "do you come to my area?" in one tap. */}
+          <CoverageSearch />
         </Reveal>
 
         <div className="hidden lg:block">

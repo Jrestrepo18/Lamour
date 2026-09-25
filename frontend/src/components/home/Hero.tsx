@@ -1,10 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, MapPin, ShieldCheck } from "lucide-react";
+import { MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
+import { SITE } from "@/lib/seo";
 
 const HERO = PHOTOS.oilBack;
 
@@ -21,6 +22,10 @@ const HERO = PHOTOS.oilBack;
  * The 3D statue now lives in the Manifesto section.
  */
 export function Hero() {
+  const whatsappHref = SITE.whatsapp
+    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, me gustaría reservar un ritual en L'AMOUR.")}`
+    : null;
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk">
       <div className="pointer-events-none absolute -left-32 top-1/3 hidden h-[28rem] w-[28rem] rounded-full bg-gold/20 blur-[140px] lg:block" />
@@ -74,27 +79,47 @@ export function Hero() {
             espacio. Una pausa para respirar.
           </p>
 
-          <div className="mt-6 flex animate-rise flex-col gap-3 [animation-delay:240ms] sm:flex-row sm:items-center sm:gap-6 lg:mt-10">
+          {/* Instagram business-profile action row: two twin buttons, then a quiet status line. */}
+          <div className="mt-7 grid max-w-md animate-rise grid-cols-2 gap-2 [animation-delay:240ms] lg:mt-10">
             <Link
               href="/reservar"
-              className="group inline-flex min-h-14 items-center justify-center gap-3 rounded-full bg-ink pl-7 pr-2 text-base font-semibold text-ivory shadow-[0_16px_36px_-16px_rgba(43,32,25,0.8)] transition-colors duration-300 hover:bg-espresso sm:justify-start"
+              className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-[0.95rem] font-semibold text-ivory shadow-[0_12px_28px_-16px_rgba(43,32,25,0.8)] transition-colors duration-200 hover:bg-espresso active:scale-[0.98]"
             >
-              Reservar mi experiencia
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold text-ink transition-transform duration-300 group-hover:rotate-45">
-                <ArrowUpRight size={18} aria-hidden />
-              </span>
+              Reservar
             </Link>
-            <Link
-              href="/servicios"
-              className="inline-flex min-h-11 items-center justify-center text-sm font-medium text-ink underline decoration-gold/60 decoration-1 underline-offset-8 transition-colors hover:decoration-ink"
-            >
-              Ver servicios y precios
-            </Link>
+            {whatsappHref ? (
+              <a
+                href={whatsappHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-white/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-white active:scale-[0.98]"
+              >
+                Mensaje
+              </a>
+            ) : (
+              <Link
+                href="/servicios"
+                className="inline-flex min-h-12 items-center justify-center rounded-xl border border-ink/15 bg-white/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-white active:scale-[0.98]"
+              >
+                Ver servicios
+              </Link>
+            )}
           </div>
 
-          <p className="mt-8 hidden animate-rise items-center gap-2 text-sm text-ink-soft [animation-delay:320ms] lg:flex">
-            <MapPin size={14} className="text-bronze" aria-hidden />
-            Medellín y su área metropolitana · 9:00 a.m. – 9:00 p.m.
+          <p className="mt-4 flex animate-rise flex-wrap items-center gap-x-2 gap-y-1 text-sm text-ink-soft [animation-delay:320ms]">
+            <span className="relative flex h-2 w-2" aria-hidden>
+              <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60" />
+              <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
+            </span>
+            {whatsappHref ? "Responde en minutos" : "Reservas en línea"} · 9:00 a.m. – 9:00 p.m.
+            {whatsappHref && (
+              <>
+                <span aria-hidden>·</span>
+                <Link href="/servicios" className="font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink">
+                  Ver servicios
+                </Link>
+              </>
+            )}
           </p>
         </div>
       </Container>
