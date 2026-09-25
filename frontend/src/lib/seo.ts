@@ -33,7 +33,8 @@ export const SITE = {
     "Spa de masajes a domicilio en Medellín: masajes tántricos, relajación, experiencias en pareja y recuperación muscular con terapeutas certificadas. Discreción total en Envigado, Sabaneta, Itagüí, Bello y el Valle de Aburrá.",
   areaServed: ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"],
   openingHours: { opens: "09:00", closes: "21:00" },
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || undefined,
+  /** Business WhatsApp with country code (57 = Colombia); overridable per environment. */
+  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || "573236669426",
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || undefined,
   ogImage: "/opengraph-image.jpg",
   /** Raster logo for structured data — Google doesn't accept SVG logos. */
