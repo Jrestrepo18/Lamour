@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-import { CalendarDays, ExternalLink, LogOut, Menu, Sparkles, Users, X } from "lucide-react";
+import { CalendarDays, ExternalLink, KeyRound, LogOut, Menu, Sparkles, Users, X } from "lucide-react";
 import { clearAdminSession } from "@/lib/admin-auth";
+import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 const LINKS = [
   { href: "/admin/dashboard/citas", label: "Citas", icon: CalendarDays },
@@ -21,6 +22,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- closes the mobile menu on route change
@@ -72,6 +74,14 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
         <ExternalLink size={17} aria-hidden />
         Ver sitio
       </Link>
+      <button
+        type="button"
+        onClick={() => setChangingPassword(true)}
+        className="flex min-h-11 w-full cursor-pointer items-center gap-3 rounded-xl px-3 text-sm text-ink-soft transition-colors hover:bg-marfil/70 hover:text-ink"
+      >
+        <KeyRound size={17} aria-hidden />
+        Cambiar contraseña
+      </button>
       <button
         type="button"
         onClick={handleLogout}
@@ -137,6 +147,8 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
           })}
         </ul>
       </nav>
+
+      {changingPassword && <ChangePasswordDialog onClose={() => setChangingPassword(false)} />}
     </>
   );
 }

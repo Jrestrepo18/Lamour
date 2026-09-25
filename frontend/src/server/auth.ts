@@ -16,6 +16,11 @@ export function hashPassword(password: string): string {
   return `${salt.toString("base64")}.${key.toString("base64")}`;
 }
 
+/** bcrypt, cost 12 — the format usuarios already uses. */
+export function hashAdminPassword(password: string): string {
+  return bcrypt.hashSync(password, 12);
+}
+
 export function verifyPassword(password: string, hashed: string): boolean {
   if (/^\$2[aby]\$/.test(hashed)) return bcrypt.compareSync(password, hashed);
   const [saltB64, keyB64] = hashed.split(".");

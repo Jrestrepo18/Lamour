@@ -12,6 +12,7 @@ import type {
 } from "@/lib/types";
 import { busyOf, loadAgenda, slotFits } from "./availability";
 import { COL, db } from "./db";
+import { hashAdminPassword } from "./auth";
 import { dateToLocal, formatHm, localToDate } from "./time";
 
 /*
@@ -552,6 +553,14 @@ export async function findAdmin(username: string) {
   const d = snap.data();
   if (!d || d.activo === false) return undefined;
   return { username: snap.id, password_hash: String(d.passwordHash ?? ""), full_name: String(d.nombre ?? snap.id), role: String(d.rol ?? "ADMIN") };
+}
+
+/** Stores a new bcrypt hash (same format as the rest of usuarios). */
+export async function changeAdminPassword(username: string, password: string) {
+  await col(COL.usuarios).doc(username).update({
+    passwordHash: hashAdminPassword(password),
+    claveActualizadaEn: FieldValue.serverTimestamp(),
+  });
 }
 
 /** Health check: Firestore reachable and the catalog in place. */

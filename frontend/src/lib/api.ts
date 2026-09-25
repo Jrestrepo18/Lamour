@@ -161,6 +161,14 @@ export async function adminUpdateAppointmentStatus(id: string, status: string, t
   );
 }
 
+export async function adminChangePassword(currentPassword: string, newPassword: string, token: string) {
+  return request<{ ok: true }>(
+    "/admin/password",
+    { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) },
+    token,
+  );
+}
+
 export async function adminGetMasseuses(token: string) {
   return request<MasseuseAdmin[]>("/admin/masseuses", {}, token);
 }
