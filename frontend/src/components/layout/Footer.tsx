@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Clock3, MapPin, MessageCircle, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/seo";
+import { CITIES, cityPath } from "@/lib/cities";
 
 function InstagramGlyph() {
   return (
@@ -19,6 +20,7 @@ const EXPLORE = [
   { href: "/masajes-tantricos", label: "Masajes tántricos" },
   { href: "/servicios#pareja", label: "Experiencias en pareja" },
   { href: "/masajistas", label: "Nuestro equipo" },
+  { href: "/masajes-a-domicilio", label: "Zonas de cobertura" },
   { href: "/#faq", label: "Preguntas frecuentes" },
   { href: "/reservar", label: "Reservar cita" },
 ];
@@ -83,7 +85,19 @@ export function Footer() {
           <ul className="mt-5 space-y-4 text-sm text-ivory/75">
             <li className="flex items-start gap-3">
               <MapPin size={16} className="mt-0.5 shrink-0 text-gold" aria-hidden />
-              Medellín, Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas y Rionegro
+              <span>
+                <Link href="/" className="transition-colors hover:text-gold">
+                  Medellín
+                </Link>
+                {CITIES.map((c, i) => (
+                  <span key={c.slug}>
+                    {i === CITIES.length - 1 ? " y " : ", "}
+                    <Link href={cityPath(c)} className="transition-colors hover:text-gold">
+                      {c.name}
+                    </Link>
+                  </span>
+                ))}
+              </span>
             </li>
             <li className="flex items-start gap-3">
               <Clock3 size={16} className="mt-0.5 shrink-0 text-gold" aria-hidden />

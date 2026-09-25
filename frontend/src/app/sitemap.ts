@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getServiceCategories } from "@/lib/api";
 import { servicePath } from "@/lib/catalog";
+import { CITIES, cityPath } from "@/lib/cities";
 import { absoluteUrl } from "@/lib/seo";
 
 /**
@@ -19,6 +20,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/servicios"), changeFrequency: "weekly", priority: 0.9 },
     { url: absoluteUrl("/masajes-tantricos"), changeFrequency: "weekly", priority: 0.9 },
     ...services.map((url) => ({ url, changeFrequency: "monthly" as const, priority: 0.8 })),
+    { url: absoluteUrl("/masajes-a-domicilio"), changeFrequency: "monthly", priority: 0.7 },
+    ...CITIES.map((c) => ({ url: absoluteUrl(cityPath(c)), changeFrequency: "monthly" as const, priority: 0.7 })),
     { url: absoluteUrl("/masajistas"), changeFrequency: "weekly", priority: 0.7 },
   ];
 }

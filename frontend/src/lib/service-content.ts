@@ -32,7 +32,7 @@ export const SERVICE_CONTENT: Record<string, ServiceContent> = {
       "Terapia con piedras volcánicas calientes a domicilio en Medellín: 75 minutos de calor profundo para cuello, espalda y hombros. Reserva en línea.",
     intro: [
       "El calor relaja el músculo antes de que llegue la mano. Por eso la terapia con piedras volcánicas alcanza tensiones que un masaje convencional a veces no logra soltar: las piedras, tibias y lisas, reposan sobre los puntos de mayor carga y luego acompañan los movimientos de la terapeuta.",
-      "La llevamos hasta tu casa, tu apartamento o tu hotel en Medellín y el Valle de Aburrá, para que después de la sesión no tengas que manejar ni salir a ninguna parte.",
+      "La llevamos hasta tu espacio en Medellín y el Valle de Aburrá, para que después de la sesión no tengas que manejar ni salir a ninguna parte.",
     ],
     idealFor: [
       "Estrés acumulado en cuello, espalda y hombros",
@@ -373,7 +373,7 @@ export const SERVICE_CONTENT: Record<string, ServiceContent> = {
     idealFor: [
       "Parejas que quieren explorar juntas algo nuevo",
       "Avivar la complicidad y la fantasía",
-      "Una noche especial en casa o en el hotel",
+      "Una noche especial sin salir de casa",
     ],
     session:
       "La pareja decide quién recibe y quién observa. La terapeuta trabaja con movimientos lentos sobre quien recibe, mientras la otra persona acompaña de cerca, durante los 60 minutos.",

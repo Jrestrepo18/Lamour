@@ -5,19 +5,14 @@ import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { FinalCta } from "@/components/home/FinalCta";
+import { BookingSteps } from "./BookingSteps";
+import { FaqList } from "./FaqList";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd, serviceJsonLd, SITE } from "@/lib/seo";
 import { SECTION_BASE, SECTION_NAME, sectionOf, servicePath } from "@/lib/catalog";
 import { SERVICE_CONTENT } from "@/lib/service-content";
 import { fallbackPhoto } from "@/lib/photos";
 import { formatCOP, formatDuration } from "@/lib/format";
-
-const STEPS = [
-  { title: "Elige tu servicio", text: "Selecciona este ritual al reservar en línea." },
-  { title: "Elige tu masajista", text: "Conoce al equipo y elige con quién vivir la experiencia." },
-  { title: "Elige tu horario", text: "Consulta la disponibilidad en tiempo real, de 9:00 a.m. a 9:00 p.m." },
-  { title: "Recibe en tu espacio", text: "Te confirmamos por WhatsApp y llegamos a tu dirección, con total discreción." },
-];
 
 const heading = "font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl";
 
@@ -155,38 +150,9 @@ export function ServiceDetail({
               </div>
             )}
 
-            <div>
-              <h2 className={heading}>Cómo reservar a domicilio</h2>
-              <ol className="mt-6 grid gap-4 sm:grid-cols-2">
-                {STEPS.map((step, i) => (
-                  <li key={step.title} className="rounded-2xl border border-ink/10 bg-white/60 p-5">
-                    <p className="text-xs font-semibold uppercase tracking-[0.25em] text-bronze">Paso {i + 1}</p>
-                    <p className="mt-2 font-semibold text-ink">{step.title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-ink-soft">{step.text}</p>
-                  </li>
-                ))}
-              </ol>
-            </div>
+            <BookingSteps title="Cómo reservar a domicilio" />
 
-            <div>
-              <h2 className={heading}>Preguntas frecuentes</h2>
-              <div className="mt-6 divide-y divide-ink/10 border-y border-ink/10">
-                {faqs.map((f) => (
-                  <details key={f.q} className="group py-5">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 font-semibold text-ink [&::-webkit-details-marker]:hidden">
-                      <h3 className="text-base">{f.q}</h3>
-                      <span
-                        aria-hidden
-                        className="mt-0.5 text-xl leading-none text-bronze transition-transform group-open:rotate-45"
-                      >
-                        +
-                      </span>
-                    </summary>
-                    <p className="mt-3 text-sm leading-relaxed text-ink-soft sm:text-base">{f.a}</p>
-                  </details>
-                ))}
-              </div>
-            </div>
+            <FaqList faqs={faqs} />
           </div>
 
           {/* Booking card — sticky beside the copy on desktop, right after the intro flow on phones. */}
