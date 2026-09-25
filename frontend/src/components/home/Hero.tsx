@@ -31,10 +31,12 @@ export function Hero() {
       <div className="pointer-events-none absolute -left-32 top-1/3 hidden h-[28rem] w-[28rem] rounded-full bg-gold/20 blur-[140px] lg:block" />
       <Grain />
 
-      {/* Phones: exactly one screen tall (100svh = visible height with the browser bars
-          shown). The photo flexes to fill whatever the copy leaves, so the hero ends at the
-          opening-hours line on any phone and nothing from the next section peeks in. */}
-      <Container className="relative flex min-h-[100svh] flex-col lg:grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
+      {/* Phones: the hero fills the *whole* screen, including the strip behind the browser
+          bars (100lvh) — iOS Safari's floating toolbar is translucent, so with 100svh the next
+          section showed through underneath it on first load. The photo flexes to fill whatever
+          the copy leaves; the copy's bottom padding (below) lifts the hours line clear of the
+          bars, so the hero ends at the hours line and nothing from the next section peeks in. */}
+      <Container className="relative flex min-h-[100lvh] flex-col lg:grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
         {/* Photo — first on phones (full-bleed), right column on desktop */}
         <div className="relative -mx-5 min-h-56 flex-1 overflow-hidden sm:-mx-8 lg:order-last lg:flex-none lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(43,32,25,0.55)]">
           <ParallaxMedia>
@@ -70,7 +72,7 @@ export function Hero() {
         </div>
 
         {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
-        <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(env(safe-area-inset-bottom)+3.5rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
+        <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
           <h1 className="eyebrow animate-rise">Spa de masajes a domicilio en Medellín</h1>
           <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
             <span className="block text-ink-soft">Estética</span>
