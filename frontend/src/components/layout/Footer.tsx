@@ -36,8 +36,10 @@ export function Footer() {
     <footer id="contacto" className="bg-ink text-ivory">
       <Container className="grid gap-10 py-14 sm:grid-cols-2 sm:gap-12 sm:py-20 lg:grid-cols-[1.3fr_1fr_1.2fr_1.2fr]">
         <div>
-          <p className="font-serif text-2xl font-bold tracking-wide text-ivory">L&apos;AMOUR</p>
-          <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-champagne">Estética y Sentidos</p>
+          <Link href="/" aria-label="L'AMOUR — Inicio" className="inline-flex flex-col">
+            <span className="font-serif text-2xl font-bold tracking-wide text-ivory">L&apos;AMOUR</span>
+            <span className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-champagne">Estética y Sentidos</span>
+          </Link>
           <p className="mt-5 max-w-xs text-sm leading-relaxed text-ivory/70">
             Spa de masajes a domicilio en Medellín. Rituales de bienestar y sensualidad en la privacidad de tu
             espacio.

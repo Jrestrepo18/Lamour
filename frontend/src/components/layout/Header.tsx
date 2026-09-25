@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 import { LinkButton } from "@/components/ui/Button";
+import { useLenisInstance } from "@/components/motion/LenisProvider";
 
 const NAV_LINKS = [
   { href: "/", label: "Inicio" },
@@ -20,6 +21,17 @@ export function Header() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const lenis = useLenisInstance();
+
+  // On the home page a link to "/" is a no-op, so the logo glides back to the top instead.
+  function handleLogoClick(e: MouseEvent<HTMLAnchorElement>) {
+    if (pathname !== "/") return;
+    e.preventDefault();
+    setMenuOpen(false);
+    if (window.location.hash) history.replaceState(null, "", "/");
+    if (lenis) lenis.scrollTo(0);
+    else window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -64,7 +76,7 @@ export function Header() {
             : "max-w-none rounded-none border-transparent bg-transparent px-6 py-6 sm:px-10",
         )}
       >
-        <Link href="/" aria-label="L'AMOUR — Inicio" className="flex flex-col leading-none">
+        <Link href="/" onClick={handleLogoClick} aria-label="L'AMOUR — Inicio" className="flex flex-col leading-none">
           <span className="font-serif text-xl font-bold tracking-wide text-ink">
             L&apos;AMOUR
           </span>
