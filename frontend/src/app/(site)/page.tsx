@@ -31,8 +31,9 @@ export default async function HomePage() {
         <HowItWorksSection />
         <CoverageSection />
         <FaqSection />
+        {/* Inside the tint so its top edge dissolves into the same warm backdrop. */}
+        <FinalCta />
       </ScrollTint>
-      <FinalCta />
     </>
   );
 }

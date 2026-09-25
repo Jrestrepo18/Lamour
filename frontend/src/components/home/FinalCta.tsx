@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import clsx from "clsx";
 import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
@@ -7,33 +8,46 @@ import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
 
 /**
- * Closing call to action over a full-strength photograph. Instead of one heavy
- * wash over the whole image, the darkening is targeted: a short caramel fade
- * at the top (continuing the scroll tint above), a soft dark vignette only
- * behind the copy (for legibility), and a fade into the footer's ink at the
- * bottom — so the photo itself stays visible.
+ * Closing call to action over a full-strength photograph. The darkening is
+ * targeted — a soft vignette behind the copy for legibility and a fade into
+ * the footer's ink at the bottom — and the top edge dissolves into whatever
+ * background precedes it, so there is never a hard seam above this section.
  */
-export function FinalCta() {
+export function FinalCta({ className }: { className?: string }) {
+  // `className` lets a page paint the same background as the section above (e.g. a tinted
+  // catalog section), so the photo's fade starts from exactly that colour.
   return (
-    <section className="relative isolate flex min-h-[78svh] items-center overflow-hidden bg-ink py-28 sm:min-h-[70vh] sm:py-36">
-      <div className="absolute inset-0 -z-20 overflow-hidden">
-        <ParallaxMedia mode="through" distance={10}>
-          <Image src={PHOTOS.footBw.src} alt="" aria-hidden fill sizes="100vw" className="object-cover object-[50%_35%]" />
-        </ParallaxMedia>
-      </div>
-
+    <section
+      className={clsx(
+        "relative isolate flex min-h-[80svh] items-center overflow-hidden py-28 sm:min-h-[72vh] sm:py-36",
+        className,
+      )}
+    >
+      {/* Photo + shading share one mask that fades them in from fully transparent at the
+          top edge — so whatever sits above (ivory, silk, or the home page's scroll tint)
+          flows straight into the photo with no seam, on every page. The bottom fades
+          to the footer's ink. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background: [
-            // soft dark pool behind the text, fading out toward the edges
-            "radial-gradient(ellipse 75% 60% at 50% 52%, rgba(20,13,8,0.58) 0%, rgba(20,13,8,0.32) 55%, rgba(20,13,8,0.08) 100%)",
-            // short caramel lead-in at the top, ink lead-out into the footer
-            "linear-gradient(to bottom, rgba(184,154,115,0.9) 0%, rgba(184,154,115,0) 18%, rgba(43,32,25,0) 80%, #2b2019 100%)",
-          ].join(", "),
-        }}
-      />
+        className="pointer-events-none absolute inset-0 -z-10 [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.06)_7%,rgba(0,0,0,0.22)_14%,rgba(0,0,0,0.5)_22%,rgba(0,0,0,0.8)_30%,#000_38%)]"
+      >
+        <div className="absolute inset-0 overflow-hidden">
+          <ParallaxMedia mode="through" distance={10}>
+            <Image src={PHOTOS.footBw.src} alt="" fill sizes="100vw" className="object-cover object-[50%_35%]" />
+          </ParallaxMedia>
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background: [
+              // soft dark pool behind the text, fading out toward the edges
+              "radial-gradient(ellipse 75% 60% at 50% 55%, rgba(20,13,8,0.6) 0%, rgba(20,13,8,0.34) 55%, rgba(20,13,8,0.1) 100%)",
+              // lead-out into the footer's ink
+              "linear-gradient(to bottom, rgba(43,32,25,0) 72%, #2b2019 100%)",
+            ].join(", "),
+          }}
+        />
+      </div>
 
       <Container className="relative text-center [text-shadow:0_2px_24px_rgba(20,13,8,0.55)]">
         <Reveal>

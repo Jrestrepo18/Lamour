@@ -70,7 +70,8 @@ export default async function ServiciosPage() {
       {pareja && <CouplesSection category={pareja} />}
       {relajacion && <CategorySection category={relajacion} eyebrow="Bienestar físico" tinted />}
 
-      <FinalCta />
+      {/* Same tint as the Relajación section right above, so the CTA photo fades in from it. */}
+      <FinalCta className="bg-silk/45" />
     </>
   );
 }
