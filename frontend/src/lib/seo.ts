@@ -12,6 +12,14 @@ function resolveSiteUrl() {
   // Vercel exposes the production domain at build time.
   const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
   if (vercel) return `https://${vercel}`;
+  // A production server without a known domain would publish canonicals, the sitemap and
+  // Open Graph URLs pointing at localhost — fail loudly instead of deploying that silently.
+  // (Server only: VERCEL_* never reaches the browser bundle, so the check would misfire there.)
+  if (process.env.NODE_ENV === "production" && typeof window === "undefined") {
+    throw new Error(
+      "Falta NEXT_PUBLIC_SITE_URL: define el dominio público del sitio (p. ej. https://lamour.com.co) antes de compilar para producción.",
+    );
+  }
   return "http://localhost:3000";
 }
 
@@ -22,21 +30,15 @@ export const SITE = {
   locale: "es_CO",
   description:
     "Spa de masajes a domicilio en Medellín: masajes tántricos, relajación, experiencias en pareja y recuperación muscular con terapeutas certificadas. Discreción total en Envigado, Sabaneta, Itagüí, Bello y el Valle de Aburrá.",
-  keywords: [
-    "masajes a domicilio Medellín",
-    "spa a domicilio Medellín",
-    "masaje tántrico Medellín",
-    "masaje relajante a domicilio",
-    "masaje en pareja Medellín",
-    "masajes Envigado",
-    "masajes Sabaneta",
-    "masaje muscular a domicilio",
-  ],
   areaServed: ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"],
   openingHours: { opens: "09:00", closes: "21:00" },
   whatsapp: process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/\D/g, "") || undefined,
   instagram: process.env.NEXT_PUBLIC_INSTAGRAM_URL || undefined,
   ogImage: "/opengraph-image.jpg",
+  /** Raster logo for structured data — Google doesn't accept SVG logos. */
+  logo: "/logo.png",
+  /** Google Search Console HTML-tag verification token (content of the meta tag only). */
+  googleVerification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || undefined,
 } as const;
 
 export const absoluteUrl = (path = "/") => `${SITE.url}${path.startsWith("/") ? path : `/${path}`}`;
@@ -78,7 +80,7 @@ export function businessJsonLd(): Json {
     description: SITE.description,
     url: SITE.url,
     image: absoluteUrl(SITE.ogImage),
-    logo: absoluteUrl("/icon.svg"),
+    logo: absoluteUrl(SITE.logo),
     priceRange: "$$$",
     currenciesAccepted: "COP",
     paymentAccepted: "Efectivo, Transferencia, Tarjeta",

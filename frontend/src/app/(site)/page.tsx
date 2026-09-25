@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { getServiceCategories } from "@/lib/api";
 import { Hero } from "@/components/home/Hero";
 import { Manifesto } from "@/components/home/Manifesto";
@@ -9,6 +10,8 @@ import { FaqSection } from "@/components/home/FaqSection";
 import { FinalCta } from "@/components/home/FinalCta";
 import { ScrollTint } from "@/components/home/ScrollTint";
 import { TrustHighlights } from "@/components/home/TrustHighlights";
+
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const FEATURED_SLUGS = ["ritual-lamour-full-nuru", "masaje-sensorial", "masaje-voyerista"];
 

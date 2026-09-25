@@ -66,9 +66,9 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                   <span className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
                     {service.imageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
-                      <img src={service.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                      <img src={service.imageUrl} alt={service.name} loading="lazy" className="h-full w-full object-cover" />
                     ) : (
-                      <Image src={photo.src} alt="" fill sizes="(min-width: 768px) 30vw, 62vw" className="object-cover" />
+                      <Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 768px) 30vw, 62vw" className="object-cover" />
                     )}
                   </span>
                   <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-espresso/35 via-transparent to-espresso/85" />

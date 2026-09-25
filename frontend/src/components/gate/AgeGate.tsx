@@ -9,7 +9,8 @@ import { Button } from "@/components/ui/Button";
  * Age confirmation. Server-rendered (so it needs no JS to appear), hidden by
  * CSS via `html[data-age-ok]` for visitors who already confirmed. Light, warm
  * glass over the real page instead of a black wall — the first impression
- * is the brand's calm, not a blocking screen.
+ * is the brand's calm, not a blocking screen. The title is a <p>, not a heading:
+ * the dialog is in every page's HTML, and a heading would join each page's outline.
  */
 export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
   const [declined, setDeclined] = useState(false);
@@ -38,9 +39,9 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
 
         {declined ? (
           <>
-            <h2 id="age-gate-title" className="mt-6 font-serif text-2xl font-semibold text-ink">
+            <p id="age-gate-title" className="mt-6 font-serif text-2xl font-semibold text-ink">
               Acceso restringido
-            </h2>
+            </p>
             <p id="age-gate-desc" className="mt-4 text-sm leading-relaxed text-ink-soft">
               Este sitio contiene información sobre servicios exclusivos para personas mayores de edad. Si no
               cumples este requisito, te pedimos abandonar la página.
@@ -51,9 +52,9 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
             <span className="mx-auto mt-6 flex h-12 w-12 items-center justify-center rounded-full bg-gold/15 text-bronze">
               <ShieldCheck size={22} strokeWidth={1.6} />
             </span>
-            <h2 id="age-gate-title" className="mt-4 font-serif text-2xl font-semibold text-ink">
+            <p id="age-gate-title" className="mt-4 font-serif text-2xl font-semibold text-ink">
               Confirmación de edad
-            </h2>
+            </p>
             <p id="age-gate-desc" className="mt-3 text-sm leading-relaxed text-ink-soft">
               Nuestros servicios son de naturaleza sensorial e íntima, dirigidos exclusivamente a personas
               mayores de 18 años.

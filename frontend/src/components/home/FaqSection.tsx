@@ -27,7 +27,7 @@ const FAQS = [
   },
   {
     q: "¿Qué zonas cubren?",
-    a: "Atendemos Medellín y todo su Valle de Aburrá: Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas y Rionegro.",
+    a: "Atendemos Medellín y todo el Valle de Aburrá (Envigado, Sabaneta, Itagüí, Bello, La Estrella y Caldas), y también Rionegro, en el Oriente antioqueño.",
   },
   {
     q: "¿Qué métodos de pago aceptan?",

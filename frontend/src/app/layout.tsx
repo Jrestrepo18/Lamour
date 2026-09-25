@@ -31,12 +31,10 @@ export const metadata: Metadata = {
     template: "%s | L'AMOUR Medellín",
   },
   description: SITE.description,
-  keywords: [...SITE.keywords],
   applicationName: SITE.shortName,
   authors: [{ name: SITE.name }],
   creator: SITE.name,
   category: "health & beauty",
-  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     locale: SITE.locale,
@@ -50,11 +48,11 @@ export const metadata: Metadata = {
     title: "L'AMOUR | Spa y masajes a domicilio en Medellín",
     description: SITE.description,
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
-  },
+  // No index/follow here: indexable is already the default, and declaring it at the root
+  // leaked "index, follow" into the 404 next to Next's own "noindex". Canonicals are set
+  // per page for the same reason (a root canonical made every page without one claim "/").
+  robots: { googleBot: { "max-image-preview": "large", "max-snippet": -1 } },
+  ...(SITE.googleVerification ? { verification: { google: SITE.googleVerification } } : {}),
   formatDetection: { telephone: false },
 };
 

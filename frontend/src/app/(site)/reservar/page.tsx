@@ -9,7 +9,15 @@ const TITLE = "Reservar masaje a domicilio";
 const DESCRIPTION =
   "Reserva en línea tu masaje a domicilio en Medellín: elige servicio, masajista y horario disponible en tiempo real. Confirmación por WhatsApp.";
 
-export const metadata: Metadata = pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/reservar" });
+/**
+ * noindex, follow: a booking form has no search demand of its own, and its first step
+ * lists the whole catalog — including the adult rituals — which would get this page
+ * classified as explicit. Links from here are still followed.
+ */
+export const metadata: Metadata = {
+  ...pageMetadata({ title: TITLE, description: DESCRIPTION, path: "/reservar" }),
+  robots: { index: false, follow: true },
+};
 
 export default async function ReservarPage() {
   const [{ data: categories }, { data: masseuses }] = await Promise.all([

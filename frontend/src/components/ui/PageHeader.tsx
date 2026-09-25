@@ -89,12 +89,16 @@ export function PageHeader({
               </ol>
             </nav>
             {/* Above the fold: CSS-only entrance (no JS wait), so the title paints — and counts as LCP — immediately. */}
-            <div className="animate-rise">
-              <p className="eyebrow">{eyebrow}</p>
-              <h1 className="mt-5 font-serif text-5xl font-semibold leading-[0.95] tracking-tight text-ink text-balance sm:text-7xl">
+            {/* The eyebrow is part of the <h1> (as on the home hero), so the search-facing
+                heading carries the keywords ("… a domicilio en Medellín") while the big
+                display word stays short. */}
+            <h1 className="animate-rise">
+              <span className="eyebrow">{eyebrow}</span>
+              <span className="sr-only">: </span>
+              <span className="mt-5 block font-serif text-5xl font-semibold leading-[0.95] tracking-tight text-ink text-balance sm:text-7xl">
                 {title}
-              </h1>
-            </div>
+              </span>
+            </h1>
             {description && (
               <p className="mt-6 max-w-xl animate-rise text-base leading-relaxed text-ink-soft [animation-delay:120ms] sm:text-lg">
                 {description}
