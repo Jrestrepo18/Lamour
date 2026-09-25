@@ -1,23 +1,32 @@
+"use client";
+
+import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight, ChevronRight, Clock3 } from "lucide-react";
+import { ArrowUpRight, Clapperboard } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
-import { FadeInImage } from "@/components/ui/FadeInImage";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PHOTOS } from "@/lib/photos";
-import { formatCOP, formatDuration } from "@/lib/format";
+import { formatCOP } from "@/lib/format";
+import { ReelViewer, type Reel } from "./ReelViewer";
 
 // The hero already uses the oil-pour photo, so the signature ritual leads with a different frame.
 const VISUALS = [PHOTOS.handsBack, PHOTOS.hotStone, PHOTOS.candles];
 
 /**
- * The three signature rituals as tall editorial cards: full-bleed photo,
- * a numbered index, and name/price/duration set over a soft ink wash at the
- * base — the same "photo-led product card" language premium spa sites use.
+ * "Rituales destacados" as a Reels shelf: tall 9:16 thumbnails (slow drift,
+ * reel icon, name and price over the photo). Tapping one opens the
+ * full-screen Reels viewer on that ritual, where you swipe up/down between
+ * them. Phones: a swipeable row with the next reel peeking in; desktop: all
+ * three side by side.
  */
 export function FeaturedServices({ services }: { services: Service[] }) {
+  const [open, setOpen] = useState<number | null>(null);
   if (services.length === 0) return null;
+
+  const reels: Reel[] = services.map((service, i) => ({ service, photo: VISUALS[i % VISUALS.length] }));
 
   return (
     <section className="py-16 sm:py-32">
@@ -27,7 +36,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
             <SectionHeading
               eyebrow="Lo más pedido"
               title="Rituales destacados"
-              description="Nuestras experiencias favoritas, creadas para desconectar la mente y despertar cada sentido."
+              description="Nuestras experiencias favoritas. Toca un reel para verlo completo."
             />
           </Reveal>
           <Reveal delay={0.1}>
@@ -41,90 +50,55 @@ export function FeaturedServices({ services }: { services: Service[] }) {
           </Reveal>
         </div>
 
-        {/* Phones: an elegant "carta" — thumbnail, name, duration and price on one line each,
-            gold hairlines between rows. Half a screen instead of three tall cards. */}
-        <ol className="mt-8 border-t border-ink/10 md:hidden">
-          {services.map((service, i) => {
-            const photo = VISUALS[i % VISUALS.length];
-            return (
-              <li key={service.id} className="border-b border-ink/10">
-                <Reveal delay={0.08 * i} from="right">
-                <Link href={`/reservar?service=${service.slug}`} className="group flex items-center gap-4 py-4">
-                  <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl bg-silk">
-                    <FadeInImage
-                      src={service.imageUrl ?? photo.src}
-                      alt={service.imageUrl ? service.name : photo.alt}
-                      fill
-                      sizes="80px"
-                      className="object-cover"
-                      unoptimized={!!service.imageUrl}
-                    />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block text-[0.7rem] font-semibold tracking-[0.25em] text-bronze">0{i + 1}</span>
-                    <span className="mt-0.5 block font-serif text-base font-semibold leading-snug text-ink">{service.name}</span>
-                    <span className="mt-1 flex items-center gap-3 text-xs text-[var(--tone-body)]">
-                      <span className="flex items-center gap-1">
-                        <Clock3 size={12} className="text-bronze" aria-hidden />
-                        {formatDuration(service.durationMinutes)}
-                      </span>
-                      <span className="ml-auto font-serif text-sm font-semibold text-ink">{formatCOP(service.price)}</span>
-                    </span>
-                  </span>
-                  <ChevronRight size={18} className="shrink-0 text-bronze" aria-hidden />
-                </Link>
-                </Reveal>
-              </li>
-            );
-          })}
-        </ol>
-
-        <div className="mt-12 hidden grid-cols-3 gap-6 md:grid">
-          {services.map((service, i) => {
-            const photo = VISUALS[i % VISUALS.length];
-            return (
-              <Reveal key={service.id} delay={0.08 * i}>
-                <Link
-                  href={`/reservar?service=${service.slug}`}
-                  className="group relative block aspect-[3/4] overflow-hidden rounded-[1.75rem] bg-silk shadow-[0_24px_50px_-30px_rgba(43,32,25,0.6)]"
+        <ul className="-mx-5 mt-8 flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-5 px-5 pb-2 [scrollbar-width:none] sm:-mx-8 sm:mt-12 sm:scroll-px-8 sm:px-8 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 [&::-webkit-scrollbar]:hidden">
+          {reels.map(({ service, photo }, i) => (
+            <li key={service.id} className="w-[62%] max-w-[16rem] shrink-0 snap-start md:w-auto md:max-w-none">
+              <Reveal delay={0.08 * i}>
+                <button
+                  type="button"
+                  onClick={() => setOpen(i)}
+                  aria-haspopup="dialog"
+                  aria-label={`Ver reel: ${service.name}, ${formatCOP(service.price)}`}
+                  className="group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_24px_50px_-30px_rgba(43,32,25,0.6)] md:rounded-[1.5rem]"
                 >
-                  {/* Slow "reel" drift; each card starts at a different point of the cycle. */}
-                  <div className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
-                  <FadeInImage
-                    src={service.imageUrl ?? photo.src}
-                    alt={service.imageUrl ? service.name : photo.alt}
-                    fill
-                    sizes="33vw"
-                    className="object-cover transition-transform duration-[1.2s] ease-out group-hover:scale-105"
-                    unoptimized={!!service.imageUrl}
-                  />
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-espresso/90 via-espresso/30 to-transparent" />
-
-                  <span className="absolute left-5 top-5 rounded-full bg-ivory/90 px-3 py-1 text-xs font-semibold tracking-widest text-ink">
-                    0{i + 1}
+                  <span className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
+                    {service.imageUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
+                      <img src={service.imageUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <Image src={photo.src} alt="" fill sizes="(min-width: 768px) 30vw, 62vw" className="object-cover" />
+                    )}
                   </span>
-                  <span className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink transition-transform duration-300 group-hover:rotate-45">
-                    <ArrowUpRight size={17} />
+                  <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-espresso/35 via-transparent to-espresso/85" />
+
+                  <span className="absolute right-3 top-3 text-ivory" aria-hidden>
+                    <Clapperboard size={20} />
                   </span>
 
-                  <div className="absolute inset-x-0 bottom-0 p-6 sm:p-7">
-                    <h3 className="font-serif text-2xl font-semibold leading-tight text-ivory">{service.name}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ivory/80">{service.shortDescription}</p>
-                    <div className="mt-5 flex items-center justify-between border-t border-ivory/20 pt-4 text-sm text-ivory/85">
-                      <span className="flex items-center gap-1.5">
-                        <Clock3 size={14} className="text-champagne" aria-hidden />
-                        {formatDuration(service.durationMinutes)}
-                      </span>
-                      <span className="font-serif text-lg font-semibold text-ivory">{formatCOP(service.price)}</span>
-                    </div>
-                  </div>
-                </Link>
+                  <span className="absolute inset-x-0 bottom-0 p-4 md:p-6">
+                    <span className="block font-serif text-lg font-semibold leading-tight text-ivory md:text-2xl">
+                      {service.name}
+                    </span>
+                    <span className="mt-1 block text-sm font-medium text-champagne">{formatCOP(service.price)}</span>
+                  </span>
+
+                  {/* Play affordance on hover (desktop) */}
+                  <span
+                    aria-hidden
+                    className="absolute left-1/2 top-1/2 hidden h-14 w-14 -translate-x-1/2 -translate-y-1/2 scale-90 items-center justify-center rounded-full bg-ivory/90 text-ink opacity-0 shadow-lg transition-[opacity,transform] duration-300 group-hover:scale-100 group-hover:opacity-100 md:flex"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+                      <path d="M8 5.5v13l11-6.5z" />
+                    </svg>
+                  </span>
+                </button>
               </Reveal>
-            );
-          })}
-        </div>
+            </li>
+          ))}
+        </ul>
       </Container>
+
+      {open !== null && <ReelViewer reels={reels} start={open} onClose={() => setOpen(null)} />}
     </section>
   );
 }
