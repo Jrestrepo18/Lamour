@@ -29,7 +29,7 @@ export function SensesSection() {
   return (
     <section id="sentidos" aria-labelledby="sentidos-title" className="py-16 sm:py-32">
       <Container>
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_minmax(0,30rem)] lg:gap-20">
+        <div className="grid items-center gap-8 lg:grid-cols-[1fr_minmax(0,31rem)] lg:gap-20">
           <div>
             <Reveal>
               <SectionHeading
@@ -70,7 +70,8 @@ export function SensesSection() {
             </Reveal>
           </div>
 
-          <Reveal delay={0.1} className="mx-auto w-full max-w-[30rem]">
+          {/* Full-bleed on phones (cancels the container padding); its own column on desktop. */}
+          <Reveal delay={0.1} className="-mx-5 sm:-mx-8 lg:mx-0">
             <InstagramPost slides={SENSES} active={active} onActiveChange={setActive} />
           </Reveal>
 

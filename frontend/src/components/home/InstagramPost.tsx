@@ -10,7 +10,8 @@ import type { Photo } from "@/lib/photos";
 export type PostSlide = { title: string; caption: string; tags: string[]; photo: Photo };
 
 /**
- * A single Instagram *carousel* post: one header, one photo area you swipe
+ * A single Instagram *carousel* post, laid out as part of the page (no card
+ * frame): full-bleed on phones, a wide column on desktop. One header, one photo area you swipe
  * through (native scroll-snap), the "n/5" pill and dot indicators, and a
  * caption that changes with each photo. Every action is real — like (tap ♡
  * or double-tap the photo, heart pop), comment (jumps to the FAQ chat),
@@ -125,12 +126,12 @@ export function InstagramPost({
     <article
       aria-roledescription="carrusel"
       aria-label="Publicación de L'AMOUR: un ritual para cada sentido"
-      className="overflow-hidden rounded-[1.5rem] border border-ink/10 bg-white shadow-[0_30px_60px_-36px_rgba(43,32,25,0.6)]"
+      className="w-full"
     >
       {/* Header */}
-      <header className="flex items-center gap-3 px-4 py-3">
+      <header className="flex items-center gap-3 px-5 py-3 sm:px-8 lg:px-0 lg:pt-0">
         <span className="rounded-full bg-[conic-gradient(from_210deg,#d4af37,#e8d8b0,#9c7a26,#d4af37)] p-[2px]">
-          <span className="block rounded-full bg-white p-[2px]">
+          <span className="block rounded-full bg-ivory p-[2px]">
             <Image src="/icon.svg" alt="" width={32} height={32} className="h-8 w-8 rounded-full" />
           </span>
         </span>
@@ -141,7 +142,7 @@ export function InstagramPost({
       </header>
 
       {/* Photos — one swipeable strip inside the same post */}
-      <div className="relative" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
+      <div className="relative overflow-hidden lg:rounded-[1.25rem]" onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
         <div
           ref={trackRef}
           onScroll={onScroll}
@@ -160,7 +161,7 @@ export function InstagramPost({
                   src={s.photo.src}
                   alt={s.photo.alt}
                   fill
-                  sizes="(min-width: 1024px) 30rem, 100vw"
+                  sizes="(min-width: 1024px) 31rem, 100vw"
                   className="object-cover"
                 />
               </div>
@@ -201,7 +202,7 @@ export function InstagramPost({
       </div>
 
       {/* Actions + dots */}
-      <div className="relative flex items-center gap-1 px-2 pt-1.5">
+      <div className="relative flex items-center gap-1 px-2.5 pt-1.5 sm:px-5.5 lg:-ml-2.5 lg:px-0">
         <button
           type="button"
           onClick={() => setLiked((v) => !v)}
@@ -262,7 +263,7 @@ export function InstagramPost({
       </div>
 
       {/* Caption — changes with each photo */}
-      <div className="min-h-[7.5rem] px-4 pb-5 pt-2" aria-live="polite">
+      <div className="min-h-[7rem] px-5 pb-2 pt-2 sm:px-8 lg:px-0" aria-live="polite">
         <div key={active} className="animate-fade-in">
           <h3 className="sr-only">{slide.title}</h3>
           <p className="text-sm leading-relaxed text-ink">
