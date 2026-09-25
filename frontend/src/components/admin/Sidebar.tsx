@@ -92,26 +92,51 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
         {footer}
       </aside>
 
-      {/* Mobile top bar */}
-      <header className="sticky top-0 z-40 border-b border-ink/10 bg-ivory/90 backdrop-blur-md lg:hidden">
+      {/* Phone: slim top bar (brand + account) and an app-style tab bar at the bottom */}
+      <header className="sticky top-0 z-40 border-b border-ink/10 bg-ivory lg:hidden">
         <div className="flex items-center justify-between px-5 py-3">
           {brand}
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            aria-controls="admin-mobile-nav"
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
+            aria-controls="admin-mobile-account"
+            aria-label={open ? "Cerrar opciones" : "Opciones de la cuenta"}
             className="-mr-2 flex h-11 w-11 cursor-pointer items-center justify-center text-ink"
           >
             {open ? <X size={22} /> : <Menu size={22} />}
           </button>
         </div>
-        <div id="admin-mobile-nav" hidden={!open} className="space-y-4 border-t border-ink/10 px-4 pb-5 pt-4">
-          {nav}
+        <div id="admin-mobile-account" hidden={!open} className="border-t border-ink/10 px-4 pb-4 pt-3">
           {footer}
         </div>
       </header>
+
+      <nav
+        aria-label="Secciones del panel"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-ivory pb-[env(safe-area-inset-bottom)] lg:hidden"
+      >
+        <ul className="grid grid-cols-3">
+          {LINKS.map((link) => {
+            const active = pathname.startsWith(link.href);
+            return (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={clsx(
+                    "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[0.7rem] font-semibold transition-colors",
+                    active ? "text-ink" : "text-ink-soft",
+                  )}
+                >
+                  <link.icon size={22} strokeWidth={active ? 2.4 : 1.8} aria-hidden />
+                  {link.label}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
     </>
   );
 }

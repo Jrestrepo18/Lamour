@@ -10,6 +10,8 @@ public class LAmourDbContext(DbContextOptions<LAmourDbContext> options) : DbCont
     public DbSet<Masseuse> Masseuses => Set<Masseuse>();
     public DbSet<Appointment> Appointments => Set<Appointment>();
     public DbSet<AdminUser> AdminUsers => Set<AdminUser>();
+    public DbSet<MasseuseWorkingHours> MasseuseWorkingHours => Set<MasseuseWorkingHours>();
+    public DbSet<MasseuseTimeOff> MasseuseTimeOff => Set<MasseuseTimeOff>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +51,18 @@ public class LAmourDbContext(DbContextOptions<LAmourDbContext> options) : DbCont
                 .OnDelete(DeleteBehavior.Restrict);
 
             e.HasIndex(x => new { x.MasseuseId, x.StartsAt });
+        });
+
+        modelBuilder.Entity<MasseuseWorkingHours>(e =>
+        {
+            e.HasOne(x => x.Masseuse).WithMany(m => m.WorkingHours).HasForeignKey(x => x.MasseuseId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(x => new { x.MasseuseId, x.DayOfWeek });
+        });
+
+        modelBuilder.Entity<MasseuseTimeOff>(e =>
+        {
+            e.HasOne(x => x.Masseuse).WithMany(m => m.TimeOff).HasForeignKey(x => x.MasseuseId).OnDelete(DeleteBehavior.Cascade);
+            e.HasIndex(x => new { x.MasseuseId, x.Date }).IsUnique();
         });
 
         modelBuilder.Entity<AdminUser>(e =>

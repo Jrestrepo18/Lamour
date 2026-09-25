@@ -9,6 +9,7 @@ public static class SeedData
     public static void EnsureSeeded(LAmourDbContext db, IConfiguration config, ILogger logger)
     {
         db.Database.EnsureCreated();
+        SchemaUpgrader.Upgrade(db);
 
         if (!db.AdminUsers.Any())
         {

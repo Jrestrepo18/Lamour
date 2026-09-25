@@ -1,4 +1,5 @@
 import { MOCK_CATEGORIES, MOCK_MASSEUSES } from "./mock-data";
+import { clearAdminSession } from "./admin-auth";
 import type {
   Appointment,
   AppointmentConfirmationResult,
@@ -6,6 +7,7 @@ import type {
   AvailabilitySlot,
   Masseuse,
   MasseuseAdmin,
+  MasseuseSchedule,
   Service,
   ServiceCategory,
 } from "./types";
@@ -43,12 +45,22 @@ async function request<T>(path: string, options: RequestInit = {}, token?: strin
   });
 
   if (!res.ok) {
+    if (res.status === 401 && token) expireAdminSession();
     const body = await res.text().catch(() => "");
     throw new ApiError(body || `Error ${res.status}`, res.status);
   }
 
   if (res.status === 204) return undefined as T;
   return res.json() as Promise<T>;
+}
+
+/** An expired or revoked admin token: drop it and go back to the login instead of failing every call. */
+function expireAdminSession() {
+  if (typeof window === "undefined") return;
+  clearAdminSession();
+  // Outside React (no router here), and a full load also drops any stale admin state.
+  // eslint-disable-next-line @next/next/no-location-assign-relative-destination
+  if (!window.location.pathname.startsWith("/admin/login")) window.location.assign("/admin/login");
 }
 
 /** True when the .NET API isn't reachable — lets the UI fall back to demo data instead of a blank page. */
@@ -168,6 +180,18 @@ export async function adminDeleteMasseuse(id: number, token: string) {
   return request<void>(`/admin/masseuses/${id}`, { method: "DELETE" }, token);
 }
 
+export async function adminGetSchedule(id: number, token: string) {
+  return request<MasseuseSchedule>(`/admin/masseuses/${id}/schedule`, {}, token);
+}
+
+export async function adminSaveSchedule(id: number, schedule: MasseuseSchedule, token: string) {
+  return request<MasseuseSchedule>(
+    `/admin/masseuses/${id}/schedule`,
+    { method: "PUT", body: JSON.stringify(schedule) },
+    token,
+  );
+}
+
 export async function adminGetServices(token: string) {
   return request<Service[]>("/admin/services", {}, token);
 }
@@ -203,4 +227,24 @@ export async function adminUploadImage(file: File, token: string): Promise<{ url
   }
 
   return res.json() as Promise<{ url: string }>;
+}
+
+/** Several photos in one request; the API validates each and reports the ones it rejected. */
+export async function adminUploadImages(files: File[], token: string): Promise<{ urls: string[]; errors: string[] }> {
+  const formData = new FormData();
+  for (const file of files) formData.append("files", file);
+
+  const res = await fetch(`${API_URL}/admin/uploads/batch`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    if (res.status === 401) expireAdminSession();
+    const body = await res.text().catch(() => "");
+    throw new ApiError(body || `Error ${res.status}`, res.status);
+  }
+
+  return res.json() as Promise<{ urls: string[]; errors: string[] }>;
 }

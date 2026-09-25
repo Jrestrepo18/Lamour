@@ -1,15 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { AlertCircle, Loader2, MapPin, Phone, RefreshCw, Users } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import clsx from "clsx";
+import { Clock3, MapPin, NotebookPen, RefreshCw, Users } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { adminGetAppointments, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
-import { formatCOP, formatDateLong, formatTime } from "@/lib/format";
+import { capitalize, formatCOP, formatDateLong, formatTime } from "@/lib/format";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
+import { chipClass } from "@/lib/ui";
+import { wrapRailClass } from "@/components/booking/parts";
 import { StatusBadge } from "./StatusBadge";
 import { AdminPageHeader } from "./AdminPageHeader";
-import { chipClass, surfaceClass } from "@/lib/ui";
-import { Button } from "@/components/ui/Button";
+import { ConfirmDialog, ErrorBanner, LoadingBlock } from "./kit";
 
 const TABS: { value: AppointmentStatus | "All"; label: string }[] = [
   { value: "Pending", label: "Pendientes" },
@@ -19,24 +21,46 @@ const TABS: { value: AppointmentStatus | "All"; label: string }[] = [
   { value: "All", label: "Todas" },
 ];
 
+const PAYMENT: Record<string, string> = { Cash: "Efectivo", Transfer: "Transferencia", Card: "Datáfono" };
+
+/** Colombian mobile numbers are typed without the country code; wa.me needs it. */
+function clientWhatsApp(phone: string) {
+  const digits = phone.replace(/\D/g, "");
+  return `https://wa.me/${digits.length === 10 ? `57${digits}` : digits}`;
+}
+
+function dayLabel(iso: string) {
+  const day = iso.slice(0, 10);
+  const today = new Date().toLocaleDateString("en-CA");
+  const tomorrow = new Date(Date.now() + 86_400_000).toLocaleDateString("en-CA");
+  if (day === today) return "Hoy";
+  if (day === tomorrow) return "Mañana";
+  return capitalize(formatDateLong(iso));
+}
+
 export function AppointmentsView({ token }: { token: string }) {
   const [appointments, setAppointments] = useState<Appointment[] | null>(null);
   const [tab, setTab] = useState<AppointmentStatus | "All">("Pending");
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
   const [whatsappLinks, setWhatsappLinks] = useState<{ id: number; links: string[] } | null>(null);
+  const [cancelling, setCancelling] = useState<Appointment | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   async function load() {
     setError(null);
+    setRefreshing(true);
     try {
       const data = await adminGetAppointments(token);
       setAppointments(data.sort((a, b) => a.startsAt.localeCompare(b.startsAt)));
     } catch (err) {
       setError(
         err instanceof ApiError
-          ? "No se pudo cargar las citas. Verifica tu sesión."
-          : "No se pudo conectar con el servidor de la API .NET. Asegúrate de que el backend esté corriendo.",
+          ? "No se pudieron cargar las citas."
+          : "No se pudo conectar con el servidor. Revisa que la API esté encendida.",
       );
+    } finally {
+      setRefreshing(false);
     }
   }
 
@@ -56,124 +80,211 @@ export function AppointmentsView({ token }: { token: string }) {
         setWhatsappLinks({ id, links });
       }
     } catch {
-      setError("No se pudo actualizar el estado de la cita.");
+      setError("No se pudo actualizar la cita.");
     } finally {
       setBusyId(null);
     }
   }
 
-  const filtered = appointments?.filter((a) => tab === "All" || a.status === tab) ?? [];
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { All: appointments?.length ?? 0 };
+    for (const a of appointments ?? []) c[a.status] = (c[a.status] ?? 0) + 1;
+    return c;
+  }, [appointments]);
+
+  // Keep a just-confirmed appointment on screen (with its WhatsApp buttons) even though it left "Pendientes".
+  const filtered = (appointments ?? []).filter((a) => tab === "All" || a.status === tab || whatsappLinks?.id === a.id);
+  const byDay = filtered.reduce<{ day: string; items: Appointment[] }[]>((acc, a) => {
+    const day = a.startsAt.slice(0, 10);
+    const group = acc.find((g) => g.day === day);
+    if (group) group.items.push(a);
+    else acc.push({ day, items: [a] });
+    return acc;
+  }, []);
 
   return (
     <div>
       <AdminPageHeader
         title="Citas"
-        description="Gestiona las reservas y confirma la asignación a cada masajista."
+        description="Confirma cada reserva y avísale a la masajista por WhatsApp."
         action={
-          <Button variant="secondary" size="sm" onClick={load}>
-            <RefreshCw size={14} aria-hidden />
-            Actualizar
-          </Button>
+          <button
+            type="button"
+            onClick={load}
+            aria-label="Actualizar citas"
+            className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink/10 bg-marfil text-ink transition-colors hover:border-gold/50"
+          >
+            <RefreshCw size={17} className={clsx(refreshing && "animate-spin")} aria-hidden />
+          </button>
         }
       />
 
-      <div className="mt-8 flex flex-wrap gap-2">
+      <div className={clsx(wrapRailClass, "mt-6")}>
         {TABS.map((t) => (
           <button
             key={t.value}
             type="button"
-            onClick={() => setTab(t.value)}
+            onClick={() => {
+              setTab(t.value);
+              setWhatsappLinks(null);
+            }}
             aria-pressed={tab === t.value}
-            className={chipClass(tab === t.value)}
+            className={clsx(chipClass(tab === t.value), "min-h-10 shrink-0 whitespace-nowrap")}
           >
             {t.label}
+            {counts[t.value] ? <span className="ml-1.5 opacity-60">{counts[t.value]}</span> : null}
           </button>
         ))}
       </div>
 
-      {error && (
-        <div className="mt-6 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
-          <AlertCircle size={16} className="mt-0.5 shrink-0" />
-          {error}
-        </div>
-      )}
-
-      {!appointments && !error && (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="animate-spin text-bronze" size={26} aria-label="Cargando" />
-        </div>
-      )}
+      {error && <div className="mt-6"><ErrorBanner>{error}</ErrorBanner></div>}
+      {!appointments && !error && <LoadingBlock label="Cargando citas" />}
 
       {appointments && filtered.length === 0 && !error && (
-        <p className="mt-10 text-center text-sm text-ink-soft">No hay citas en esta categoría.</p>
+        <p className="mt-14 text-center text-sm text-ink-soft">No hay citas aquí por ahora.</p>
       )}
 
-      <div className="mt-6 space-y-3">
-        {filtered.map((a) => (
-          <div key={a.id} className={`${surfaceClass} p-6`}>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div>
-                <div className="flex items-center gap-2">
-                  <p className="font-serif text-lg font-semibold text-ink">{a.serviceName}</p>
-                  <StatusBadge status={a.status} />
+      {byDay.map(({ day, items }) => (
+        <section key={day} className="mt-8">
+          <p className="text-[0.7rem] font-semibold uppercase tracking-[0.22em] text-bronze">{dayLabel(items[0].startsAt)}</p>
+          <ul className="mt-3 space-y-3">
+            {items.map((a) => (
+              <li key={a.id} className="animate-fade-in rounded-[1.5rem] bg-marfil p-5 ring-1 ring-ink/[0.07]">
+                <div className="flex items-start gap-4">
+                  <div className="flex w-16 shrink-0 flex-col items-center rounded-2xl bg-ivory py-2 ring-1 ring-ink/[0.07]">
+                    <span className="font-serif text-lg font-semibold leading-tight text-ink">{formatTime(a.startsAt).replace(/\s?[ap]\.\s?m\./, "")}</span>
+                    <span className="text-[0.65rem] font-semibold uppercase text-ink-soft">
+                      {/a\.\s?m\./.test(formatTime(a.startsAt)) ? "a. m." : "p. m."}
+                    </span>
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <p className="font-semibold text-ink">{a.serviceName}</p>
+                      <StatusBadge status={a.status} />
+                    </div>
+                    <p className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-soft">
+                      <span className="inline-flex items-center gap-1">
+                        <Clock3 size={13} aria-hidden />
+                        {a.durationMinutes} min
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Users size={13} aria-hidden />
+                        {a.masseuseName}
+                        {a.secondMasseuseName ? ` y ${a.secondMasseuseName}` : ""}
+                      </span>
+                      <span className="font-semibold text-ink">{formatCOP(a.totalPrice)}</span>
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-1 text-sm capitalize text-ink-soft">
-                  {formatDateLong(a.startsAt)} · {formatTime(a.startsAt)} ({a.durationMinutes} min)
-                </p>
-              </div>
-              <span className="font-serif text-lg font-semibold text-ink">{formatCOP(a.totalPrice)}</span>
-            </div>
 
-            <div className="mt-4 grid grid-cols-1 gap-3 text-sm text-ink-soft sm:grid-cols-2">
-              <p className="flex items-center gap-2">
-                <Users size={14} className="text-bronze" aria-hidden />
-                {a.masseuseName}
-                {a.secondMasseuseName ? ` y ${a.secondMasseuseName}` : ""}
-              </p>
-              <p className="flex items-center gap-2">
-                <Phone size={14} className="text-bronze" aria-hidden />
-                {a.clientName} · {a.clientPhone}
-              </p>
-              <p className="flex items-start gap-2 sm:col-span-2">
-                <MapPin size={14} className="mt-0.5 shrink-0 text-bronze" />
-                {a.address}, {a.neighborhood}, {a.city}
-              </p>
-            </div>
+                <div className="mt-4 space-y-1.5 border-t border-ink/[0.07] pt-4 text-sm">
+                  <p className="flex items-center justify-between gap-3">
+                    <span className="min-w-0 truncate text-ink">
+                      <span className="font-semibold">{a.clientName}</span> · {a.clientPhone}
+                    </span>
+                    <a
+                      href={clientWhatsApp(a.clientPhone)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Escribir a ${a.clientName} por WhatsApp`}
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#25D366] text-white"
+                    >
+                      <WhatsAppIcon size={17} />
+                    </a>
+                  </p>
+                  <p className="flex items-start gap-2 text-ink-soft">
+                    <MapPin size={14} className="mt-0.5 shrink-0" aria-hidden />
+                    <span>
+                      {a.address}
+                      {a.addressDetails && `, ${a.addressDetails}`} · {a.neighborhood}, {a.city}
+                    </span>
+                  </p>
+                  <p className="text-ink-soft">
+                    Pago: {PAYMENT[a.paymentMethod] ?? a.paymentMethod}
+                    {a.sensoryDressRequested && " · Vestidura sensorial"}
+                    {a.extraMinutes > 0 && ` · +${a.extraMinutes} min`}
+                  </p>
+                  {a.notes && (
+                    <p className="flex items-start gap-2 rounded-xl bg-ivory p-3 text-ink-soft">
+                      <NotebookPen size={14} className="mt-0.5 shrink-0" aria-hidden />
+                      {a.notes}
+                    </p>
+                  )}
+                </div>
 
-            <div className="mt-5 flex flex-wrap items-center gap-2 border-t border-ink/10 pt-4">
-              {a.status === "Pending" && (
-                <Button size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Confirmed")}>
-                  {busyId === a.id ? "Confirmando…" : "Confirmar cita"}
-                </Button>
-              )}
-              {a.status === "Confirmed" && (
-                <Button variant="secondary" size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Completed")}>
-                  Marcar como completada
-                </Button>
-              )}
-              {(a.status === "Pending" || a.status === "Confirmed") && (
-                <Button variant="danger" size="sm" disabled={busyId === a.id} onClick={() => updateStatus(a.id, "Cancelled")}>
-                  Cancelar
-                </Button>
-              )}
+                {(a.status === "Pending" || a.status === "Confirmed" || whatsappLinks?.id === a.id) && (
+                  <div className="mt-4 flex flex-wrap items-center gap-2">
+                    {a.status === "Pending" && (
+                      <button
+                        type="button"
+                        disabled={busyId === a.id}
+                        onClick={() => updateStatus(a.id, "Confirmed")}
+                        className="min-h-11 flex-1 cursor-pointer rounded-full bg-ink px-5 text-sm font-semibold text-ivory disabled:opacity-50 sm:flex-none"
+                      >
+                        {busyId === a.id ? "Confirmando…" : "Confirmar"}
+                      </button>
+                    )}
+                    {a.status === "Confirmed" && whatsappLinks?.id !== a.id && (
+                      <button
+                        type="button"
+                        disabled={busyId === a.id}
+                        onClick={() => updateStatus(a.id, "Completed")}
+                        className="min-h-11 flex-1 cursor-pointer rounded-full border border-ink/15 bg-ivory px-5 text-sm font-semibold text-ink disabled:opacity-50 sm:flex-none"
+                      >
+                        Marcar completada
+                      </button>
+                    )}
+                    {whatsappLinks?.id === a.id &&
+                      whatsappLinks.links.map((link, i) => (
+                        <a
+                          key={link}
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 text-sm font-semibold text-white sm:flex-none"
+                        >
+                          <WhatsAppIcon size={17} />
+                          Avisar a {i === 0 ? a.masseuseName : a.secondMasseuseName}
+                        </a>
+                      ))}
+                    {(a.status === "Pending" || a.status === "Confirmed") && (
+                      <button
+                        type="button"
+                        disabled={busyId === a.id}
+                        onClick={() => setCancelling(a)}
+                        className="min-h-11 cursor-pointer rounded-full px-4 text-sm font-semibold text-red-700 disabled:opacity-50"
+                      >
+                        Cancelar
+                      </button>
+                    )}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
-              {whatsappLinks?.id === a.id &&
-                whatsappLinks.links.map((link, i) => (
-                  <a
-                    key={link}
-                    href={link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex min-h-9 items-center gap-1.5 rounded-full bg-emerald-700 px-4 py-2 text-xs font-medium text-white transition-colors hover:bg-emerald-800"
-                  >
-                    <WhatsAppIcon size={15} />
-                    Avisar por WhatsApp {whatsappLinks.links.length > 1 ? `(${i === 0 ? "1ª" : "2ª"} masajista)` : ""}
-                  </a>
-                ))}
-            </div>
-          </div>
-        ))}
-      </div>
+      {cancelling && (
+        <ConfirmDialog
+          title="¿Cancelar esta cita?"
+          message={
+            <>
+              <p>
+                {cancelling.serviceName} de <strong className="text-ink">{cancelling.clientName}</strong>,{" "}
+                {formatDateLong(cancelling.startsAt)} a las {formatTime(cancelling.startsAt)}
+              </p>
+              <p className="mt-2">El horario quedará libre de nuevo.</p>
+            </>
+          }
+          confirmLabel="Cancelar cita"
+          onClose={() => setCancelling(null)}
+          onConfirm={async () => {
+            await updateStatus(cancelling.id, "Cancelled");
+            setCancelling(null);
+          }}
+        />
+      )}
     </div>
   );
 }

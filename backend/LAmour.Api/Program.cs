@@ -72,7 +72,19 @@ builder.Services.AddCors(options =>
     });
 });
 
+// Behind a hosting proxy (Render, Railway, Nginx…) the app sees plain http; trust the
+// forwarded scheme/host so upload URLs come back as https and don't get blocked as mixed content.
+builder.Services.Configure<Microsoft.AspNetCore.Builder.ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor
+        | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto
+        | Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedHost;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
+
 var app = builder.Build();
+app.UseForwardedHeaders();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -91,11 +103,13 @@ app.UseHttpsRedirection();
 // Serve admin uploads from an explicit provider. The default UseStaticFiles() binds to
 // WebRootPath at startup, which is null when wwwroot doesn't exist yet (first run) — the
 // files would then be saved but return 404 until the API was restarted.
-var webRoot = app.Environment.WebRootPath ?? Path.Combine(app.Environment.ContentRootPath, "wwwroot");
-Directory.CreateDirectory(Path.Combine(webRoot, "uploads"));
+// Storage:UploadsPath moves them to a persistent disk when hosted (e.g. /data/uploads).
+var uploadsPath = UploadStorage.Resolve(app.Configuration, app.Environment);
+Directory.CreateDirectory(uploadsPath);
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(webRoot),
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(uploadsPath),
+    RequestPath = "/uploads",
 });
 app.UseCors("Frontend");
 app.UseAuthentication();

@@ -92,3 +92,16 @@ public record MasseuseUpsertDto(
     int DisplayOrder,
     bool IsActive
 );
+
+/// <summary>One working block on a weekday; times as "HH:mm" (24 h). DayOfWeek: 0 = Sunday … 6 = Saturday.</summary>
+public record WorkingBlockDto(int DayOfWeek, string Start, string End);
+
+public record TimeOffDto(DateOnly Date, string? Note);
+
+/// <summary>A masseuse's whole agenda, read and replaced as one document from the admin panel.</summary>
+public record MasseuseScheduleDto(
+    int SlotIntervalMinutes,
+    int BufferMinutes,
+    List<WorkingBlockDto> WorkingHours,
+    List<TimeOffDto> TimeOff
+);

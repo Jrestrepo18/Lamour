@@ -44,6 +44,26 @@ export interface MasseuseAdmin extends Masseuse {
   whatsAppNumber: string;
 }
 
+/** One working block on a weekday. dayOfWeek: 0 = domingo … 6 = sábado; times "HH:mm". */
+export interface WorkingBlock {
+  dayOfWeek: number;
+  start: string;
+  end: string;
+}
+
+export interface TimeOff {
+  date: string;
+  note: string | null;
+}
+
+/** A masseuse's agenda. An empty week means she works the business hours every day. */
+export interface MasseuseSchedule {
+  slotIntervalMinutes: number;
+  bufferMinutes: number;
+  workingHours: WorkingBlock[];
+  timeOff: TimeOff[];
+}
+
 export type PaymentMethod = "Cash" | "Transfer" | "Card";
 
 export type AppointmentStatus = "Pending" | "Confirmed" | "Completed" | "Cancelled";
