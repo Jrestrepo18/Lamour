@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getServiceCategories } from "@/lib/api";
+import { findService, servicePath } from "@/lib/catalog";
 import { Hero } from "@/components/home/Hero";
 import { Manifesto } from "@/components/home/Manifesto";
 import { FeaturedServices } from "@/components/home/FeaturedServices";
@@ -13,15 +14,20 @@ import { TrustHighlights } from "@/components/home/TrustHighlights";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 
-const FEATURED_SLUGS = ["ritual-lamour-full-nuru", "masaje-sensorial", "masaje-voyerista"];
+/**
+ * Only general-section rituals on the home page: an adult ritual here would get the
+ * whole home page classified as explicit, and Google keeps explicit pages out of
+ * non-explicit searches like "masajes a domicilio Medellín". The tantric rituals are
+ * one link away (/masajes-tantricos) — see lib/catalog.ts.
+ */
+const FEATURED_SLUGS = ["relajacion-clasica", "piedras-volcanicas", "experiencia-en-pareja"];
 
 export default async function HomePage() {
   const { data: categories } = await getServiceCategories();
 
-  const allServices = categories.flatMap((c) => c.services);
-  const featured = FEATURED_SLUGS.map((slug) => allServices.find((s) => s.slug === slug)).filter(
-    (s): s is NonNullable<typeof s> => !!s,
-  );
+  const featured = FEATURED_SLUGS.map((slug) => findService(categories, slug))
+    .filter((f) => f !== null)
+    .map(({ service, category }) => ({ ...service, href: servicePath(service, category.slug) }));
 
   return (
     <>

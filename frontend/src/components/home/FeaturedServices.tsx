@@ -20,9 +20,10 @@ const VISUALS = [PHOTOS.handsBack, PHOTOS.hotStone, PHOTOS.candles];
  * reel icon, name and price over the photo). Tapping one opens the
  * full-screen Reels viewer on that ritual, where you swipe up/down between
  * them. Phones: a swipeable row with the next reel peeking in; desktop: all
- * three side by side.
+ * three side by side. Each thumbnail links to the ritual's own page (for
+ * crawlers and modified clicks); a plain tap opens the viewer instead.
  */
-export function FeaturedServices({ services }: { services: Service[] }) {
+export function FeaturedServices({ services }: { services: (Service & { href: string })[] }) {
   const [open, setOpen] = useState<number | null>(null);
   if (services.length === 0) return null;
 
@@ -39,12 +40,19 @@ export function FeaturedServices({ services }: { services: Service[] }) {
               description="Nuestras experiencias favoritas. Toca un reel para verlo completo."
             />
           </Reveal>
-          <Reveal delay={0.1}>
+          <Reveal delay={0.1} className="flex flex-wrap gap-x-6 gap-y-3">
             <Link
               href="/servicios"
               className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink underline decoration-gold/60 underline-offset-8 transition-colors hover:decoration-ink"
             >
               Ver catálogo completo
+              <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href="/masajes-tantricos"
+              className="group inline-flex items-center gap-1.5 text-sm font-medium text-bronze underline decoration-gold/60 underline-offset-8 transition-colors hover:text-ink hover:decoration-ink"
+            >
+              Rituales tántricos (+18)
               <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
@@ -56,9 +64,13 @@ export function FeaturedServices({ services }: { services: Service[] }) {
           {reels.map(({ service, photo }, i) => (
             <li key={service.id} className="w-[62%] max-w-[16rem] shrink-0 snap-start md:w-auto md:max-w-none">
               <Reveal delay={0.08 * i}>
-                <button
-                  type="button"
-                  onClick={() => setOpen(i)}
+                <Link
+                  href={services[i].href}
+                  onClick={(e) => {
+                    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+                    e.preventDefault();
+                    setOpen(i);
+                  }}
                   aria-haspopup="dialog"
                   aria-label={`Ver reel: ${service.name}, ${formatCOP(service.price)}`}
                   className="group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_24px_50px_-30px_rgba(43,32,25,0.6)] md:rounded-[1.5rem]"
@@ -93,7 +105,7 @@ export function FeaturedServices({ services }: { services: Service[] }) {
                       <path d="M8 5.5v13l11-6.5z" />
                     </svg>
                   </span>
-                </button>
+                </Link>
               </Reveal>
             </li>
           ))}

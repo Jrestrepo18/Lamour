@@ -16,6 +16,7 @@ function InstagramGlyph() {
 const EXPLORE = [
   { href: "/", label: "Inicio" },
   { href: "/servicios", label: "Servicios" },
+  { href: "/masajes-tantricos", label: "Masajes tántricos" },
   { href: "/servicios#pareja", label: "Experiencias en pareja" },
   { href: "/masajistas", label: "Nuestro equipo" },
   { href: "/#faq", label: "Preguntas frecuentes" },

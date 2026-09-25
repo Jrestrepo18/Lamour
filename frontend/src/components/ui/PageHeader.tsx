@@ -20,6 +20,7 @@ export function PageHeader({
   description,
   path,
   photo,
+  parent,
   compact = false,
 }: {
   eyebrow: string;
@@ -28,6 +29,8 @@ export function PageHeader({
   /** Route path of this page, e.g. "/servicios" — used for the breadcrumb. */
   path: string;
   photo?: Photo;
+  /** Intermediate breadcrumb level, e.g. the catalog a service page belongs to. */
+  parent?: { name: string; path: string };
   compact?: boolean;
 }) {
   return (
@@ -42,7 +45,7 @@ export function PageHeader({
         (photo ? "" : " bg-gradient-to-br from-ivory via-champagne/35 to-silk")
       }
     >
-      <JsonLd data={breadcrumbJsonLd([{ name: title, path }])} />
+      <JsonLd data={breadcrumbJsonLd([...(parent ? [parent] : []), { name: title, path }])} />
       <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
       <Grain />
 
@@ -74,7 +77,7 @@ export function PageHeader({
             }
           >
             <nav aria-label="Ruta de navegación" className="mb-6 lg:mb-8">
-              <ol className="flex items-center gap-1.5 text-xs text-ink-soft">
+              <ol className="flex flex-wrap items-center gap-1.5 text-xs text-ink-soft">
                 <li>
                   <Link href="/" className="transition-colors hover:text-ink">
                     Inicio
@@ -83,6 +86,18 @@ export function PageHeader({
                 <li aria-hidden>
                   <ChevronRight size={12} />
                 </li>
+                {parent && (
+                  <>
+                    <li>
+                      <Link href={parent.path} className="transition-colors hover:text-ink">
+                        {parent.name}
+                      </Link>
+                    </li>
+                    <li aria-hidden>
+                      <ChevronRight size={12} />
+                    </li>
+                  </>
+                )}
                 <li aria-current="page" className="text-ink">
                   {title}
                 </li>

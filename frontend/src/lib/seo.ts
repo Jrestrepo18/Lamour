@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { servicePath } from "./catalog";
 
 /**
  * Single source of truth for SEO: canonical site URL, brand copy, and the
@@ -48,12 +49,24 @@ export const absoluteUrl = (path = "/") => `${SITE.url}${path.startsWith("/") ? 
  * `openGraph` wholesale instead of merging them with the root layout's, so each
  * page must restate the image, locale and site name — this does it in one place.
  */
-export function pageMetadata({ title, description, path }: { title: string; description: string; path: string }): Metadata {
+export function pageMetadata({
+  title,
+  description,
+  path,
+  adult = false,
+}: {
+  title: string;
+  description: string;
+  path: string;
+  /** Marks the page as sexually explicit for SafeSearch (`<meta name="rating" content="adult">`). */
+  adult?: boolean;
+}): Metadata {
   const image = { url: SITE.ogImage, width: 1200, height: 630, alt: "L'AMOUR — Spa y masajes a domicilio en Medellín" };
   return {
     title,
     description,
     alternates: { canonical: path },
+    ...(adult ? { other: { rating: "adult" } } : {}),
     openGraph: {
       type: "website",
       locale: SITE.locale,
@@ -141,15 +154,21 @@ export function faqJsonLd(faqs: { q: string; a: string }[]): Json {
   };
 }
 
-/** The service catalog as an OfferCatalog of the business — prices and durations included. */
-export function catalogJsonLd(
-  categories: { name: string; services: { name: string; slug: string; shortDescription: string; price: number }[] }[],
-): Json {
+/** One section of the catalog as an OfferCatalog of the business — prices and durations included. */
+export function catalogJsonLd({
+  name,
+  path,
+  categories,
+}: {
+  name: string;
+  path: string;
+  categories: { name: string; slug: string; services: { name: string; slug: string; shortDescription: string; price: number }[] }[];
+}): Json {
   return {
     "@context": "https://schema.org",
     "@type": "OfferCatalog",
-    name: "Catálogo de masajes a domicilio",
-    url: absoluteUrl("/servicios"),
+    name,
+    url: absoluteUrl(path),
     provider: { "@id": absoluteUrl("/#business") },
     itemListElement: categories.map((c) => ({
       "@type": "OfferCatalog",
@@ -158,7 +177,7 @@ export function catalogJsonLd(
         "@type": "Offer",
         price: s.price,
         priceCurrency: "COP",
-        url: absoluteUrl(`/reservar?service=${s.slug}`),
+        url: absoluteUrl(servicePath(s, c.slug)),
         itemOffered: {
           "@type": "Service",
           name: s.name,
@@ -167,5 +186,41 @@ export function catalogJsonLd(
         },
       })),
     })),
+  };
+}
+
+/** A single service's own page: the Service, offered by the business, with its price. */
+export function serviceJsonLd({
+  name,
+  slug,
+  description,
+  path,
+  price,
+  category,
+}: {
+  name: string;
+  slug: string;
+  description: string;
+  path: string;
+  price: number;
+  category: string;
+}): Json {
+  const url = absoluteUrl(path);
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${url}#service`,
+    name,
+    description,
+    url,
+    serviceType: category,
+    provider: { "@id": absoluteUrl("/#business") },
+    areaServed: SITE.areaServed.map((city) => ({ "@type": "City", name: city })),
+    offers: {
+      "@type": "Offer",
+      price,
+      priceCurrency: "COP",
+      url: absoluteUrl(`/reservar?service=${slug}`),
+    },
   };
 }

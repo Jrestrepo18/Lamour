@@ -2,18 +2,22 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import clsx from "clsx";
 import { ArrowUpRight, Clock3, Users } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { formatCOP, formatDuration } from "@/lib/format";
 import { fallbackPhoto } from "@/lib/photos";
+import { servicePath } from "@/lib/catalog";
 import { LinkButton } from "@/components/ui/Button";
 import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { DetailModal } from "./DetailModal";
 
 /**
  * Catalog card — click opens the full detail (gallery, long description,
- * highlights, CTA). Services without an uploaded photo borrow a matching
+ * highlights, CTA). The card is a real link to the service's own page, so
+ * crawlers (and middle-click / ⌘-click) reach it; a plain click opens the
+ * detail sheet instead. Services without an uploaded photo borrow a matching
  * image from the brand's own photography, so the catalog never shows an
  * empty placeholder box.
  */
@@ -24,7 +28,7 @@ export function ServiceCard({
   tone = "light",
 }: {
   service: Service;
-  categorySlug?: string;
+  categorySlug: string;
   index?: number;
   tone?: "light" | "dark";
 }) {
@@ -32,16 +36,24 @@ export function ServiceCard({
   const dark = tone === "dark";
   const gallery = service.imageUrl ? [service.imageUrl, ...service.imageGallery] : service.imageGallery;
   const stand = fallbackPhoto(categorySlug, index);
+  const href = servicePath(service, categorySlug);
+
+  function openSheet(e: React.MouseEvent) {
+    // Let modified clicks (new tab / window) follow the link to the full page.
+    if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
+    e.preventDefault();
+    setOpen(true);
+  }
 
   return (
     <>
       {/* One element, two layouts: a compact "menu" row on phones (thumbnail, name,
           one-line description, duration · price) and a photo card from sm up. The ♡ sits
-          beside it (not inside — buttons can't nest), over the row's end / the card photo. */}
+          beside it (not inside — interactive elements can't nest), over the row's end / the card photo. */}
       <div className="relative h-full">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
+      <Link
+        href={href}
+        onClick={openSheet}
         aria-haspopup="dialog"
         className={clsx(
           "group flex h-full w-full cursor-pointer items-center gap-4 border-b py-4 pr-12 text-left transition-[transform,box-shadow,border-color] duration-500 ease-out",
@@ -133,7 +145,7 @@ export function ServiceCard({
           </div>
         </div>
 
-      </button>
+      </Link>
       <FavoriteButton
         slug={service.slug}
         name={service.name}
@@ -152,10 +164,18 @@ export function ServiceCard({
         gallery={gallery}
         fallback={<Image src={stand.src} alt={stand.alt} fill sizes="(min-width: 640px) 42rem, 100vw" className="object-cover" />}
         footer={
-          <LinkButton href={`/reservar?service=${service.slug}`} className="w-full">
-            Reservar este servicio
-            <ArrowUpRight size={16} />
-          </LinkButton>
+          <div className="flex flex-col items-center gap-3">
+            <LinkButton href={`/reservar?service=${service.slug}`} className="w-full">
+              Reservar este servicio
+              <ArrowUpRight size={16} />
+            </LinkButton>
+            <Link
+              href={href}
+              className="text-sm font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink"
+            >
+              Ver todos los detalles
+            </Link>
+          </div>
         }
       >
         <p className="text-base leading-relaxed text-ink-soft">{service.longDescription ?? service.shortDescription}</p>
