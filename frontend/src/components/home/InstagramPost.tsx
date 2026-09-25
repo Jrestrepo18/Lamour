@@ -146,7 +146,7 @@ export function InstagramPost({
         <div
           ref={trackRef}
           onScroll={onScroll}
-          className="flex aspect-[4/5] touch-pan-x snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-silk [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="flex aspect-[4/5] touch-manipulation snap-x snap-mandatory overflow-x-auto overscroll-x-contain bg-silk [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
           {slides.map((s, i) => (
             <div

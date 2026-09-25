@@ -22,7 +22,9 @@ function observe(el: Element, onEnter: () => void) {
         observer?.unobserve(entry.target);
       }
     },
-    { rootMargin: "0px 0px -8% 0px", threshold: 0.12 },
+    // Fire slightly before the element enters (positive bottom margin, any overlap), so tall
+    // blocks never leave an empty stretch on screen while they wait to appear.
+    { rootMargin: "0px 0px 15% 0px", threshold: 0 },
   );
   callbacks.set(el, onEnter);
   observer.observe(el);

@@ -48,7 +48,7 @@ export default async function ServiciosPage() {
       {/* Quick jump between categories — sticky under the header, swipeable on phones. */}
       <nav
         aria-label="Categorías"
-        className="sticky top-[4.5rem] z-30 mx-auto mt-4 w-fit max-w-[calc(100%-2rem)] rounded-full border border-ink/10 bg-ivory/90 shadow-[0_8px_32px_-16px_rgba(43,32,25,0.3)] backdrop-blur-md sm:top-20 sm:mt-6"
+        className="sticky top-[4.5rem] z-30 mx-auto mt-4 w-fit max-w-[calc(100%-2rem)] rounded-full border border-ink/10 bg-ivory/95 shadow-[0_8px_32px_-16px_rgba(43,32,25,0.3)] sm:top-20 sm:mt-6"
       >
         <ul className="flex gap-1 overflow-x-auto px-1.5 py-1.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
           {categories.map((c) => (
