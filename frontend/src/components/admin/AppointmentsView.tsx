@@ -93,7 +93,7 @@ export function AppointmentsView({ token }: { token: string }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  async function updateStatus(id: string, status: AppointmentStatus) {
+  async function updateStatus(id: string, status: AppointmentStatus): Promise<boolean> {
     setBusyId(id);
     try {
       const result = await adminUpdateAppointmentStatus(id, status, token);
@@ -102,11 +102,30 @@ export function AppointmentsView({ token }: { token: string }) {
         const links = [result.whatsAppLink, result.secondWhatsAppLink].filter(Boolean) as string[];
         setWhatsappLinks({ id, links });
       }
+      return true;
     } catch {
       setError("No se pudo actualizar la cita.");
+      return false;
     } finally {
       setBusyId(null);
     }
+  }
+
+  /**
+   * One tap: confirms the booking and opens the client's WhatsApp with the confirmation
+   * already written. The tab is opened during the tap (browsers block pop-ups opened later)
+   * and only pointed at WhatsApp once the confirmation is saved; if saving fails it closes.
+   */
+  async function confirmAndNotify(a: Appointment) {
+    const link = clientConfirmation(a);
+    const tab = window.open("", "_blank");
+    const saved = await updateStatus(a.id, "Confirmed");
+    if (!saved) {
+      tab?.close();
+      return;
+    }
+    if (tab) tab.location.assign(link);
+    else window.location.assign(link);
   }
 
   const counts = useMemo(() => {
@@ -238,14 +257,28 @@ export function AppointmentsView({ token }: { token: string }) {
 
                 {(a.status === "Pending" || a.status === "Confirmed" || whatsappLinks?.id === a.id) && (
                   <div className="mt-4 flex flex-wrap items-center gap-2">
+                    {a.status === "Pending" && a.clientPhone && (
+                      <button
+                        type="button"
+                        disabled={busyId === a.id}
+                        onClick={() => confirmAndNotify(a)}
+                        className="inline-flex min-h-12 w-full cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-full bg-[#25D366] px-5 text-[0.95rem] font-semibold text-white shadow-[0_10px_24px_-12px_rgba(37,211,102,0.8)] disabled:opacity-50 sm:w-auto"
+                      >
+                        <WhatsAppIcon size={17} />
+                        {busyId === a.id ? "Confirmando…" : "Confirmar y avisar al cliente"}
+                      </button>
+                    )}
                     {a.status === "Pending" && (
                       <button
                         type="button"
                         disabled={busyId === a.id}
                         onClick={() => updateStatus(a.id, "Confirmed")}
-                        className="min-h-11 flex-1 cursor-pointer rounded-full bg-ink px-5 text-sm font-semibold text-ivory disabled:opacity-50 sm:flex-none"
+                        className={clsx(
+                          "min-h-11 cursor-pointer rounded-full px-4 text-sm font-semibold disabled:opacity-50",
+                          a.clientPhone ? "text-ink-soft hover:text-ink" : "flex-1 bg-ink px-5 text-ivory sm:flex-none",
+                        )}
                       >
-                        {busyId === a.id ? "Confirmando…" : "Confirmar"}
+                        {a.clientPhone ? "Solo confirmar" : busyId === a.id ? "Confirmando…" : "Confirmar"}
                       </button>
                     )}
                     {a.status === "Confirmed" && whatsappLinks?.id !== a.id && (
@@ -281,17 +314,6 @@ export function AppointmentsView({ token }: { token: string }) {
                           Avisar a {i === 0 ? a.masseuseName : a.secondMasseuseName}
                         </a>
                       ))}
-                    {a.status === "Confirmed" && a.clientPhone && (
-                      <a
-                        href={clientConfirmation(a)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-[#25D366] bg-ivory px-5 text-sm font-semibold text-[#128C4B] transition-colors hover:bg-[#25D366]/10 sm:flex-none"
-                      >
-                        <WhatsAppIcon size={17} />
-                        Confirmar al cliente
-                      </a>
-                    )}
                     {(a.status === "Pending" || a.status === "Confirmed") && (
                       <button
                         type="button"
