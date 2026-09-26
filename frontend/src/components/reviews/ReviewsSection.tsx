@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { BadgeCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import type { Review, ReviewSummary } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 
 /** Real reviews show from the first one; with none, the section stays hidden (nothing is invented). */
 const MIN_TO_SHOW = 1;
@@ -63,7 +64,7 @@ function ReviewCard({ r }: { r: Review }) {
  * touched, hovered or focused, and doesn't rotate for reduced-motion users.
  */
 export function ReviewsSection({
-  summary,
+  summary: initial,
   compact = false,
   title = "Lo que cuentan de L'AMOUR",
 }: {
@@ -72,7 +73,16 @@ export function ReviewsSection({
   compact?: boolean;
   title?: string;
 }) {
-  const [order, setOrder] = useState<Review[]>(summary.reviews);
+  // Starts with what the page was built with, then keeps itself current while it's open.
+  const [summary, setSummary] = useState<ReviewSummary>(initial);
+  const [order, setOrder] = useState<Review[]>(initial.reviews);
+  useAutoRefresh(async () => {
+    const res = await fetch("/api/reviews", { cache: "no-store" });
+    if (!res.ok) return;
+    const next = (await res.json()) as ReviewSummary;
+    const same = next.count === summary.count && next.reviews.every((r, i) => r.id === summary.reviews[i]?.id && r.reply === summary.reviews[i]?.reply);
+    if (!same) setSummary(next);
+  }, 60_000);
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState(1);
   const [paused, setPaused] = useState(false);

@@ -7,6 +7,7 @@ import { es } from "date-fns/locale";
 import { getAvailability } from "@/lib/api";
 import { formatTime } from "@/lib/format";
 import { chipClass } from "@/lib/ui";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import type { AvailabilitySlot, Masseuse, Service } from "@/lib/types";
 import { GroupLabel, StepHeading, railClass, wrapRailClass } from "./parts";
 
@@ -46,35 +47,37 @@ export function ScheduleStep({
   const duration = service.durationMinutes + extraMinutes;
   const dateStr = format(date, "yyyy-MM-dd");
 
+  // Both therapists must be free for a four-hands ritual: keep only the slots free for each.
+  async function fetchSlots() {
+    const primaryRes = await getAvailability(primary.id, dateStr, duration);
+    let merged = primaryRes.data;
+    if (secondary) {
+      const secondaryRes = await getAvailability(secondary.id, dateStr, duration);
+      const secondaryAvailable = new Set(secondaryRes.data.filter((s) => s.available).map((s) => s.start));
+      merged = merged.map((s) => ({ ...s, available: s.available && secondaryAvailable.has(s.start) }));
+    }
+    return merged;
+  }
+
   useEffect(() => {
     let cancelled = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- resets slot state before refetching on date/masseuse change
     setLoading(true);
     setSlots(null);
-
-    async function load() {
-      const primaryRes = await getAvailability(primary.id, dateStr, duration);
-      let merged = primaryRes.data;
-
-      if (secondary) {
-        const secondaryRes = await getAvailability(secondary.id, dateStr, duration);
-        const secondaryAvailable = new Set(
-          secondaryRes.data.filter((s) => s.available).map((s) => s.start),
-        );
-        merged = merged.map((s) => ({ ...s, available: s.available && secondaryAvailable.has(s.start) }));
-      }
-
+    fetchSlots().then((merged) => {
       if (!cancelled) {
         setSlots(merged);
         setLoading(false);
       }
-    }
-
-    load();
+    });
     return () => {
       cancelled = true;
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [primary.id, secondary, dateStr, duration]);
+
+  // While the client decides, slots someone else just booked disappear on their own.
+  useAutoRefresh(async () => setSlots(await fetchSlots()), 45_000, !loading);
 
   const today = new Date();
   const days = Array.from({ length: DAYS_AHEAD }, (_, i) => addDays(today, i));

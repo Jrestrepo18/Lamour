@@ -1,6 +1,6 @@
 import { isValidReviewToken } from "@/server/auth";
 import { bool, fail, idParam, int, ok, readJson, route, str } from "@/server/http";
-import { reviewContext, submitAppointmentReview } from "@/server/reviews";
+import { publishedReviews, reviewContext, submitAppointmentReview } from "@/server/reviews";
 
 /**
  * Public: a client reviews their own completed booking through the personal link
@@ -30,3 +30,6 @@ export const POST = route(async (request: Request) => {
   if (result === "duplicate") return fail("Ya recibimos tu opinión sobre esta cita. ¡Gracias!", 409);
   return ok({ ok: true }, 201);
 });
+
+/** Public: the published reviews, so an open page picks up new ones without reloading. */
+export const GET = route(async () => ok(await publishedReviews()));

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
 import { Clock3, MapPin, NotebookPen, RefreshCw, Users } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { adminGetAppointments, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
 import { capitalize, formatCOP, formatDateLong, formatTime } from "@/lib/format";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
@@ -84,23 +85,34 @@ export function AppointmentsView({ token }: { token: string }) {
   const [whatsappLinks, setWhatsappLinks] = useState<{ id: string; links: string[] } | null>(null);
   const [cancelling, setCancelling] = useState<Appointment | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  /** The booking just acted on stays in view (with its next step) even after it changes tab. */
+  const [justChanged, setJustChanged] = useState<string | null>(null);
 
-  async function load() {
-    setError(null);
-    setRefreshing(true);
+  /** `silent`: background refresh — no spinner, and a failed attempt keeps what's on screen. */
+  async function load(silent = false) {
+    if (!silent) {
+      setError(null);
+      setRefreshing(true);
+    }
     try {
       const data = await adminGetAppointments(token);
       setAppointments(data.sort((a, b) => a.startsAt.localeCompare(b.startsAt)));
+      if (silent) setError(null);
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? "No se pudieron cargar las citas."
-          : "No se pudo conectar con el servidor. Revisa que la API esté encendida.",
-      );
+      if (!silent) {
+        setError(
+          err instanceof ApiError
+            ? "No se pudieron cargar las citas."
+            : "No se pudo conectar con el servidor. Revisa tu conexión.",
+        );
+      }
     } finally {
-      setRefreshing(false);
+      if (!silent) setRefreshing(false);
     }
   }
+
+  // New bookings and changes made from another device show up on their own.
+  useAutoRefresh(() => load(true), 20_000);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount, not a render loop
@@ -113,6 +125,7 @@ export function AppointmentsView({ token }: { token: string }) {
     try {
       const result = await adminUpdateAppointmentStatus(id, status, token);
       setAppointments((prev) => prev?.map((a) => (a.id === id ? result.appointment : a)) ?? null);
+      setJustChanged(id);
       if (status === "Confirmed") {
         const links = [result.whatsAppLink, result.secondWhatsAppLink].filter(Boolean) as string[];
         setWhatsappLinks({ id, links });
@@ -150,7 +163,9 @@ export function AppointmentsView({ token }: { token: string }) {
   }, [appointments]);
 
   // Keep a just-confirmed appointment on screen (with its WhatsApp buttons) even though it left "Pendientes".
-  const filtered = (appointments ?? []).filter((a) => tab === "All" || a.status === tab || whatsappLinks?.id === a.id);
+  const filtered = (appointments ?? []).filter(
+    (a) => tab === "All" || a.status === tab || whatsappLinks?.id === a.id || justChanged === a.id,
+  );
   const byDay = filtered.reduce<{ day: string; items: Appointment[] }[]>((acc, a) => {
     const day = a.startsAt.slice(0, 10);
     const group = acc.find((g) => g.day === day);
@@ -167,7 +182,7 @@ export function AppointmentsView({ token }: { token: string }) {
         action={
           <button
             type="button"
-            onClick={load}
+            onClick={() => load()}
             aria-label="Actualizar citas"
             className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-ink/10 bg-marfil text-ink transition-colors hover:border-gold/50"
           >
@@ -184,6 +199,7 @@ export function AppointmentsView({ token }: { token: string }) {
             onClick={() => {
               setTab(t.value);
               setWhatsappLinks(null);
+              setJustChanged(null);
             }}
             aria-pressed={tab === t.value}
             className={clsx(chipClass(tab === t.value), "min-h-10 shrink-0 whitespace-nowrap")}

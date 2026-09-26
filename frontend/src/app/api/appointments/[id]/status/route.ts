@@ -2,8 +2,10 @@ import type { AppointmentStatus } from "@/lib/types";
 import { fail, idParam, ok, readJson, requireAdmin, route } from "@/server/http";
 import { setAppointmentStatus } from "@/server/repo";
 import { assignmentLink } from "@/server/whatsapp";
+import { reviewToken } from "@/server/auth";
+import { absoluteUrl } from "@/lib/seo";
 
-const STATUSES: AppointmentStatus[] = ["Pending", "Confirmed", "Completed", "Cancelled"];
+const STATUSES: AppointmentStatus[] = ["Pending", "Confirmed", "Completed", "Cancelled", "NoShow"];
 type Ctx = { params: Promise<{ id: string }> };
 
 export const PUT = route(async (request: Request, { params }: Ctx) => {
@@ -17,7 +19,13 @@ export const PUT = route(async (request: Request, { params }: Ctx) => {
 
   const updated = await setAppointmentStatus(id, status);
   if (!updated) return fail("Cita no encontrada.", 404);
-  const { masseuseWhatsApp, secondMasseuseWhatsApp, ...appointment } = updated;
+  const { masseuseWhatsApp, secondMasseuseWhatsApp, ...base } = updated;
+  // Same shape as the admin list: a completed booking carries the client's review link right away.
+  const appointment = {
+    ...base,
+    reviewed: false,
+    reviewUrl: status === "Completed" ? absoluteUrl(`/opinion/${encodeURIComponent(id)}?t=${reviewToken(id)}`) : null,
+  };
 
   const confirmed = status === "Confirmed";
   return ok({

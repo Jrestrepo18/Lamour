@@ -10,6 +10,7 @@ import { Modal } from "@/components/ui/Modal";
 import { wrapRailClass } from "@/components/booking/parts";
 import { chipClass, fieldClass, labelClass } from "@/lib/ui";
 import { AdminPageHeader } from "./AdminPageHeader";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 import { ConfirmDialog, ErrorBanner, LoadingBlock, SheetActions } from "./kit";
 
 const TABS: { value: ReviewStatus; label: string }[] = [
@@ -49,14 +50,17 @@ export function ReviewsView({ token }: { token: string }) {
   const [adding, setAdding] = useState(false);
   const [deleting, setDeleting] = useState<ReviewAdmin | null>(null);
 
-  async function load() {
-    setError(null);
+  async function load(silent = false) {
+    if (!silent) setError(null);
     try {
       setItems(await adminGetReviews(token));
     } catch {
-      setError("No se pudieron cargar las opiniones.");
+      if (!silent) setError("No se pudieron cargar las opiniones.");
     }
   }
+
+  // Reviews clients send arrive in "Por revisar" on their own.
+  useAutoRefresh(() => load(true), 20_000);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount, not a render loop
