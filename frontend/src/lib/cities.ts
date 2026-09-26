@@ -30,7 +30,7 @@ export const CITIES: City[] = [
     name: "Medellín",
     slug: "medellin",
     where: "en todos sus barrios",
-    seoTitle: "Masajes a domicilio en El Poblado, Laureles y toda Medellín",
+    seoTitle: "Masajes a domicilio en El Poblado y Laureles, Medellín",
     intro: [
       "Del ritmo de oficinas y reuniones de El Poblado a la calma residencial de Laureles, Estadio o Belén, en Medellín cada barrio tiene su propia pausa. Llevamos el ritual hasta tu apartamento o casa, sin que tengas que cruzar la ciudad en el tráfico.",
       "Reservas en línea, eliges tu masajista y tu horario, y la terapeuta llega a tu barrio sin uniformes ni nada que revele el tipo de servicio. Te confirmamos la cita por WhatsApp.",

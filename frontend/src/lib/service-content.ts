@@ -181,7 +181,7 @@ export const SERVICE_CONTENT: Record<string, ServiceContent> = {
     ],
   },
   "recuperacion-muscular-profunda": {
-    seoTitle: "Masaje deportivo de tejido profundo a domicilio en Medellín",
+    seoTitle: "Masaje de tejido profundo a domicilio en Medellín",
     seoDescription:
       "Masaje de tejido profundo a domicilio en Medellín para deportistas y tensión crónica: 75 minutos de presión sostenida enfocados en el resultado.",
     intro: [
@@ -227,7 +227,7 @@ export const SERVICE_CONTENT: Record<string, ServiceContent> = {
     ],
   },
   "salvaje-cambio-de-roles": {
-    seoTitle: "Masaje tántrico con cambio de roles a domicilio en Medellín",
+    seoTitle: "Masaje tántrico de cambio de roles en Medellín",
     seoDescription:
       "Salvaje (Cambio de Roles): ella toma el control en un ritual tántrico de 75 minutos a domicilio en Medellín. Solo mayores de 18, total discreción.",
     intro: [
