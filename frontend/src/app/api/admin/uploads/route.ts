@@ -30,16 +30,24 @@ export const POST = route(async (request: Request) => {
 
   const path = `fotos/${randomUUID()}.${ext}`;
   const token = randomUUID();
-  await bucket()
-    .file(path)
-    .save(Buffer.from(await file.arrayBuffer()), {
-      resumable: false,
-      contentType: file.type,
-      metadata: {
-        cacheControl: "public, max-age=31536000, immutable",
-        metadata: { firebaseStorageDownloadTokens: token },
-      },
-    });
+  try {
+    await bucket()
+      .file(path)
+      .save(Buffer.from(await file.arrayBuffer()), {
+        resumable: false,
+        contentType: file.type,
+        metadata: {
+          cacheControl: "public, max-age=31536000, immutable",
+          metadata: { firebaseStorageDownloadTokens: token },
+        },
+      });
+  } catch (err) {
+    // 404 = the bucket doesn't exist: Storage hasn't been enabled in the Firebase console yet.
+    if ((err as { code?: number }).code === 404) {
+      return fail("Firebase Storage aún no está activado en el proyecto, por eso no se pueden guardar fotos.", 503);
+    }
+    throw err;
+  }
 
   const url = `https://firebasestorage.googleapis.com/v0/b/${STORAGE_BUCKET}/o/${encodeURIComponent(path)}?alt=media&token=${token}`;
   return ok({ url }, 201);
