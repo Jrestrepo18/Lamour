@@ -52,10 +52,18 @@ function clientConfirmation(a: Appointment) {
   return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
-/** The client's personal review link, sent from the admin's WhatsApp once the session is completed. */
+/** Only asks for the review: a thank-you and the client's personal link — nothing about the booking itself. */
 function reviewRequest(a: Appointment) {
   const firstName = a.clientName.trim().split(/\s+/)[0] ?? "";
-  const text = `Hola ${firstName} 🌿 Gracias por dejarnos cuidarte. ¿Nos cuentas cómo te fue con tu ${a.serviceName}? Toma menos de un minuto: ${a.reviewUrl}`;
+  const text = [
+    `Hola ${firstName} 🌿`,
+    "",
+    "En L'AMOUR agradecemos mucho tu opinión. ¿Nos regalas un minuto para calificar tu experiencia?",
+    "",
+    a.reviewUrl,
+    "",
+    "¡Gracias por elegirnos!",
+  ].join("\n");
   return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(text)}`;
 }
 
