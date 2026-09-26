@@ -2,7 +2,9 @@ import { normalizePlace } from "./coverage";
 
 /**
  * Local landing pages (/masajes-a-domicilio/[municipio]) for each covered
- * municipality besides Medellín, which the home page already targets.
+ * municipality. Medellín's page targets its barrios ("masajes a domicilio El
+ * Poblado / Laureles" are real searches) so it complements the home page
+ * instead of competing with it for the plain "masajes a domicilio Medellín".
  *
  * Each page needs something genuinely local, or Google treats the set as
  * doorway pages: the copy below describes the municipality and who books
@@ -19,9 +21,22 @@ export type City = {
   intro: string[];
   /** Well-known sectors, only as examples of the area covered. */
   sectors?: string[];
+  /** Overrides the default "Masajes a domicilio en {name}" for <title> and the page heading. */
+  seoTitle?: string;
 };
 
 export const CITIES: City[] = [
+  {
+    name: "Medellín",
+    slug: "medellin",
+    where: "en todos sus barrios",
+    seoTitle: "Masajes a domicilio en El Poblado, Laureles y toda Medellín",
+    intro: [
+      "Del ritmo de oficinas y reuniones de El Poblado a la calma residencial de Laureles, Estadio o Belén, en Medellín cada barrio tiene su propia pausa. Llevamos el ritual hasta tu apartamento o casa, sin que tengas que cruzar la ciudad en el tráfico.",
+      "Reservas en línea, eliges tu masajista y tu horario, y la terapeuta llega a tu barrio sin uniformes ni nada que revele el tipo de servicio. Te confirmamos la cita por WhatsApp.",
+    ],
+    sectors: ["El Poblado", "Laureles", "Estadio", "Belén", "La América", "Robledo"],
+  },
   {
     name: "Envigado",
     slug: "envigado",

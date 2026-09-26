@@ -38,7 +38,7 @@ export default async function MasajesTantricosPage() {
       <PageHeader
         path="/masajes-tantricos"
         eyebrow="Masajes tántricos a domicilio en Medellín"
-        title="Rituales tántricos"
+        title="Rituales solo para adultos"
         description="Nuestras experiencias más íntimas, exclusivas para mayores de 18 años, en la privacidad de tu espacio y con absoluta discreción."
         photo={PHOTOS.candlesGlow}
       />

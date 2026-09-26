@@ -9,7 +9,7 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { FinalCta } from "@/components/home/FinalCta";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Zonas de cobertura: masajes a domicilio en el Valle de Aburrá",
+  title: "Masajes a domicilio en Medellín y el Valle de Aburrá",
   description:
     "Masajes a domicilio en Medellín, Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas y Rionegro. Todos los días de 9:00 a.m. a 9:00 p.m.",
   path: "/masajes-a-domicilio",
@@ -18,7 +18,6 @@ export const metadata: Metadata = pageMetadata({
 /** Hub for the municipality pages — one crawlable entry point to every local landing page. */
 export default function CoberturaPage() {
   const places = [
-    { name: "Medellín", href: "/", where: "en toda la ciudad" },
     ...CITIES.map((c) => ({ name: c.name, href: cityPath(c), where: c.where })),
   ];
 
@@ -27,7 +26,7 @@ export default function CoberturaPage() {
       <PageHeader
         path="/masajes-a-domicilio"
         eyebrow="Masajes a domicilio en el Valle de Aburrá"
-        title="Cobertura"
+        title="Zonas de cobertura"
         description="Llevamos cada ritual hasta tu espacio en Medellín, su área metropolitana y Rionegro, todos los días de 9:00 a.m. a 9:00 p.m."
         photo={PHOTOS.suite}
       />

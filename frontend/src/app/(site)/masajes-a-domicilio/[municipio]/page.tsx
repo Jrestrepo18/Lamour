@@ -31,8 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const city = findCity((await params).municipio);
   if (!city) notFound();
   return pageMetadata({
-    title: `Masajes a domicilio en ${city.name}`,
-    description: `Spa y masajes a domicilio en ${city.name}, ${city.where}: relajación, piedras volcánicas, masajes en pareja y más. Reserva en línea, todos los días.`,
+    title: city.seoTitle ?? `Masajes a domicilio en ${city.name}`,
+    description: `Masajes a domicilio en ${city.name}, ${city.where}: relajación, piedras volcánicas y masajes en pareja. Reserva en línea, todos los días.`,
     path: cityPath(city),
   });
 }
@@ -100,7 +100,7 @@ export default async function MunicipioPage({ params }: Props) {
         path={cityPath(city)}
         parent={{ name: "Cobertura", path: "/masajes-a-domicilio" }}
         eyebrow="Spa y bienestar en casa"
-        title={`Masajes a domicilio en ${city.name}`}
+        title={city.seoTitle ?? `Masajes a domicilio en ${city.name}`}
         description={`Relajación, terapias con calor y experiencias en pareja, llevadas hasta tu espacio en ${city.name}.`}
         photo={PHOTOS.suite}
       />
@@ -154,11 +154,6 @@ export default async function MunicipioPage({ params }: Props) {
           <nav aria-label="Otros municipios">
             <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">También llegamos a</h2>
             <ul className="mt-5 flex flex-wrap gap-2">
-              <li>
-                <Link href="/" className={chip}>
-                  Medellín
-                </Link>
-              </li>
               {others.map((c) => (
                 <li key={c.slug}>
                   <Link href={cityPath(c)} className={chip}>

@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),
   title: {
     default: "L'AMOUR | Spa y masajes a domicilio en Medellín",
-    template: "%s | L'AMOUR Medellín",
+    template: "%s | L'AMOUR",
   },
   description: SITE.description,
   applicationName: SITE.shortName,

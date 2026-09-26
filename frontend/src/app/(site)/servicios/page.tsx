@@ -32,7 +32,7 @@ export default async function ServiciosPage() {
       <PageHeader
         path="/servicios"
         eyebrow="Masajes a domicilio en Medellín"
-        title="Servicios"
+        title="Servicios y precios"
         description="Terapias con calor, experiencias en pareja y masajes de relajación y recuperación muscular, llevados hasta tu espacio."
         photo={PHOTOS.backFlowers}
       />

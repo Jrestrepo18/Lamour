@@ -89,12 +89,9 @@ export function Footer() {
             <li className="flex items-start gap-3">
               <MapPin size={16} className="mt-0.5 shrink-0 text-gold" aria-hidden />
               <span>
-                <Link href="/" className="transition-colors hover:text-gold">
-                  Medellín
-                </Link>
                 {CITIES.map((c, i) => (
                   <span key={c.slug}>
-                    {i === CITIES.length - 1 ? " y " : ", "}
+                    {i === 0 ? "" : i === CITIES.length - 1 ? " y " : ", "}
                     <Link href={cityPath(c)} className="transition-colors hover:text-gold">
                       {c.name}
                     </Link>

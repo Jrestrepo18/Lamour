@@ -30,7 +30,7 @@ export const SITE = {
   shortName: "L'AMOUR",
   locale: "es_CO",
   description:
-    "Spa de masajes a domicilio en Medellín: masajes tántricos, relajación, experiencias en pareja y recuperación muscular con terapeutas certificadas. Discreción total en Envigado, Sabaneta, Itagüí, Bello y el Valle de Aburrá.",
+    "Spa de masajes a domicilio en Medellín y el Valle de Aburrá: relajación, piedras volcánicas y masajes en pareja con terapeutas certificadas. Reserva en línea.",
   areaServed: ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"],
   openingHours: { opens: "09:00", closes: "21:00" },
   /** Business WhatsApp with country code (57 = Colombia); overridable per environment. */
