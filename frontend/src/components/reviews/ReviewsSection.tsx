@@ -6,8 +6,8 @@ import { BadgeCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import type { Review, ReviewSummary } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
 
-/** Below this, a reviews block reads as thin rather than reassuring — the section stays hidden. */
-const MIN_TO_SHOW = 3;
+/** Real reviews show from the first one; with none, the section stays hidden (nothing is invented). */
+const MIN_TO_SHOW = 1;
 const ROTATE_MS = 7000;
 
 function Stars({ value, size = 15 }: { value: number; size?: number }) {
@@ -96,6 +96,8 @@ export function ReviewsSection({ summary }: { summary: ReviewSummary }) {
     };
   }, []);
 
+  // Never more columns than reviews: one or two sit centred instead of leaving empty slots.
+  const columns = Math.min(perPage, order.length);
   const pages = Math.max(1, Math.ceil(order.length / perPage));
   const current = page % pages;
   const visible = useMemo(() => order.slice(current * perPage, current * perPage + perPage), [order, current, perPage]);
@@ -140,7 +142,16 @@ export function ReviewsSection({ summary }: { summary: ReviewSummary }) {
           onTouchStart={() => setPaused(true)}
           onTouchEnd={() => setPaused(false)}
         >
-          <div key={`${current}-${perPage}`} className="grid animate-fade-in gap-4 md:grid-cols-3" aria-live="polite">
+          <div
+            key={`${current}-${perPage}`}
+            className={clsx(
+              "grid animate-fade-in gap-4",
+              columns >= 3 && "md:grid-cols-3",
+              columns === 2 && "mx-auto max-w-4xl md:grid-cols-2",
+              columns <= 1 && "mx-auto max-w-xl",
+            )}
+            aria-live="polite"
+          >
             {visible.map((r) => (
               <ReviewCard key={r.id} r={r} />
             ))}

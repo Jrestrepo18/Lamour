@@ -42,7 +42,7 @@ export default async function HomePage() {
         <FeaturedServices services={featured} />
         <SensesSection />
         <HowItWorksSection />
-        {/* Real client reviews only; hidden until there are at least three published. */}
+        {/* Real client reviews only; hidden while none is published. */}
         <ReviewsSection summary={reviews} />
         <CoverageSection />
         <FaqSection />

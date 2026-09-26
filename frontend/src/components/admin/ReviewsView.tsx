@@ -98,7 +98,7 @@ export function ReviewsView({ token }: { token: string }) {
     <div>
       <AdminPageHeader
         title="Reseñas"
-        description="Opiniones reales de clientas. Aparecen en el inicio cuando hay al menos 3 publicadas; no publiques las que describan servicios +18 de forma explícita."
+        description="Opiniones reales de clientas. Las publicadas aparecen en el inicio (sección “Opiniones reales”, después de “Cómo funciona”) en menos de un minuto. No publiques las que describan servicios +18 de forma explícita."
         action={
           <Button onClick={() => setAdding(true)}>
             <Plus size={16} aria-hidden />
@@ -111,7 +111,6 @@ export function ReviewsView({ token }: { token: string }) {
         <p className="mt-6 text-sm text-ink-soft">
           <span className="font-semibold text-ink">{published.length} publicadas</span>
           {published.length > 0 && ` · promedio ${average.toFixed(1).replace(".", ",")} de 5`}
-          {published.length < 3 && ` · faltan ${3 - published.length} para mostrarse en la web`}
         </p>
       )}
 
