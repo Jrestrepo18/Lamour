@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import clsx from "clsx";
-import { Check, Copy, Download, Megaphone, NotebookPen, Pencil, Search } from "lucide-react";
+import { ArrowDown, ArrowUp, Check, Copy, Crown, Download, FileSpreadsheet, Megaphone, NotebookPen, Pencil, Search } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
@@ -15,12 +15,47 @@ import { chipClass, fieldClass, labelClass } from "@/lib/ui";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { ErrorBanner, LoadingBlock, SheetActions, SwitchRow } from "./kit";
 
-type Filter = "all" | "optin" | "repeat" | "away";
+/* ---------- Categories ---------- */
+
+type TierId = "premium" | "frecuente" | "recurrente" | "nuevo" | "prospecto";
+
+/**
+ * Automatic category from the client's history. Only completed appointments count
+ * (a pending or cancelled one isn't a visit); the first rule that matches wins.
+ */
+const TIERS: { id: TierId; label: string; rule: string; test: (c: Client) => boolean; badge: string }[] = [
+  {
+    id: "premium",
+    label: "Premium",
+    rule: "6+ citas o $1.500.000+ gastados",
+    test: (c) => c.completed >= 6 || c.totalSpent >= 1_500_000,
+    badge: "bg-gold/20 text-bronze ring-1 ring-gold/40",
+  },
+  { id: "frecuente", label: "Frecuente", rule: "3 a 5 citas", test: (c) => c.completed >= 3, badge: "bg-ink text-ivory" },
+  { id: "recurrente", label: "Recurrente", rule: "2 citas", test: (c) => c.completed === 2, badge: "bg-champagne/60 text-ink" },
+  { id: "nuevo", label: "Nuevo", rule: "1 cita", test: (c) => c.completed === 1, badge: "bg-[#25D366]/12 text-[#128C4B]" },
+  { id: "prospecto", label: "Sin cita completada", rule: "reservó, aún sin cita completada", test: () => true, badge: "bg-ink/[0.06] text-ink-soft" },
+];
+const TIER_RANK: Record<TierId, number> = { premium: 4, frecuente: 3, recurrente: 2, nuevo: 1, prospecto: 0 };
+const tierOf = (c: Client) => TIERS.find((t) => t.test(c))!;
+
+function TierBadge({ client }: { client: Client }) {
+  const tier = tierOf(client);
+  return (
+    <span className={clsx("inline-flex items-center gap-1 whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-semibold", tier.badge)}>
+      {tier.id === "premium" && <Crown size={12} aria-hidden />}
+      {tier.label}
+    </span>
+  );
+}
+
+/* ---------- Filters (also the audiences of a broadcast) ---------- */
+
+type Filter = "all" | "optin" | "away" | TierId;
 
 const FILTERS: { value: Filter; label: string }[] = [
-  { value: "all", label: "Todos" },
   { value: "optin", label: "Aceptan promociones" },
-  { value: "repeat", label: "Recurrentes" },
+  ...TIERS.map((t) => ({ value: t.id as Filter, label: t.label })),
   { value: "away", label: "Sin volver +60 días" },
 ];
 
@@ -38,15 +73,15 @@ const prettyPhone = (phone: string) => {
 const daysSince = (local: string | null) => (local ? Math.floor((Date.now() - new Date(local).getTime()) / DAY) : null);
 
 function matches(c: Client, filter: Filter) {
+  if (filter === "all") return true;
   if (filter === "optin") return c.acceptsMarketing;
-  if (filter === "repeat") return c.completed >= 2;
   if (filter === "away") return (daysSince(c.lastVisit) ?? 0) > 60;
-  return true;
+  return tierOf(c).id === filter;
 }
 
 function lastVisitLabel(c: Client) {
   const days = daysSince(c.lastVisit);
-  if (days === null) return "Sin citas";
+  if (days === null) return "—";
   if (days < 0) return "Cita próxima";
   if (days === 0) return "Hoy";
   if (days === 1) return "Ayer";
@@ -54,17 +89,86 @@ function lastVisitLabel(c: Client) {
   return `Hace ${Math.round(days / 30)} meses`;
 }
 
+/* ---------- Sorting ---------- */
+
+type SortKey = "name" | "tier" | "completed" | "lastVisit" | "totalSpent";
+const SORTERS: Record<SortKey, (a: Client, b: Client) => number> = {
+  name: (a, b) => a.name.localeCompare(b.name, "es"),
+  tier: (a, b) => TIER_RANK[tierOf(a).id] - TIER_RANK[tierOf(b).id] || a.totalSpent - b.totalSpent,
+  completed: (a, b) => a.completed - b.completed || a.bookings - b.bookings,
+  lastVisit: (a, b) => (a.lastVisit ?? "").localeCompare(b.lastVisit ?? ""),
+  totalSpent: (a, b) => a.totalSpent - b.totalSpent,
+};
+
+function Th({
+  k,
+  sort,
+  onSort,
+  children,
+  className,
+}: {
+  k: SortKey;
+  sort: { key: SortKey; desc: boolean };
+  onSort: (k: SortKey) => void;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  const active = sort.key === k;
+  return (
+    <th scope="col" aria-sort={active ? (sort.desc ? "descending" : "ascending") : "none"} className={clsx("px-3 py-3 font-semibold", className)}>
+      <button type="button" onClick={() => onSort(k)} className="inline-flex cursor-pointer items-center gap-1 whitespace-nowrap hover:text-ink">
+        {children}
+        {active && (sort.desc ? <ArrowDown size={13} aria-hidden /> : <ArrowUp size={13} aria-hidden />)}
+      </button>
+    </th>
+  );
+}
+
+/* ---------- Excel export ---------- */
+
+/** The rows on screen as a CSV Excel opens directly (UTF-8 BOM, semicolons as Colombian Excel expects). */
+function exportCsv(rows: Client[]) {
+  const cell = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+  const header = ["Nombre", "Celular", "Categoría", "Citas completadas", "Reservas", "Última visita", "Último servicio", "Total gastado", "Acepta promociones", "Notas"];
+  const lines = rows.map((c) =>
+    [
+      c.name,
+      c.phone,
+      tierOf(c).label,
+      c.completed,
+      c.bookings,
+      c.lastVisit?.slice(0, 10) ?? "",
+      c.lastService ?? "",
+      c.totalSpent,
+      c.acceptsMarketing ? "Sí" : "No",
+      c.notes,
+    ]
+      .map(cell)
+      .join(";"),
+  );
+  const csv = "﻿" + [header.map(cell).join(";"), ...lines].join("\r\n");
+  const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `clientes-lamour-${new Date().toISOString().slice(0, 10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 /**
- * Everyone who has booked, with their history, and promotions to all of them at once
- * through a WhatsApp Business broadcast list.
- * Promotions go only to clients who opted in (booking checkbox, or told the team),
- * as Colombian data law (Ley 1581) and WhatsApp's own rules require.
+ * The client database: one row per person who has booked, with their automatic
+ * category, history and contact, sortable by any column. Promotions go to all of
+ * them at once through a WhatsApp Business broadcast list — only to clients who
+ * opted in, as Colombian data law (Ley 1581) and WhatsApp's own rules require.
  */
 export function ClientsView({ token }: { token: string }) {
   const [clients, setClients] = useState<Client[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState<Filter>("all");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<{ key: SortKey; desc: boolean }>({ key: "lastVisit", desc: true });
   const [editing, setEditing] = useState<Client | null>(null);
   const [campaign, setCampaign] = useState(false);
 
@@ -77,7 +181,7 @@ export function ClientsView({ token }: { token: string }) {
     }
   }
 
-  useAutoRefresh(() => load(true), 30_000);
+  useAutoRefresh(() => load(true), 30_000, editing === null && !campaign);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount
     load();
@@ -85,33 +189,55 @@ export function ClientsView({ token }: { token: string }) {
   }, [token]);
 
   const q = query.trim().toLowerCase();
-  const list = useMemo(
-    () =>
-      (clients ?? []).filter(
-        (c) => matches(c, filter) && (!q || c.name.toLowerCase().includes(q) || digits(c.phone).includes(q.replace(/\D/g, "") || "§")),
-      ),
-    [clients, filter, q],
-  );
-  const optedIn = (clients ?? []).filter((c) => c.acceptsMarketing);
+  const rows = useMemo(() => {
+    const qDigits = q.replace(/\D/g, "");
+    const list = (clients ?? []).filter(
+      (c) => matches(c, filter) && (!q || c.name.toLowerCase().includes(q) || (qDigits && digits(c.phone).includes(qDigits))),
+    );
+    const cmp = SORTERS[sort.key];
+    return list.sort((a, b) => (sort.desc ? cmp(b, a) : cmp(a, b)));
+  }, [clients, filter, q, sort]);
+
+  const all = clients ?? [];
+  const revenue = all.reduce((s, c) => s + c.totalSpent, 0);
+  const optedIn = all.filter((c) => c.acceptsMarketing).length;
+
+  function sortBy(key: SortKey) {
+    setSort((s) => (s.key === key ? { key, desc: !s.desc } : { key, desc: key !== "name" }));
+  }
 
   return (
     <div>
       <AdminPageHeader
         title="Clientes"
-        description="Todas las personas que han reservado, con su historial. Las promociones solo se envían a quienes aceptaron recibirlas."
+        description="Tu base de clientes: quién es, cómo contactarla y qué tan seguido reserva. La categoría se calcula sola con las citas completadas."
         action={
-          <Button onClick={() => setCampaign(true)} disabled={!clients}>
-            <Megaphone size={16} aria-hidden />
-            Promoción a todos
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button variant="secondary" onClick={() => exportCsv(rows)} disabled={!clients || rows.length === 0}>
+              <FileSpreadsheet size={16} aria-hidden />
+              Excel
+            </Button>
+            <Button onClick={() => setCampaign(true)} disabled={!clients}>
+              <Megaphone size={16} aria-hidden />
+              Promoción a todos
+            </Button>
+          </div>
         }
       />
 
       {clients && (
-        <p className="mt-6 text-sm text-ink-soft">
-          <span className="font-semibold text-ink">{clients.length} {clients.length === 1 ? "cliente" : "clientes"}</span> · {optedIn.length}{" "}
-          {optedIn.length === 1 ? "acepta" : "aceptan"} promociones
-        </p>
+        <dl className="mt-6 grid grid-cols-3 divide-x divide-ink/10 rounded-2xl bg-marfil py-4 ring-1 ring-ink/[0.07]">
+          {[
+            { label: "Clientes", value: String(all.length) },
+            { label: "Aceptan promociones", value: String(optedIn) },
+            { label: "Facturado", value: formatCOP(revenue) },
+          ].map((s) => (
+            <div key={s.label} className="px-3 text-center">
+              <dt className="text-[0.7rem] font-medium text-ink-soft">{s.label}</dt>
+              <dd className="mt-0.5 font-serif text-lg font-semibold tabular-nums text-ink sm:text-2xl">{s.value}</dd>
+            </div>
+          ))}
+        </dl>
       )}
 
       <label className="relative mt-5 block">
@@ -121,14 +247,14 @@ export function ClientsView({ token }: { token: string }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Buscar por nombre o teléfono"
+          placeholder="Buscar por nombre o celular"
           className={clsx(fieldClass, "pl-11")}
         />
       </label>
 
       <div className={clsx(wrapRailClass, "mt-4")}>
-        {FILTERS.map((f) => {
-          const count = (clients ?? []).filter((c) => matches(c, f.value)).length;
+        {[{ value: "all" as Filter, label: "Todos" }, ...FILTERS].map((f) => {
+          const count = all.filter((c) => matches(c, f.value)).length;
           return (
             <button
               key={f.value}
@@ -137,89 +263,124 @@ export function ClientsView({ token }: { token: string }) {
               aria-pressed={filter === f.value}
               className={clsx(chipClass(filter === f.value), "min-h-10 shrink-0 whitespace-nowrap")}
             >
+              {f.value === "premium" && <Crown size={13} className="mr-1.5" aria-hidden />}
               {f.label}
-              {count ? <span className="ml-1.5 opacity-60">{count}</span> : null}
+              <span className="ml-1.5 opacity-60">{count}</span>
             </button>
           );
         })}
       </div>
+      <p className="mt-2 text-xs leading-relaxed text-ink-soft">
+        {TIERS.slice(0, 4)
+          .map((t) => `${t.label}: ${t.rule}`)
+          .join(" · ")}
+      </p>
 
       {error && <div className="mt-6"><ErrorBanner>{error}</ErrorBanner></div>}
       {!clients && !error && <LoadingBlock label="Cargando clientes" />}
-      {clients && list.length === 0 && (
-        <p className="mt-14 text-center text-sm text-ink-soft">
-          {clients.length === 0 ? "Aún no hay clientes. Aparecen aquí con su primera reserva." : "Nadie coincide con la búsqueda."}
+
+      {clients && (
+        <div className="relative isolate mt-5 overflow-x-auto rounded-2xl bg-marfil ring-1 ring-ink/[0.07]">
+          <table className="w-full min-w-[52rem] border-separate border-spacing-0 text-left text-sm">
+            <thead className="bg-ivory/80 text-xs text-ink-soft [&_th]:border-b [&_th]:border-ink/10">
+              <tr>
+                <Th k="name" sort={sort} onSort={sortBy} className="sticky left-0 z-10 bg-ivory pl-4">
+                  Nombre
+                </Th>
+                <th scope="col" className="px-3 py-3 font-semibold">
+                  Celular
+                </th>
+                <Th k="tier" sort={sort} onSort={sortBy}>Categoría</Th>
+                <Th k="completed" sort={sort} onSort={sortBy} className="text-right">
+                  Citas
+                </Th>
+                <Th k="lastVisit" sort={sort} onSort={sortBy}>Última visita</Th>
+                <Th k="totalSpent" sort={sort} onSort={sortBy} className="text-right">
+                  Total gastado
+                </Th>
+                <th scope="col" className="px-3 py-3 font-semibold">
+                  Promos
+                </th>
+                <th scope="col" className="px-3 py-3 pr-4 text-right font-semibold">
+                  <span className="sr-only">Acciones</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody className="[&_tr+tr_td]:border-t [&_tr+tr_td]:border-ink/[0.06]">
+              {rows.length === 0 && (
+                <tr>
+                  <td colSpan={8} className="px-4 py-12 text-center text-ink-soft">
+                    {all.length === 0 ? "Aún no hay clientes. Aparecen aquí con su primera reserva." : "Nadie coincide con la búsqueda."}
+                  </td>
+                </tr>
+              )}
+              {rows.map((c) => (
+                <tr key={c.phone} className="group transition-colors hover:bg-ivory/70">
+                  <td className="sticky left-0 z-10 bg-marfil py-3 pl-4 pr-3 transition-colors group-hover:bg-ivory">
+                    <button type="button" onClick={() => setEditing(c)} className="block max-w-[8.5rem] cursor-pointer text-left sm:max-w-[11rem]">
+                      <span className="block truncate font-semibold text-ink">{c.name || "Sin nombre"}</span>
+                      {c.notes && (
+                        <span className="mt-0.5 flex items-center gap-1 truncate text-xs text-ink-soft" title={c.notes}>
+                          <NotebookPen size={11} className="shrink-0" aria-hidden />
+                          {c.notes}
+                        </span>
+                      )}
+                    </button>
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 tabular-nums text-ink">{prettyPhone(c.phone)}</td>
+                  <td className="px-3 py-3">
+                    <TierBadge client={c} />
+                  </td>
+                  <td className="px-3 py-3 text-right tabular-nums">
+                    <span className="font-semibold text-ink">{c.completed}</span>
+                    {c.bookings > c.completed && <span className="text-ink-soft"> / {c.bookings}</span>}
+                  </td>
+                  <td className="px-3 py-3">
+                    <span className="block whitespace-nowrap text-ink">{lastVisitLabel(c)}</span>
+                    {c.lastService && <span className="block max-w-[12rem] truncate text-xs text-ink-soft">{c.lastService}</span>}
+                  </td>
+                  <td className="whitespace-nowrap px-3 py-3 text-right font-semibold tabular-nums text-ink">{formatCOP(c.totalSpent)}</td>
+                  <td className="px-3 py-3">
+                    {c.acceptsMarketing ? (
+                      <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#128C4B]">
+                        <Check size={14} aria-hidden /> Sí
+                      </span>
+                    ) : (
+                      <span className="text-xs text-ink-soft">No</span>
+                    )}
+                  </td>
+                  <td className="py-3 pl-3 pr-4">
+                    <div className="flex justify-end gap-2">
+                      <a
+                        href={waLink(c.phone)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Escribir a ${c.name} por WhatsApp`}
+                        className="flex h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white"
+                      >
+                        <WhatsAppIcon size={16} />
+                      </a>
+                      <button
+                        type="button"
+                        onClick={() => setEditing(c)}
+                        aria-label={`Editar a ${c.name}`}
+                        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-ink/10 bg-ivory text-ink transition-colors hover:border-gold/50"
+                      >
+                        <Pencil size={14} aria-hidden />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+      {clients && rows.length > 0 && (
+        <p className="mt-2 text-xs text-ink-soft">
+          {rows.length} de {all.length} · toca un encabezado para ordenar · desliza la tabla hacia los lados en el celular
         </p>
       )}
-
-      <ul className="mt-6 space-y-3">
-        {list.map((c) => (
-          <li key={c.phone} className="animate-fade-in rounded-[1.5rem] bg-marfil p-5 ring-1 ring-ink/[0.07]">
-            <div className="flex items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate font-semibold text-ink">{c.name || "Sin nombre"}</p>
-                <p className="text-sm tabular-nums text-ink-soft">{prettyPhone(c.phone)}</p>
-              </div>
-              <div className="flex shrink-0 gap-2">
-                <button
-                  type="button"
-                  onClick={() => setEditing(c)}
-                  aria-label={`Editar a ${c.name}`}
-                  className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-ink/10 bg-ivory text-ink transition-colors hover:border-gold/50"
-                >
-                  <Pencil size={15} aria-hidden />
-                </button>
-                <a
-                  href={waLink(c.phone)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`Escribir a ${c.name} por WhatsApp`}
-                  className="flex h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white"
-                >
-                  <WhatsAppIcon size={17} />
-                </a>
-              </div>
-            </div>
-
-            <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-ink/[0.07] pt-4 text-sm">
-              <div>
-                <dt className="text-xs text-ink-soft">Citas</dt>
-                <dd className="font-semibold tabular-nums text-ink">
-                  {c.completed}
-                  {c.bookings > c.completed && <span className="font-normal text-ink-soft"> / {c.bookings}</span>}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-ink-soft">Última</dt>
-                <dd className="font-semibold text-ink">{lastVisitLabel(c)}</dd>
-              </div>
-              <div>
-                <dt className="text-xs text-ink-soft">Total</dt>
-                <dd className="font-semibold tabular-nums text-ink">{formatCOP(c.totalSpent)}</dd>
-              </div>
-            </dl>
-
-            <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
-              {c.lastService && <span className="text-ink-soft">{c.lastService}</span>}
-              <span
-                className={clsx(
-                  "inline-flex items-center gap-1 rounded-full px-2.5 py-1 font-semibold",
-                  c.acceptsMarketing ? "bg-[#25D366]/10 text-[#128C4B]" : "bg-ink/[0.06] text-ink-soft",
-                )}
-              >
-                {c.acceptsMarketing && <Check size={12} aria-hidden />}
-                {c.acceptsMarketing ? "Acepta promociones" : "Sin autorización de promociones"}
-              </span>
-            </div>
-            {c.notes && (
-              <p className="mt-3 flex items-start gap-2 rounded-xl bg-ivory p-3 text-sm text-ink-soft">
-                <NotebookPen size={14} className="mt-0.5 shrink-0" aria-hidden />
-                {c.notes}
-              </p>
-            )}
-          </li>
-        ))}
-      </ul>
 
       {editing && (
         <EditClientSheet
