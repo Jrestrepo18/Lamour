@@ -7,6 +7,7 @@ import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
+import { getI18n } from "@/i18n/server";
 
 const HERO = PHOTOS.aromaTowels;
 
@@ -22,9 +23,12 @@ const HERO = PHOTOS.aromaTowels;
  * JavaScript, so the photo and headline paint (and count as LCP) immediately.
  * The 3D statue now lives in the Manifesto section.
  */
-export function Hero() {
+export async function Hero() {
+  const { t, href, lang } = await getI18n();
   const whatsappHref = SITE.whatsapp
-    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, me gustaría reservar un ritual en L'AMOUR.")}`
+    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+        t("Hola, me gustaría reservar un ritual en L'AMOUR.", "Hi, I'd like to book a ritual at L'AMOUR."),
+      )}`
     : null;
 
   return (
@@ -43,7 +47,7 @@ export function Hero() {
           <ParallaxMedia>
             <Image
               src={HERO.src}
-              alt={HERO.alt}
+              alt={lang === "en" ? HERO.altEn : HERO.alt}
               fill
               priority
               fetchPriority="high"
@@ -57,41 +61,43 @@ export function Hero() {
 
           <p className="absolute left-5 top-[5.5rem] inline-flex animate-rise items-center gap-1.5 rounded-full bg-ivory/95 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] sm:left-8 lg:hidden">
             <MapPin size={12} className="text-bronze" aria-hidden />
-            Medellín · a domicilio
+            {t("Medellín · a domicilio", "Medellín · at your place")}
           </p>
 
           {/* Desktop: glass note on the photo */}
           <div className="absolute bottom-6 left-6 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/30 bg-ivory/95 p-4 shadow-lg [animation-delay:700ms] lg:block">
             <p className="flex items-center gap-2 text-sm font-semibold text-ink">
               <ShieldCheck size={16} className="text-bronze" aria-hidden />
-              Discreción total
+              {t("Discreción total", "Complete discretion")}
             </p>
             <p className="mt-1 text-xs leading-relaxed text-ink-soft">
-              Sin señalética ni uniformes. Solo tu experiencia, en tu espacio.
+              {t("Sin señalética ni uniformes. Solo tu experiencia, en tu espacio.", "No signage, no uniforms. Just your experience, in your space.")}
             </p>
           </div>
         </div>
 
         {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
         <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
-          <h1 className="eyebrow animate-rise">Spa de masajes a domicilio en Medellín</h1>
+          <h1 className="eyebrow animate-rise">{t("Spa de masajes a domicilio en Medellín", "In-home massage spa in Medellín")}</h1>
           <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
-            <span className="block text-ink-soft">Estética</span>
-            <span className="block text-ink">y Sentidos</span>
+            <span className="block text-ink-soft">{t("Estética", "Aesthetics")}</span>
+            <span className="block text-ink">{t("y Sentidos", "& Senses")}</span>
           </p>
 
           <p className="mt-4 max-w-md animate-rise text-base leading-relaxed text-ink-soft [animation-delay:160ms] sm:text-lg lg:mt-8">
-            Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu
-            espacio. Una pausa para respirar.
+            {t(
+              "Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu espacio. Una pausa para respirar.",
+              "Tantric, relaxation and couples massage rituals, brought to the privacy of your own space. A pause to breathe.",
+            )}
           </p>
 
           {/* Instagram business-profile action row: two twin buttons, then a quiet status line. */}
           <div className="mt-7 grid max-w-md animate-rise grid-cols-2 gap-2 [animation-delay:240ms] lg:mt-10">
             <Link
-              href="/reservar"
+              href={href("/reservar")}
               className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-[0.95rem] font-semibold text-ivory shadow-[0_12px_28px_-16px_rgba(23,23,23,0.8)] transition-colors duration-200 hover:bg-espresso active:scale-[0.98]"
             >
-              Reservar
+              {t("Reservar", "Book")}
             </Link>
             {whatsappHref ? (
               <a
@@ -101,14 +107,14 @@ export function Hero() {
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
                 <WhatsAppIcon size={19} className="text-[#25D366]" />
-                Mensaje
+                {t("Mensaje", "Message")}
               </a>
             ) : (
               <Link
-                href="/servicios"
+                href={href("/servicios")}
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-ink/15 bg-marfil/70 px-4 text-[0.95rem] font-semibold text-ink transition-colors duration-200 hover:bg-marfil active:scale-[0.98]"
               >
-                Ver servicios
+                {t("Ver servicios", "See services")}
               </Link>
             )}
           </div>
@@ -118,12 +124,12 @@ export function Hero() {
               <span className="absolute inset-0 animate-ping rounded-full bg-emerald-500/60" />
               <span className="relative h-2 w-2 rounded-full bg-emerald-500" />
             </span>
-            {whatsappHref ? "Responde en minutos" : "Reservas en línea"} · 9:00 a.m. – 9:00 p.m.
+            {whatsappHref ? t("Responde en minutos", "Replies in minutes") : t("Reservas en línea", "Online booking")} · 9:00 a.m. – 9:00 p.m.
             {whatsappHref && (
               <>
                 <span aria-hidden>·</span>
-                <Link href="/servicios" className="font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink">
-                  Ver servicios
+                <Link href={href("/servicios")} className="font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink">
+                  {t("Ver servicios", "See services")}
                 </Link>
               </>
             )}

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /**
  * Age confirmation. Server-rendered (so it needs no JS to appear), hidden by
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/Button";
  * the dialog is in every page's HTML, and a heading would join each page's outline.
  */
 export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
+  const { t, href } = useI18n();
   const [declined, setDeclined] = useState(false);
   const confirmRef = useRef<HTMLButtonElement>(null);
 
@@ -34,17 +36,19 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
         className="relative w-full max-w-md rounded-[2rem] border border-gold/25 bg-ivory/95 p-8 text-center shadow-[0_40px_80px_-30px_rgba(23,23,23,0.45)] sm:p-10"
       >
         <p className="font-serif text-2xl font-bold tracking-wide text-ink">L&apos;AMOUR</p>
-        <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-bronze">Estética y Sentidos</p>
+        <p className="mt-1 text-[0.6rem] font-medium uppercase tracking-[0.4em] text-bronze">{t("Estética y Sentidos", "Aesthetics & Senses")}</p>
         <div className="mx-auto mt-6 h-px w-16 bg-gradient-to-r from-transparent via-gold to-transparent" />
 
         {declined ? (
           <>
             <p id="age-gate-title" className="mt-6 font-serif text-2xl font-semibold text-ink">
-              Acceso restringido
+              {t("Acceso restringido", "Access restricted")}
             </p>
             <p id="age-gate-desc" className="mt-4 text-sm leading-relaxed text-ink-soft">
-              Este sitio contiene información sobre servicios exclusivos para personas mayores de edad. Si no
-              cumples este requisito, te pedimos abandonar la página.
+              {t(
+                "Este sitio contiene información sobre servicios exclusivos para personas mayores de edad. Si no cumples este requisito, te pedimos abandonar la página.",
+                "This site contains information about services exclusively for adults. If you don't meet this requirement, please leave the page.",
+              )}
             </p>
           </>
         ) : (
@@ -53,30 +57,32 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
               <ShieldCheck size={22} strokeWidth={1.6} />
             </span>
             <p id="age-gate-title" className="mt-4 font-serif text-2xl font-semibold text-ink">
-              Confirmación de edad
+              {t("Confirmación de edad", "Age confirmation")}
             </p>
             <p id="age-gate-desc" className="mt-3 text-sm leading-relaxed text-ink-soft">
-              Nuestros servicios son de naturaleza sensorial e íntima, dirigidos exclusivamente a personas
-              mayores de 18 años.
+              {t(
+                "Nuestros servicios son de naturaleza sensorial e íntima, dirigidos exclusivamente a personas mayores de 18 años.",
+                "Our services are sensory and intimate in nature, intended exclusively for people aged 18 and over.",
+              )}
             </p>
             <p className="mt-3 text-xs leading-relaxed text-ink-soft">
-              Al continuar aceptas nuestra{" "}
-              <Link href="/legal/privacidad" className="text-bronze underline underline-offset-2 hover:text-ink">
-                Política de Tratamiento de Datos
+              {t("Al continuar aceptas nuestra", "By continuing you accept our")}{" "}
+              <Link href={href("/legal/privacidad")} className="text-bronze underline underline-offset-2 hover:text-ink">
+                {t("Política de Tratamiento de Datos", "Privacy Policy")}
               </Link>{" "}
-              y los{" "}
-              <Link href="/legal/terminos" className="text-bronze underline underline-offset-2 hover:text-ink">
-                Términos y Condiciones
+              {t("y los", "and")}{" "}
+              <Link href={href("/legal/terminos")} className="text-bronze underline underline-offset-2 hover:text-ink">
+                {t("Términos y Condiciones", "Terms & Conditions")}
               </Link>
               .
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button ref={confirmRef} onClick={onConfirm} className="flex-1">
-                Soy mayor de 18 años
+                {t("Soy mayor de 18 años", "I'm 18 or older")}
               </Button>
               <Button variant="secondary" onClick={() => setDeclined(true)} className="sm:w-28">
-                Salir
+                {t("Salir", "Leave")}
               </Button>
             </div>
           </>

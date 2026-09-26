@@ -8,6 +8,8 @@ export interface ServiceCategory {
   displayOrder: number;
   isActive: boolean;
   services: Service[];
+  /** English copy (Firestore `en` map); any field left empty falls back to Spanish. */
+  en?: { name?: string; description?: string | null; highlight?: string | null };
 }
 
 export interface Service {
@@ -28,6 +30,8 @@ export interface Service {
   isCoupleExperience: boolean;
   displayOrder: number;
   isActive: boolean;
+  /** English copy (Firestore `en` map); any field left empty falls back to Spanish. */
+  en?: { name?: string; shortDescription?: string; longDescription?: string | null; highlights?: string[] };
 }
 
 export interface Masseuse {
@@ -35,6 +39,8 @@ export interface Masseuse {
   stageName: string;
   age: number | null;
   bio: string | null;
+  /** English bio (Firestore `bioEn`); falls back to the Spanish one. */
+  bioEn?: string | null;
   photoUrl: string | null;
   photoGallery: string[];
   displayOrder: number;
@@ -98,6 +104,8 @@ export interface AppointmentCreatePayload {
   paymentMethod: PaymentMethod;
   /** Opted in to promotions by WhatsApp (unchecked by default). */
   acceptsMarketing?: boolean;
+  /** Language the client booked in, so the team replies in it. */
+  language?: "es" | "en";
 }
 
 export interface Appointment {
@@ -128,6 +136,8 @@ export interface Appointment {
   confirmedAt: string | null;
   /** Admin only: the client's personal review link, once the booking is completed. */
   reviewUrl?: string | null;
+  /** Language the client booked in ("en" from the English site), so the team writes back in it. */
+  language?: "es" | "en";
   /** Admin only: the client already left a review for this booking. */
   reviewed?: boolean;
 }

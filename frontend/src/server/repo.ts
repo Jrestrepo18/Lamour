@@ -59,6 +59,12 @@ const toService = (id: string, d: DocumentData): Service => ({
   isCoupleExperience: d.experienciaPareja === true,
   displayOrder: Number(d.orden) || 0,
   isActive: d.activo !== false,
+  en: {
+    name: d.en?.nombre || undefined,
+    shortDescription: d.en?.descripcion || undefined,
+    longDescription: d.en?.descripcionLarga || null,
+    highlights: Array.isArray(d.en?.incluye) && d.en.incluye.length ? d.en.incluye : undefined,
+  },
 });
 
 function ageFrom(birth: Timestamp | null | undefined): number | null {
@@ -75,6 +81,7 @@ const toMasseuseAdmin = (id: string, d: DocumentData): MasseuseAdmin => ({
   stageName: d.nombreArtistico ?? "",
   age: ageFrom(d.fechaNacimiento),
   bio: d.bio || null,
+  bioEn: d.bioEn || null,
   photoUrl: d.fotoUrl ?? null,
   photoGallery: d.fotos ?? [],
   displayOrder: Number(d.orden) || 0,
@@ -112,6 +119,11 @@ export async function listCategories(activeOnly = true): Promise<ServiceCategory
       displayOrder: Number(c.get("orden")) || 0,
       isActive: c.get("activa") !== false,
       services: services.filter((s) => s.serviceCategoryId === c.id),
+      en: {
+        name: c.get("en.nombre") || undefined,
+        description: c.get("en.descripcion") || null,
+        highlight: c.get("en.destacado") || null,
+      },
     }))
     .filter((c) => !activeOnly || c.isActive)
     .sort(byOrder);
@@ -142,6 +154,7 @@ const therapistFields = (m: MasseuseInput, birth: Timestamp | null | undefined) 
   nombreArtistico: m.stageName,
   fechaNacimiento: birthFor(m.age, birth),
   bio: m.bio ?? "",
+  bioEn: m.bioEn ?? "",
   fotoUrl: m.photoUrl,
   fotos: m.photoGallery,
   telefono: m.whatsAppNumber,
@@ -280,6 +293,17 @@ const serviceFields = (s: ServiceInput) => ({
   incluye: s.highlights,
   activo: s.isActive,
   orden: s.displayOrder,
+  // English copy for /en; only written when the admin form sends it, so older clients can't wipe it.
+  ...(s.en
+    ? {
+        en: {
+          nombre: s.en.name ?? "",
+          descripcion: s.en.shortDescription ?? "",
+          descripcionLarga: s.en.longDescription ?? "",
+          incluye: s.en.highlights ?? [],
+        },
+      }
+    : {}),
 });
 
 async function assertSlugFree(slug: string, exceptId?: string) {
@@ -344,6 +368,7 @@ export type AppointmentInput = {
   durationMinutes: number;
   totalPrice: number;
   acceptsMarketing: boolean;
+  language: "es" | "en";
 };
 
 /** Colombian numbers are typed without the country code; clientes are keyed by E.164 ("+573001234567"). */
@@ -414,6 +439,7 @@ export async function createAppointmentIfFree(a: AppointmentInput): Promise<Appo
       minutosExtra: a.extraMinutes,
       vestiduraSensorial: a.sensoryDressRequested,
       notas: a.notes ?? "",
+      idioma: a.language,
       checkInAt: null,
       checkOutAt: null,
       confirmadaEn: null,
@@ -471,6 +497,7 @@ function joinAppointment(
     neighborhood: c.barrio ?? "",
     city: c.ciudad ?? "",
     notes: c.notas || null,
+    language: c.idioma === "en" ? "en" : "es",
     sensoryDressRequested: c.vestiduraSensorial === true,
     extraMinutes: Number(c.minutosExtra) || 0,
     paymentMethod: PAYMENT_FROM_DB[c.metodoPago] ?? "Cash",
@@ -533,10 +560,16 @@ export async function listAppointments(): Promise<Appointment[]> {
       return {
         ...a,
         reviewed: reviewed.has(c.id),
-        reviewUrl: completed ? absoluteUrl(`/opinion/${encodeURIComponent(c.id)}?t=${reviewToken(c.id)}`) : null,
+        reviewUrl: completed ? reviewLink(c.id, a.language) : null,
       };
     })
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
+}
+
+/** The client's personal review link, on the site in the language they booked in. */
+export function reviewLink(id: string, language: "es" | "en" = "es") {
+  const path = `/opinion/${encodeURIComponent(id)}?t=${reviewToken(id)}`;
+  return absoluteUrl(language === "en" ? `/en${path}` : path);
 }
 
 /** Status change; a cancellation also releases the therapists' time (citaTerapeutas.activo = false). */

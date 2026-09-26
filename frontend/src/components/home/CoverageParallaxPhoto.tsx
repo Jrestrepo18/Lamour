@@ -6,7 +6,8 @@ import { gsap } from "@/lib/gsap";
 import { useGsapContext } from "@/hooks/useGsapContext";
 import { FadeInImage } from "@/components/ui/FadeInImage";
 import { Reveal } from "@/components/ui/Reveal";
-import { PHOTOS } from "@/lib/photos";
+import { PHOTOS, photoAlt } from "@/lib/photos";
+import { useI18n } from "@/i18n/I18nProvider";
 
 // Compass points around the circle's own edge, not corners of its bounding
 // box — a corner (e.g. "bottom-10 left-10") falls outside the circle's
@@ -35,6 +36,7 @@ const LABELS = [
  * inset slightly inside it to leave them room.
  */
 export function CoverageParallaxPhoto() {
+  const { lang } = useI18n();
   const wrapperRef = useRef<HTMLDivElement>(null);
   const imgRef = useRef<HTMLDivElement>(null);
 
@@ -64,7 +66,7 @@ export function CoverageParallaxPhoto() {
           <div ref={imgRef} className="absolute inset-[-10%]">
             <FadeInImage
               src={PHOTOS.herbalFlatlay.src}
-              alt={PHOTOS.herbalFlatlay.alt}
+              alt={photoAlt(PHOTOS.herbalFlatlay, lang)}
               fill
               sizes="(min-width: 1024px) 26rem, 82vw"
               className="object-cover"

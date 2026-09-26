@@ -6,7 +6,8 @@ import { Grain } from "@/components/ui/Grain";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
-import type { Photo } from "@/lib/photos";
+import { photoAlt, type Photo } from "@/lib/photos";
+import { getI18n } from "@/i18n/server";
 
 /**
  * Opening masthead for every inner page. Same light, warm gradient as the home
@@ -14,7 +15,7 @@ import type { Photo } from "@/lib/photos";
  * brand's calm register starts at the top of every route. Carries a visible
  * breadcrumb plus its BreadcrumbList structured data.
  */
-export function PageHeader({
+export async function PageHeader({
   eyebrow,
   title,
   description,
@@ -33,6 +34,7 @@ export function PageHeader({
   parent?: { name: string; path: string };
   compact?: boolean;
 }) {
+  const { t, href, lang } = await getI18n();
   return (
     <section
       className={
@@ -45,7 +47,7 @@ export function PageHeader({
         (photo ? "" : " bg-gradient-to-br from-ivory via-champagne/35 to-silk")
       }
     >
-      <JsonLd data={breadcrumbJsonLd([...(parent ? [parent] : []), { name: title, path }])} />
+      <JsonLd data={breadcrumbJsonLd([...(parent ? [parent] : []), { name: title, path }], lang)} />
       <div className="pointer-events-none absolute -right-24 -top-24 h-96 w-96 rounded-full bg-gold/20 blur-[120px]" />
       <Grain />
 
@@ -58,7 +60,7 @@ export function PageHeader({
               <ParallaxMedia distance={12}>
                 <Image
                   src={photo.src}
-                  alt={photo.alt}
+                  alt={photoAlt(photo, lang)}
                   fill
                   priority
                   sizes="(min-width: 1024px) 32vw, 100vw"
@@ -76,11 +78,11 @@ export function PageHeader({
                 : undefined
             }
           >
-            <nav aria-label="Ruta de navegación" className="mb-6 lg:mb-8">
+            <nav aria-label={t("Ruta de navegación", "Breadcrumb")} className="mb-6 lg:mb-8">
               <ol className="flex flex-wrap items-center gap-1.5 text-xs text-ink-soft">
                 <li>
-                  <Link href="/" className="transition-colors hover:text-ink">
-                    Inicio
+                  <Link href={href("/")} className="transition-colors hover:text-ink">
+                    {t("Inicio", "Home")}
                   </Link>
                 </li>
                 <li aria-hidden>
@@ -89,7 +91,7 @@ export function PageHeader({
                 {parent && (
                   <>
                     <li>
-                      <Link href={parent.path} className="transition-colors hover:text-ink">
+                      <Link href={href(parent.path)} className="transition-colors hover:text-ink">
                         {parent.name}
                       </Link>
                     </li>

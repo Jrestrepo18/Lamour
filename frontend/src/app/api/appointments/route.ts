@@ -59,6 +59,7 @@ export const POST = route(async (request: Request) => {
     durationMinutes: duration,
     totalPrice: service.price,
     acceptsMarketing: bool(b.acceptsMarketing),
+    language: b.language === "en" ? "en" : "es",
   });
   if ("takenBy" in result) {
     return fail(

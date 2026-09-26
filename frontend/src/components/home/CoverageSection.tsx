@@ -3,13 +3,15 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { CoverageParallaxPhoto } from "./CoverageParallaxPhoto";
 import { CoverageSearch } from "./CoverageSearch";
+import { getI18n } from "@/i18n/server";
 
 /**
  * Coverage area: an Instagram-style place search that answers "do you come to
  * my area?" (see CoverageSearch). Phones get faint CSS "radar" rings behind it;
  * desktop keeps the parallax photo circle with pulsing rings beside it.
  */
-export function CoverageSection() {
+export async function CoverageSection() {
+  const { t } = await getI18n();
   return (
     <section id="cobertura" className="relative overflow-hidden py-16 sm:py-32">
       {/* Phone-only radar backdrop */}
@@ -27,9 +29,12 @@ export function CoverageSection() {
       <Container className="relative grid items-center gap-14 lg:grid-cols-2">
         <Reveal>
           <SectionHeading
-            eyebrow="Cobertura"
-            title="Llevamos L'AMOUR hasta tu puerta"
-            description="Atendemos citas a domicilio en Medellín y todo su Valle de Aburrá, con la misma discreción y calidad en cada rincón de la ciudad."
+            eyebrow={t("Cobertura", "Coverage")}
+            title={t("Llevamos L'AMOUR hasta tu puerta", "We bring L'AMOUR to your door")}
+            description={t(
+              "Atendemos citas a domicilio en Medellín y todo su Valle de Aburrá, con la misma discreción y calidad en cada rincón de la ciudad.",
+              "We visit homes, apartments and hotels across Medellín and the whole Aburrá Valley, with the same discretion and quality everywhere.",
+            )}
           />
 
           {/* Instagram-style place search: answers "do you come to my area?" in one tap. */}

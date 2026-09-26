@@ -5,17 +5,22 @@ import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { getI18n } from "@/i18n/server";
+import type { Translate } from "@/i18n/config";
 
 type Step = { app: "lamour" | "whatsapp"; title: string; text: string };
 
-const STEPS: Step[] = [
-  { app: "lamour", title: "Elige tu servicio", text: "Explora el catálogo y selecciona el ritual perfecto para ti." },
-  { app: "lamour", title: "Elige tu masajista", text: "Conoce a nuestro equipo y elige con quién vivir la experiencia." },
-  { app: "lamour", title: "Elige tu horario", text: "Consulta disponibilidad en tiempo real y agenda sin cruces." },
+const steps = (t: Translate): Step[] => [
+  { app: "lamour", title: t("Elige tu servicio", "Choose your service"), text: t("Explora el catálogo y selecciona el ritual perfecto para ti.", "Browse the menu and pick the ritual that suits you.") },
+  { app: "lamour", title: t("Elige tu masajista", "Choose your therapist"), text: t("Conoce a nuestro equipo y elige con quién vivir la experiencia.", "Meet our team and choose who will guide your experience.") },
+  { app: "lamour", title: t("Elige tu horario", "Choose your time"), text: t("Consulta disponibilidad en tiempo real y agenda sin cruces.", "See real-time availability and book with no double-booking.") },
   {
     app: "whatsapp",
-    title: "Recibe en tu espacio",
-    text: "Te confirmamos la cita por WhatsApp y llegamos a tu dirección, con total discreción.",
+    title: t("Recibe en tu espacio", "Relax at your place"),
+    text: t(
+      "Te confirmamos la cita por WhatsApp y llegamos a tu dirección, con total discreción.",
+      "We confirm your appointment on WhatsApp and arrive at your address, with complete discretion.",
+    ),
   },
 ];
 
@@ -26,7 +31,9 @@ const STEPS: Step[] = [
  * how bookings are actually confirmed. Part of the page itself (no phone
  * frame). The right-hand slot shows the step number, not an invented time.
  */
-export function HowItWorksSection() {
+export async function HowItWorksSection() {
+  const { t, href } = await getI18n();
+  const STEPS = steps(t);
   return (
     <section id="como-funciona" className="py-16 sm:py-32">
       <Container>
@@ -34,19 +41,22 @@ export function HowItWorksSection() {
           <div>
             <Reveal>
               <SectionHeading
-                eyebrow="Reserva en 4 pasos"
-                title="Simple, discreto, a tu ritmo"
-                description="Así vive tu reserva: unas cuantas notificaciones y tu ritual llega a casa. Sin llamadas ni esperas."
+                eyebrow={t("Reserva en 4 pasos", "Book in 4 steps")}
+                title={t("Simple, discreto, a tu ritmo", "Simple, discreet, at your pace")}
+                description={t(
+                  "Así vive tu reserva: unas cuantas notificaciones y tu ritual llega a casa. Sin llamadas ni esperas.",
+                  "This is how booking feels: a few notifications and your ritual arrives at your door. No calls, no waiting.",
+                )}
               />
             </Reveal>
             <Reveal delay={0.2} className="mt-10 hidden lg:block">
-              <LinkButton href="/reservar" size="lg">
-                Empezar mi reserva
+              <LinkButton href={href("/reservar")} size="lg">
+                {t("Empezar mi reserva", "Start my booking")}
               </LinkButton>
             </Reveal>
           </div>
 
-          <ol aria-label="Pasos para reservar" className="flex flex-col gap-3">
+          <ol aria-label={t("Pasos para reservar", "Steps to book")} className="flex flex-col gap-3">
             {STEPS.map((step, i) => {
               const whatsapp = step.app === "whatsapp";
               return (
@@ -73,7 +83,7 @@ export function HowItWorksSection() {
                           <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-ink-soft">
                             {whatsapp ? "WhatsApp · L'AMOUR" : "L'AMOUR"}
                           </p>
-                          <p className="shrink-0 text-[0.7rem] text-ink-soft">Paso {i + 1}</p>
+                          <p className="shrink-0 text-[0.7rem] text-ink-soft">{t("Paso", "Step")} {i + 1}</p>
                         </div>
                         <h3 className="mt-0.5 flex items-center gap-1.5 text-[0.95rem] font-semibold text-ink">
                           {step.title}
@@ -89,8 +99,8 @@ export function HowItWorksSection() {
           </ol>
 
           <Reveal className="lg:hidden">
-            <LinkButton href="/reservar" size="lg" className="w-full sm:w-auto">
-              Empezar mi reserva
+            <LinkButton href={href("/reservar")} size="lg" className="w-full sm:w-auto">
+              {t("Empezar mi reserva", "Start my booking")}
             </LinkButton>
           </Reveal>
         </div>

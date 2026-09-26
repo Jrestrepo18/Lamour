@@ -1,6 +1,12 @@
-import clsx from "clsx";
+"use client";
 
-export const STEPS = ["Servicio", "Masajista", "Horario", "Tus datos", "Confirmar"];
+import clsx from "clsx";
+import { useI18n } from "@/i18n/I18nProvider";
+
+const STEP_LABELS = {
+  es: ["Servicio", "Masajista", "Horario", "Tus datos", "Confirmar"],
+  en: ["Service", "Therapist", "Time", "Your details", "Confirm"],
+};
 
 /**
  * Progress as Instagram story bars: one segment per step, filled in ink once
@@ -8,8 +14,10 @@ export const STEPS = ["Servicio", "Masajista", "Horario", "Tus datos", "Confirma
  * visitor can hop back to any earlier step.
  */
 export function StepIndicator({ current, onJump }: { current: number; onJump: (step: number) => void }) {
+  const { t, lang } = useI18n();
+  const STEPS = STEP_LABELS[lang];
   return (
-    <nav aria-label="Progreso de la reserva">
+    <nav aria-label={t("Progreso de la reserva", "Booking progress")}>
       <ol className="flex gap-1.5">
         {STEPS.map((label, i) => {
           const step = i + 1;
@@ -21,7 +29,7 @@ export function StepIndicator({ current, onJump }: { current: number; onJump: (s
                 type="button"
                 disabled={!done}
                 onClick={() => onJump(step)}
-                aria-label={done ? `Volver a ${label}` : `${label}${active ? " (paso actual)" : ""}`}
+                aria-label={done ? `${t("Volver a", "Back to")} ${label}` : `${label}${active ? t(" (paso actual)", " (current step)") : ""}`}
                 className="block w-full cursor-pointer py-2 disabled:cursor-default"
               >
                 <span className="block h-[3px] overflow-hidden rounded-full bg-ink/10">
@@ -40,7 +48,7 @@ export function StepIndicator({ current, onJump }: { current: number; onJump: (s
       <p className="mt-1 flex items-baseline justify-between text-xs">
         <span className="font-semibold uppercase tracking-[0.22em] text-bronze">{STEPS[current - 1]}</span>
         <span className="text-ink-soft">
-          Paso {current} de {STEPS.length}
+          {t("Paso", "Step")} {current} {t("de", "of")} {STEPS.length}
         </span>
       </p>
     </nav>

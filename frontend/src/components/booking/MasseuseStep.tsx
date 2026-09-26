@@ -4,6 +4,7 @@ import clsx from "clsx";
 import { BadgeCheck, Check } from "lucide-react";
 import type { Masseuse, Service } from "@/lib/types";
 import { StepHeading, StoryAvatar } from "./parts";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /**
  * The team as story avatars: tap one and her ring lights up gold. Four-hands
@@ -25,6 +26,7 @@ export function MasseuseStep({
   onSelectPrimary: (m: Masseuse | null) => void;
   onSelectSecondary: (m: Masseuse | null) => void;
 }) {
+  const { t } = useI18n();
   const needsTwo = service.requiresTwoTherapists;
   // Only therapists who do this ritual (servicioIds; empty = all) and visit homes (the site only books a domicilio).
   const active = masseuses.filter(
@@ -54,11 +56,14 @@ export function MasseuseStep({
   return (
     <div>
       <StepHeading
-        title={needsTwo ? "Elige a tus dos terapeutas" : "¿Con quién quieres vivirlo?"}
+        title={needsTwo ? t("Elige a tus dos terapeutas", "Choose your two therapists") : t("¿Con quién quieres vivirlo?", "Who would you like?")}
         hint={
           needsTwo
-            ? "Este ritual lo hacen dos terapeutas a la vez. La primera que toques será la principal."
-            : "Todas son terapeutas certificadas del equipo L'AMOUR."
+            ? t(
+                "Este ritual lo hacen dos terapeutas a la vez. La primera que toques será la principal.",
+                "Two therapists perform this ritual together. The first one you tap will lead.",
+              )
+            : t("Todas son terapeutas certificadas del equipo L'AMOUR.", "All are certified therapists on the L'AMOUR team.")
         }
       />
 
@@ -92,9 +97,9 @@ export function MasseuseStep({
                 </span>
                 <span className="mt-2.5 flex items-center gap-1 text-sm font-semibold text-ink">
                   {m.stageName}
-                  <BadgeCheck size={14} className="fill-gold text-ivory" aria-label="verificada" />
+                  <BadgeCheck size={14} className="fill-gold text-ivory" aria-label={t("verificada", "verified")} />
                 </span>
-                {m.age != null && <span className="text-xs text-ink-soft">{m.age} años</span>}
+                {m.age != null && <span className="text-xs text-ink-soft">{m.age} {t("años", "years")}</span>}
               </button>
             </li>
           );
@@ -104,11 +109,14 @@ export function MasseuseStep({
       <p className="mt-8 min-h-5 text-sm text-ink-soft" aria-live="polite">
         {chosen.length === 0
           ? needsTwo
-            ? "Toca dos perfiles."
-            : "Toca un perfil para elegirla."
+            ? t("Toca dos perfiles.", "Tap two profiles.")
+            : t("Toca un perfil para elegirla.", "Tap a profile to choose her.")
           : needsTwo && chosen.length === 1
-            ? `${chosen[0].stageName} será la principal. Elige a su compañera.`
-            : `Vivirás tu ritual con ${chosen.map((c) => c.stageName).join(" y ")}.`}
+            ? t(`${chosen[0].stageName} será la principal. Elige a su compañera.`, `${chosen[0].stageName} will lead. Choose her partner.`)
+            : t(
+                `Vivirás tu ritual con ${chosen.map((c) => c.stageName).join(" y ")}.`,
+                `Your ritual will be with ${chosen.map((c) => c.stageName).join(" and ")}.`,
+              )}
       </p>
     </div>
   );

@@ -3,6 +3,7 @@
 import { Heart } from "lucide-react";
 import clsx from "clsx";
 import { useFavorites } from "@/hooks/useFavorites";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /** ♡ toggle for a service. `tone` adapts it to photo (glass) or plain surfaces. */
 export function FavoriteButton({
@@ -17,6 +18,7 @@ export function FavoriteButton({
   className?: string;
 }) {
   const { isFavorite, toggle } = useFavorites();
+  const { t } = useI18n();
   const saved = isFavorite(slug);
 
   return (
@@ -27,7 +29,7 @@ export function FavoriteButton({
         toggle(slug);
       }}
       aria-pressed={saved}
-      aria-label={saved ? `Quitar ${name} de guardados` : `Guardar ${name}`}
+      aria-label={saved ? t(`Quitar ${name} de guardados`, `Remove ${name} from saved`) : t(`Guardar ${name}`, `Save ${name}`)}
       className={clsx(
         "flex h-10 w-10 cursor-pointer items-center justify-center rounded-full transition-[transform,background-color] duration-200 active:scale-90",
         tone === "glass" && "bg-ivory/90 shadow-md",

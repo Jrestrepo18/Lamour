@@ -6,6 +6,7 @@ import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
+import { getI18n } from "@/i18n/server";
 
 /**
  * Closing call to action over a full-strength photograph. The darkening is
@@ -13,7 +14,8 @@ import { PHOTOS } from "@/lib/photos";
  * the footer's ink at the bottom — and the top edge dissolves into whatever
  * background precedes it, so there is never a hard seam above this section.
  */
-export function FinalCta({ className }: { className?: string }) {
+export async function FinalCta({ className }: { className?: string }) {
+  const { t, href } = await getI18n();
   // `className` lets a page paint the same background as the section above (e.g. a tinted
   // catalog section), so the photo's fade starts from exactly that colour.
   return (
@@ -51,22 +53,25 @@ export function FinalCta({ className }: { className?: string }) {
 
       <Container className="relative text-center [text-shadow:0_2px_24px_rgba(16,16,16,0.55)]">
         <Reveal>
-          <p className="eyebrow justify-center !text-champagne">Tu momento te espera</p>
+          <p className="eyebrow justify-center !text-champagne">{t("Tu momento te espera", "Your moment awaits")}</p>
           <h2 className="mx-auto mt-5 max-w-2xl font-serif text-4xl font-semibold leading-tight tracking-tight text-ivory text-balance sm:text-6xl">
-            Regálate una pausa. Regálate L&apos;AMOUR.
+            {t("Regálate una pausa. Regálate L'AMOUR.", "Give yourself a pause. Give yourself L'AMOUR.")}
           </h2>
           <p className="mx-auto mt-5 max-w-md text-base leading-relaxed text-ivory/90 sm:text-lg">
-            Reserva en minutos y recibe una experiencia diseñada para tus sentidos, en la comodidad de tu hogar.
+            {t(
+              "Reserva en minutos y recibe una experiencia diseñada para tus sentidos, en la comodidad de tu hogar.",
+              "Book in minutes and enjoy an experience designed for your senses, in the comfort of your home.",
+            )}
           </p>
           <div className="mt-9 flex flex-col items-center justify-center gap-4 [text-shadow:none] sm:flex-row">
-            <LinkButton href="/reservar" size="lg" variant="light" className="w-full max-w-xs sm:w-auto">
-              Reservar ahora
+            <LinkButton href={href("/reservar")} size="lg" variant="light" className="w-full max-w-xs sm:w-auto">
+              {t("Reservar ahora", "Book now")}
             </LinkButton>
             <Link
-              href="/servicios"
+              href={href("/servicios")}
               className="inline-flex min-h-11 items-center text-sm font-medium text-ivory underline decoration-gold/70 underline-offset-8 transition-colors hover:decoration-ivory"
             >
-              Explorar servicios
+              {t("Explorar servicios", "Explore services")}
             </Link>
           </div>
         </Reveal>

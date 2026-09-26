@@ -5,7 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
 import { ArrowUpRight, ChevronLeft, ChevronRight, Heart, MessageCircle, Send } from "lucide-react";
-import type { Photo } from "@/lib/photos";
+import { photoAlt, type Photo } from "@/lib/photos";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export type PostSlide = { title: string; caption: string; tags: string[]; photo: Photo };
 
@@ -30,6 +31,7 @@ export function InstagramPost({
   active?: number;
   onActiveChange?: (i: number) => void;
 }) {
+  const { t, href, lang } = useI18n();
   const [internal, setInternal] = useState(0);
   const active = controlled ?? internal;
   const setActive = useCallback(
@@ -108,7 +110,7 @@ export function InstagramPost({
   }
 
   async function share() {
-    const url = `${window.location.origin}/#sentidos`;
+    const url = `${window.location.origin}${href("/#sentidos")}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: `L'AMOUR — ${slide.title}`, text: slide.caption, url });
@@ -124,8 +126,8 @@ export function InstagramPost({
 
   return (
     <article
-      aria-roledescription="carrusel"
-      aria-label="Publicación de L'AMOUR: un ritual para cada sentido"
+      aria-roledescription={t("carrusel", "carousel")}
+      aria-label={t("Publicación de L'AMOUR: un ritual para cada sentido", "L'AMOUR post: a ritual for every sense")}
       className="w-full"
     >
       {/* Header */}
@@ -153,13 +155,13 @@ export function InstagramPost({
               key={s.title}
               role="group"
               aria-roledescription="foto"
-              aria-label={`${i + 1} de ${slides.length}: ${s.title}`}
+              aria-label={`${i + 1} ${t("de", "of")} ${slides.length}: ${s.title}`}
               className="relative h-full w-full flex-none snap-center overflow-hidden"
             >
               <div className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 3}s` }}>
                 <Image
                   src={s.photo.src}
-                  alt={s.photo.alt}
+                  alt={photoAlt(s.photo, lang)}
                   fill
                   sizes="(min-width: 1024px) 31rem, 100vw"
                   className="object-cover"
@@ -179,7 +181,7 @@ export function InstagramPost({
           type="button"
           onClick={() => goTo(active - 1)}
           disabled={active === 0}
-          aria-label="Foto anterior"
+          aria-label={t("Foto anterior", "Previous photo")}
           className="absolute left-3 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ivory/85 text-ink shadow-md transition-opacity disabled:pointer-events-none disabled:opacity-0"
         >
           <ChevronLeft size={18} aria-hidden />
@@ -188,7 +190,7 @@ export function InstagramPost({
           type="button"
           onClick={() => goTo(active + 1)}
           disabled={active === slides.length - 1}
-          aria-label="Foto siguiente"
+          aria-label={t("Foto siguiente", "Next photo")}
           className="absolute right-3 top-1/2 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ivory/85 text-ink shadow-md transition-opacity disabled:pointer-events-none disabled:opacity-0"
         >
           <ChevronRight size={18} aria-hidden />
@@ -207,7 +209,7 @@ export function InstagramPost({
           type="button"
           onClick={() => setLiked((v) => !v)}
           aria-pressed={liked}
-          aria-label={liked ? "Quitar me gusta" : "Me gusta"}
+          aria-label={liked ? t("Quitar me gusta", "Unlike") : t("Me gusta", "Like")}
           className="flex h-11 w-11 cursor-pointer items-center justify-center rounded-full transition-transform active:scale-90"
         >
           <Heart
@@ -219,19 +221,19 @@ export function InstagramPost({
             )}
           />
         </button>
-        <Link href="/#faq" aria-label="Pregúntanos en el chat" className="flex h-11 w-11 items-center justify-center rounded-full text-ink">
+        <Link href={href("/#faq")} aria-label={t("Pregúntanos en el chat", "Ask us in the chat")} className="flex h-11 w-11 items-center justify-center rounded-full text-ink">
           <MessageCircle size={23} className="-scale-x-100" aria-hidden />
         </Link>
         <button
           type="button"
           onClick={share}
-          aria-label="Compartir"
+          aria-label={t("Compartir", "Share")}
           className="relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-ink"
         >
           <Send size={22} aria-hidden />
           {copied && (
             <span role="status" className="absolute -top-8 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-ink px-3 py-1 text-xs text-ivory">
-              Enlace copiado
+              {t("Enlace copiado", "Link copied")}
             </span>
           )}
         </button>
@@ -243,7 +245,7 @@ export function InstagramPost({
               key={s.title}
               type="button"
               onClick={() => goTo(i)}
-              aria-label={`Ir a la foto ${i + 1}: ${s.title}`}
+              aria-label={`${t("Ir a la foto", "Go to photo")} ${i + 1}: ${s.title}`}
               aria-current={i === active}
               className={clsx(
                 "relative h-1.5 w-1.5 cursor-pointer rounded-full transition-colors duration-300 before:absolute before:-inset-2 before:content-['']",
@@ -254,10 +256,10 @@ export function InstagramPost({
         </div>
 
         <Link
-          href="/reservar"
+          href={href("/reservar")}
           className="ml-auto inline-flex min-h-9 items-center gap-1 rounded-full bg-ink px-4 text-xs font-semibold text-ivory transition-colors hover:bg-espresso"
         >
-          Reservar
+          {t("Reservar", "Book")}
           <ArrowUpRight size={14} aria-hidden />
         </Link>
       </div>

@@ -14,12 +14,25 @@ export function parseMasseuse(b: Record<string, unknown> | null): MasseuseInput 
     stageName: stageName.slice(0, 80),
     age: age && age >= 18 && age < 100 ? age : null,
     bio: optStr(b.bio)?.slice(0, 1000) ?? null,
+    bioEn: optStr(b.bioEn)?.slice(0, 1000) ?? null,
     photoUrl: optStr(b.photoUrl),
     photoGallery: strList(b.photoGallery).slice(0, 30),
     whatsAppNumber,
     imageConsent: bool(b.imageConsent),
     displayOrder: int(b.displayOrder),
     isActive: bool(b.isActive),
+  };
+}
+
+/** Optional English copy of a service; undefined leaves what's stored untouched. */
+function parseServiceEn(v: unknown) {
+  if (!v || typeof v !== "object") return undefined;
+  const e = v as Record<string, unknown>;
+  return {
+    name: str(e.name).slice(0, 120),
+    shortDescription: str(e.shortDescription).slice(0, 300),
+    longDescription: optStr(e.longDescription)?.slice(0, 4000) ?? null,
+    highlights: strList(e.highlights).slice(0, 12),
   };
 }
 
@@ -60,5 +73,6 @@ export function parseService(b: Record<string, unknown> | null): ServiceInput | 
     isCoupleExperience: bool(b.isCoupleExperience),
     displayOrder: int(b.displayOrder),
     isActive: bool(b.isActive),
+    en: parseServiceEn(b.en),
   };
 }

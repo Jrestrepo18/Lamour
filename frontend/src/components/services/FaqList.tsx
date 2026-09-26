@@ -1,5 +1,9 @@
+import { getI18n } from "@/i18n/server";
+
 /** Native <details> accordion — every answer is in the HTML, readable without JavaScript. */
-export function FaqList({ faqs, title = "Preguntas frecuentes" }: { faqs: { q: string; a: string }[]; title?: string }) {
+export async function FaqList({ faqs, title }: { faqs: { q: string; a: string }[]; title?: string }) {
+  const { t } = await getI18n();
+  title ??= t("Preguntas frecuentes", "Frequently asked questions");
   return (
     <div>
       <h2 className="font-serif text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{title}</h2>

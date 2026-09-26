@@ -9,6 +9,7 @@ import { CATEGORY_SHORT, isAdultService } from "@/lib/catalog";
 import { formatCOP, formatDuration } from "@/lib/format";
 import { chipClass } from "@/lib/ui";
 import { ServiceThumb, StepHeading, wrapRailClass } from "./parts";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const SAVED_ID = "__guardados";
 
@@ -34,7 +35,9 @@ export function ServiceStep({
 }) {
   // Wellness first, adult (+18) rituals last: the step opens on a plain relaxation category, which is
   // what people arriving from Google or Instagram expect (and what those platforms' policies allow).
-  const ordered = [...categories].sort((a, b) => adultShare(a) - adultShare(b));
+  const { t, lang } = useI18n();
+  // Empty categories (every service moved elsewhere in the admin) get no chip — and would otherwise sort first.
+  const ordered = categories.filter((c) => c.services.length > 0).sort((a, b) => adultShare(a) - adultShare(b));
   const [activeCategory, setActiveCategory] = useState(
     () => selected?.serviceCategoryId ?? ordered[0]?.id ?? "",
   );
@@ -44,16 +47,19 @@ export function ServiceStep({
   const savedServices = categories.flatMap((c) => c.services).filter((s) => favorites.includes(s.slug));
   const savedCategory: ServiceCategory | null =
     savedServices.length > 0
-      ? { id: SAVED_ID, name: "Guardados", slug: "guardados", description: null, highlight: null, displayOrder: -1, isActive: true, services: savedServices }
+      ? { id: SAVED_ID, name: t("Guardados", "Saved"), slug: "guardados", description: null, highlight: null, displayOrder: -1, isActive: true, services: savedServices }
       : null;
   const tabs = savedCategory ? [savedCategory, ...ordered] : ordered;
   const category = tabs.find((c) => c.id === activeCategory) ?? ordered[0];
 
   return (
     <div>
-      <StepHeading title="Elige tu ritual" hint="Toca la experiencia que quieres vivir; puedes cambiarla cuando quieras." />
+      <StepHeading
+        title={t("Elige tu ritual", "Choose your ritual")}
+        hint={t("Toca la experiencia que quieres vivir; puedes cambiarla cuando quieras.", "Tap the experience you'd like; you can change it any time.")}
+      />
 
-      <div className={clsx(wrapRailClass, "mt-6")} role="tablist" aria-label="Categorías">
+      <div className={clsx(wrapRailClass, "mt-6")} role="tablist" aria-label={t("Categorías", "Categories")}>
         {tabs.map((c) => (
           <button
             key={c.id}
@@ -64,7 +70,7 @@ export function ServiceStep({
             className={clsx(chipClass(c.id === activeCategory), "min-h-11 shrink-0 whitespace-nowrap")}
           >
             {c.id === SAVED_ID && <Heart size={13} className="mr-1.5 fill-[#c0392b] text-[#c0392b]" aria-hidden />}
-            {CATEGORY_SHORT[c.slug] ?? c.name}
+            {CATEGORY_SHORT[lang][c.slug] ?? c.name}
             {c.id === SAVED_ID && <span className="ml-1.5 opacity-70">{savedServices.length}</span>}
           </button>
         ))}
@@ -108,12 +114,13 @@ export function ServiceStep({
                       <>
                         <span aria-hidden>·</span>
                         <span className="inline-flex items-center gap-1">
-                          <Users size={12} aria-hidden />2 masajistas
+                          <Users size={12} aria-hidden />
+                          {t("2 masajistas", "2 therapists")}
                         </span>
                       </>
                     )}
                     <span aria-hidden>·</span>
-                    <span className="font-semibold text-ink">{formatCOP(service.price)}</span>
+                    <span className="font-semibold text-ink">{formatCOP(service.price, lang)}</span>
                   </span>
                 </span>
                 <span

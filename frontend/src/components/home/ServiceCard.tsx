@@ -7,7 +7,8 @@ import clsx from "clsx";
 import { ArrowUpRight, Clock3, Users } from "lucide-react";
 import type { Service } from "@/lib/types";
 import { formatCOP, formatDuration } from "@/lib/format";
-import { fallbackPhoto } from "@/lib/photos";
+import { fallbackPhoto, photoAlt } from "@/lib/photos";
+import { useI18n } from "@/i18n/I18nProvider";
 import { servicePath } from "@/lib/catalog";
 import { LinkButton } from "@/components/ui/Button";
 import { FavoriteButton } from "@/components/ui/FavoriteButton";
@@ -32,11 +33,12 @@ export function ServiceCard({
   index?: number;
   tone?: "light" | "dark";
 }) {
+  const { t, href: to, lang } = useI18n();
   const [open, setOpen] = useState(false);
   const dark = tone === "dark";
   const gallery = service.imageUrl ? [service.imageUrl, ...service.imageGallery] : service.imageGallery;
   const stand = fallbackPhoto(categorySlug, index);
-  const href = servicePath(service, categorySlug);
+  const href = to(servicePath(service, categorySlug));
 
   function openSheet(e: React.MouseEvent) {
     // Let modified clicks (new tab / window) follow the link to the full page.
@@ -76,7 +78,7 @@ export function ServiceCard({
           ) : (
             <Image
               src={stand.src}
-              alt={stand.alt}
+              alt={photoAlt(stand, lang)}
               fill
               sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 80px"
               className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
@@ -90,12 +92,12 @@ export function ServiceCard({
             >
               <Users size={10} aria-hidden />
               <span aria-hidden>2</span>
-              <span className="sr-only">2 masajistas</span>
+              <span className="sr-only">{t("2 masajistas", "2 therapists")}</span>
             </span>
           )}
           {service.requiresTwoTherapists && (
             <span className="absolute left-4 top-4 hidden items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1 text-[0.7rem] font-semibold uppercase tracking-wide text-ink sm:inline-flex">
-              <Users size={12} aria-hidden /> 2 masajistas
+              <Users size={12} aria-hidden /> {t("2 masajistas", "2 therapists")}
             </span>
           )}
 
@@ -140,7 +142,7 @@ export function ServiceCard({
                 dark ? "text-champagne" : "text-ink",
               )}
             >
-              {formatCOP(service.price)}
+              {formatCOP(service.price, lang)}
             </span>
           </div>
         </div>
@@ -158,22 +160,22 @@ export function ServiceCard({
       <DetailModal
         open={open}
         onClose={() => setOpen(false)}
-        eyebrow={service.isCoupleExperience ? "Experiencia en pareja" : formatDuration(service.durationMinutes)}
+        eyebrow={service.isCoupleExperience ? t("Experiencia en pareja", "Couples experience") : formatDuration(service.durationMinutes)}
         title={service.name}
         favorite={{ slug: service.slug, name: service.name }}
         gallery={gallery}
-        fallback={<Image src={stand.src} alt={stand.alt} fill sizes="(min-width: 640px) 42rem, 100vw" className="object-cover" />}
+        fallback={<Image src={stand.src} alt={photoAlt(stand, lang)} fill sizes="(min-width: 640px) 42rem, 100vw" className="object-cover" />}
         footer={
           <div className="flex flex-col items-center gap-3">
-            <LinkButton href={`/reservar?service=${service.slug}`} className="w-full">
-              Reservar este servicio
+            <LinkButton href={to(`/reservar?service=${service.slug}`)} className="w-full">
+              {t("Reservar este servicio", "Book this service")}
               <ArrowUpRight size={16} />
             </LinkButton>
             <Link
               href={href}
               className="text-sm font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink"
             >
-              Ver todos los detalles
+              {t("Ver todos los detalles", "See all the details")}
             </Link>
           </div>
         }
@@ -187,15 +189,16 @@ export function ServiceCard({
           </span>
           {service.requiresTwoTherapists && (
             <span className="flex items-center gap-1.5">
-              <Users size={15} className="text-bronze" aria-hidden />2 masajistas
+              <Users size={15} className="text-bronze" aria-hidden />
+              {t("2 masajistas", "2 therapists")}
             </span>
           )}
-          <span className="ml-auto font-serif text-xl font-semibold text-ink">{formatCOP(service.price)}</span>
+          <span className="ml-auto font-serif text-xl font-semibold text-ink">{formatCOP(service.price, lang)}</span>
         </div>
 
         {service.highlights.length > 0 && (
           <div>
-            <p className="eyebrow">Incluye</p>
+            <p className="eyebrow">{t("Incluye", "Includes")}</p>
             <ul className="mt-3 space-y-2">
               {service.highlights.map((h) => (
                 <li key={h} className="flex items-start gap-2.5 text-sm text-ink-soft">

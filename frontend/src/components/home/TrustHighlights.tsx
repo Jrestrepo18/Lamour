@@ -9,35 +9,49 @@ import { ArrowUpRight, CalendarCheck, MapPinned, ShieldCheck, Sparkles, X, type 
 import { useLenisInstance } from "@/components/motion/LenisProvider";
 import { Container } from "@/components/ui/Container";
 import { PHOTOS, type Photo } from "@/lib/photos";
+import type { Translate } from "@/i18n/config";
+import { useI18n } from "@/i18n/I18nProvider";
 
 type Highlight = { label: string; title: string; text: string; icon: LucideIcon; photo: Photo };
 
-const HIGHLIGHTS: Highlight[] = [
+const highlights = (t: Translate): Highlight[] => [
   {
-    label: "Certificadas",
-    title: "Terapeutas certificadas",
-    text: "Técnica, presencia y trato profesional en cada ritual. Cada terapeuta es seleccionada por su formación y su discreción.",
+    label: t("Certificadas", "Certified"),
+    title: t("Terapeutas certificadas", "Certified therapists"),
+    text: t(
+      "Técnica, presencia y trato profesional en cada ritual. Cada terapeuta es seleccionada por su formación y su discreción.",
+      "Technique, presence and professional care in every ritual. Each therapist is chosen for her training and her discretion.",
+    ),
     icon: Sparkles,
     photo: PHOTOS.oiledBack,
   },
   {
-    label: "Discreción",
-    title: "Discreción total",
-    text: "Sin señalética ni uniformes. Llegamos como una visita más, y toda la comunicación se maneja con absoluta confidencialidad.",
+    label: t("Discreción", "Discretion"),
+    title: t("Discreción total", "Complete discretion"),
+    text: t(
+      "Sin señalética ni uniformes. Llegamos como una visita más, y toda la comunicación se maneja con absoluta confidencialidad.",
+      "No signage, no uniforms. We arrive like any other visitor, and every conversation is handled in complete confidence.",
+    ),
     icon: ShieldCheck,
     photo: PHOTOS.candles,
   },
   {
-    label: "Reserva fácil",
-    title: "Reserva en tiempo real",
-    text: "Elige tu servicio, tu terapeuta y un horario disponible en minutos, sin llamadas ni esperas. Te confirmamos por WhatsApp.",
+    label: t("Reserva fácil", "Easy booking"),
+    title: t("Reserva en tiempo real", "Real-time booking"),
+    text: t(
+      "Elige tu servicio, tu terapeuta y un horario disponible en minutos, sin llamadas ni esperas. Te confirmamos por WhatsApp.",
+      "Choose your service, your therapist and an open time in minutes, with no calls and no waiting. We confirm by WhatsApp.",
+    ),
     icon: CalendarCheck,
     photo: PHOTOS.suitePhone,
   },
   {
-    label: "A domicilio",
-    title: "Todo el Valle de Aburrá",
-    text: "Medellín, Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas y Rionegro. Tu ritual, en la privacidad de tu espacio.",
+    label: t("A domicilio", "We come to you"),
+    title: t("Todo el Valle de Aburrá", "The whole Aburrá Valley"),
+    text: t(
+      "Medellín, Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas y Rionegro. Tu ritual, en la privacidad de tu espacio.",
+      "Medellín, Envigado, Sabaneta, Itagüí, Bello, La Estrella, Caldas and Rionegro. Your ritual, in the privacy of your space.",
+    ),
     icon: MapPinned,
     photo: PHOTOS.bathTray,
   },
@@ -52,6 +66,8 @@ const STORY_SECONDS = 6;
  * gesture every visitor already knows, instead of a plain feature list.
  */
 export function TrustHighlights() {
+  const { t } = useI18n();
+  const HIGHLIGHTS = highlights(t);
   const [open, setOpen] = useState<number | null>(null);
   const [seen, setSeen] = useState<Set<number>>(new Set());
 
@@ -61,7 +77,7 @@ export function TrustHighlights() {
   }
 
   return (
-    <section aria-label="Por qué elegir L'AMOUR" className="border-y border-ink/10 bg-marfil/50">
+    <section aria-label={t("Por qué elegir L'AMOUR", "Why choose L'AMOUR")} className="border-y border-ink/10 bg-marfil/50">
       <Container className="py-8 sm:py-10">
         <ul className="flex items-start justify-between gap-2 sm:justify-center sm:gap-12">
           {HIGHLIGHTS.map((h, i) => (
@@ -69,7 +85,7 @@ export function TrustHighlights() {
               <button
                 type="button"
                 onClick={() => openStory(i)}
-                aria-label={`Ver historia: ${h.title}`}
+                aria-label={`${t("Ver historia", "View story")}: ${h.title}`}
                 className="group relative cursor-pointer rounded-full"
               >
                 {/* The ring: gold gradient while unseen, a quiet hairline once viewed — like stories. */}
@@ -135,6 +151,8 @@ function StoryViewer({
   const closeRef = useRef<HTMLButtonElement>(null);
   const lenis = useLenisInstance();
   const reduceMotion = typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const { t, href, lang } = useI18n();
+  const HIGHLIGHTS = highlights(t);
   const story = HIGHLIGHTS[index];
 
   const next = useCallback(() => {
@@ -185,7 +203,7 @@ function StoryViewer({
         <Image
           key={story.photo.src}
           src={story.photo.src}
-          alt={story.photo.alt}
+          alt={lang === "en" ? story.photo.altEn : story.photo.alt}
           fill
           sizes="(min-width: 640px) 26rem, 100vw"
           className="object-cover animate-hero-settle"
@@ -226,7 +244,7 @@ function StoryViewer({
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Cerrar historia"
+            aria-label={t("Cerrar historia", "Close story")}
             className="relative z-10 ml-auto flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ivory transition-colors hover:bg-ivory/10"
           >
             <X size={22} />
@@ -234,8 +252,8 @@ function StoryViewer({
         </div>
 
         {/* Tap zones: left third = back, right two-thirds = forward (story convention) */}
-        <button type="button" aria-label="Historia anterior" onClick={prev} className="absolute bottom-40 left-0 top-20 w-1/3 cursor-w-resize" />
-        <button type="button" aria-label="Historia siguiente" onClick={next} className="absolute bottom-40 right-0 top-20 w-2/3 cursor-e-resize" />
+        <button type="button" aria-label={t("Historia anterior", "Previous story")} onClick={prev} className="absolute bottom-40 left-0 top-20 w-1/3 cursor-w-resize" />
+        <button type="button" aria-label={t("Historia siguiente", "Next story")} onClick={next} className="absolute bottom-40 right-0 top-20 w-2/3 cursor-e-resize" />
 
         {/* Copy + CTA */}
         <div className="absolute inset-x-0 bottom-0 p-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
@@ -245,10 +263,10 @@ function StoryViewer({
           <h3 className="mt-2 font-serif text-3xl font-semibold leading-tight text-ivory">{story.title}</h3>
           <p className="mt-3 text-base leading-relaxed text-ivory/85">{story.text}</p>
           <Link
-            href="/reservar"
+            href={href("/reservar")}
             className="relative z-10 mt-6 inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-full bg-ivory text-sm font-semibold text-ink transition-colors hover:bg-champagne"
           >
-            Reservar mi ritual
+            {t("Reservar mi ritual", "Book my ritual")}
             <ArrowUpRight size={16} aria-hidden />
           </Link>
         </div>

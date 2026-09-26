@@ -1,4 +1,5 @@
-import type { Service, ServiceCategory } from "./types";
+import type { Masseuse, Service, ServiceCategory } from "./types";
+import type { Locale } from "@/i18n/config";
 
 /**
  * Splits the catalog into the general spa section (/servicios) and the adult
@@ -31,9 +32,9 @@ export const SECTION_BASE: Record<CatalogSection, string> = {
   adult: "/masajes-tantricos",
 };
 
-export const SECTION_NAME: Record<CatalogSection, string> = {
-  spa: "Servicios",
-  adult: "Masajes tántricos",
+export const SECTION_NAME: Record<Locale, Record<CatalogSection, string>> = {
+  es: { spa: "Servicios", adult: "Masajes tántricos" },
+  en: { spa: "Services", adult: "Tantric massages" },
 };
 
 export function isAdultService(service: Pick<Service, "slug">, categorySlug: string) {
@@ -65,10 +66,47 @@ export function findService(categories: ServiceCategory[], slug: string) {
 }
 
 /** Short chip labels — the full category names are too long for a one-line pill row on a phone. */
-export const CATEGORY_SHORT: Record<string, string> = {
-  "eroticos-tantricos": "Tántricos",
-  "terapias-especiales": "Terapias especiales",
-  sensoriales: "Sensoriales",
-  "experiencias-pareja": "En pareja",
-  "relajacion-muscular": "Relajación",
+export const CATEGORY_SHORT: Record<Locale, Record<string, string>> = {
+  es: {
+    "eroticos-tantricos": "Tántricos",
+    "terapias-especiales": "Terapias especiales",
+    sensoriales: "Sensoriales",
+    "experiencias-pareja": "En pareja",
+    "relajacion-muscular": "Relajación",
+  },
+  en: {
+    "eroticos-tantricos": "Tantric",
+    "terapias-especiales": "Special therapies",
+    sensoriales: "Sensory",
+    "experiencias-pareja": "Couples",
+    "relajacion-muscular": "Relaxation",
+  },
 };
+
+/** A service in the page's language: English fields where they exist, Spanish otherwise. */
+export function localizeService(s: Service, lang: Locale): Service {
+  if (lang !== "en" || !s.en) return s;
+  return {
+    ...s,
+    name: s.en.name || s.name,
+    shortDescription: s.en.shortDescription || s.shortDescription,
+    longDescription: s.en.longDescription || s.longDescription,
+    highlights: s.en.highlights?.length ? s.en.highlights : s.highlights,
+  };
+}
+
+export function localizeCatalog(categories: ServiceCategory[], lang: Locale): ServiceCategory[] {
+  if (lang !== "en") return categories;
+  return categories.map((c) => ({
+    ...c,
+    name: c.en?.name || c.name,
+    description: c.en?.description || c.description,
+    highlight: c.en?.highlight || c.highlight,
+    services: c.services.map((s) => localizeService(s, lang)),
+  }));
+}
+
+export function localizeMasseuses(masseuses: Masseuse[], lang: Locale): Masseuse[] {
+  if (lang !== "en") return masseuses;
+  return masseuses.map((m) => ({ ...m, bio: m.bioEn || m.bio }));
+}

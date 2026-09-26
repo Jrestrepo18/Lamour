@@ -9,7 +9,8 @@ import { ArrowUpRight, ChevronDown, ChevronUp, Clock3, Heart, MessageCircle, Sen
 import { useLenisInstance } from "@/components/motion/LenisProvider";
 import { useFavorites } from "@/hooks/useFavorites";
 import { formatCOP, formatDuration } from "@/lib/format";
-import type { Photo } from "@/lib/photos";
+import { photoAlt, type Photo } from "@/lib/photos";
+import { useI18n } from "@/i18n/I18nProvider";
 import type { Service } from "@/lib/types";
 
 export type Reel = { service: Service; photo: Photo };
@@ -29,6 +30,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
   const closeRef = useRef<HTMLButtonElement>(null);
   const lastTap = useRef(0);
   const downAt = useRef<{ x: number; y: number } | null>(null);
+  const { t, href, lang } = useI18n();
   const lenis = useLenisInstance();
   const { isFavorite, toggle, add } = useFavorites();
   const current = reels[active].service;
@@ -99,7 +101,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
   }
 
   async function share() {
-    const url = `${window.location.origin}/reservar?service=${current.slug}`;
+    const url = `${window.location.origin}${href(`/reservar?service=${current.slug}`)}`;
     try {
       if (navigator.share) {
         await navigator.share({ title: `L'AMOUR — ${current.name}`, text: current.shortDescription, url });
@@ -120,7 +122,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
       data-lenis-prevent
       role="dialog"
       aria-modal="true"
-      aria-label="Rituales destacados"
+      aria-label={t("Rituales destacados", "Featured rituals")}
       className="fixed inset-0 z-[60] flex animate-fade-in items-center justify-center bg-espresso sm:bg-espresso/92 sm:p-4"
     >
       <div className="relative h-full w-full sm:aspect-[9/16] sm:h-[min(92dvh,52rem)] sm:w-auto sm:overflow-hidden sm:rounded-[1.5rem] sm:shadow-2xl">
@@ -133,7 +135,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
           {reels.map(({ service, photo }, i) => (
             <section
               key={service.id}
-              aria-label={`${i + 1} de ${reels.length}: ${service.name}`}
+              aria-label={`${i + 1} ${t("de", "of")} ${reels.length}: ${service.name}`}
               className="relative h-full w-full touch-manipulation snap-start snap-always overflow-hidden"
               onPointerDown={onPointerDown}
               onPointerUp={(e) => onPointerUp(e, service.slug)}
@@ -143,7 +145,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
                   // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
                   <img src={service.imageUrl} alt={service.name} className="h-full w-full object-cover" />
                 ) : (
-                  <Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 640px) 30rem, 100vw" className="object-cover" />
+                  <Image src={photo.src} alt={photoAlt(photo, lang)} fill sizes="(min-width: 640px) 30rem, 100vw" className="object-cover" />
                 )}
               </div>
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-espresso/55 via-transparent to-espresso/90" />
@@ -164,13 +166,13 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
                 <p className="mt-2 flex items-center gap-2 text-sm text-ivory/85">
                   <Clock3 size={14} className="text-champagne" aria-hidden />
                   {formatDuration(service.durationMinutes)} ·{" "}
-                  <span className="font-semibold text-ivory">{formatCOP(service.price)}</span>
+                  <span className="font-semibold text-ivory">{formatCOP(service.price, lang)}</span>
                 </p>
                 <Link
-                  href={`/reservar?service=${service.slug}`}
+                  href={href(`/reservar?service=${service.slug}`)}
                   className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-full bg-ivory px-5 text-sm font-semibold text-ink transition-colors hover:bg-champagne"
                 >
-                  Reservar este ritual
+                  {t("Reservar este ritual", "Book this ritual")}
                   <ArrowUpRight size={15} aria-hidden />
                 </Link>
               </div>
@@ -185,7 +187,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={t("Cerrar", "Close")}
             className="pointer-events-auto flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-ivory transition-colors hover:bg-ivory/10"
           >
             <X size={24} />
@@ -198,32 +200,32 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
             type="button"
             onClick={() => toggle(current.slug)}
             aria-pressed={saved}
-            aria-label={saved ? `Quitar ${current.name} de guardados` : `Guardar ${current.name}`}
+            aria-label={saved ? t(`Quitar ${current.name} de guardados`, `Remove ${current.name} from saved`) : t(`Guardar ${current.name}`, `Save ${current.name}`)}
             className="flex h-12 w-12 cursor-pointer flex-col items-center justify-center rounded-full transition-transform active:scale-90"
           >
             <Heart size={28} aria-hidden className={clsx("transition-[fill,color,transform] duration-300", saved && "scale-110 fill-[#e0474c] text-[#e0474c]")} />
-            <span className="mt-0.5 text-[0.65rem]">{saved ? "Guardado" : "Guardar"}</span>
+            <span className="mt-0.5 text-[0.65rem]">{saved ? t("Guardado", "Saved") : t("Guardar", "Save")}</span>
           </button>
           <Link
-            href="/#faq"
+            href={href("/#faq")}
             onClick={onClose}
-            aria-label="Pregúntanos en el chat"
+            aria-label={t("Pregúntanos en el chat", "Ask us in the chat")}
             className="flex h-12 w-12 flex-col items-center justify-center rounded-full"
           >
             <MessageCircle size={27} className="-scale-x-100" aria-hidden />
-            <span className="mt-0.5 text-[0.65rem]">Preguntar</span>
+            <span className="mt-0.5 text-[0.65rem]">{t("Preguntar", "Ask")}</span>
           </Link>
           <button
             type="button"
             onClick={share}
-            aria-label={`Compartir ${current.name}`}
+            aria-label={t(`Compartir ${current.name}`, `Share ${current.name}`)}
             className="relative flex h-12 w-12 cursor-pointer flex-col items-center justify-center rounded-full"
           >
             <Send size={25} aria-hidden />
-            <span className="mt-0.5 text-[0.65rem]">Enviar</span>
+            <span className="mt-0.5 text-[0.65rem]">{t("Enviar", "Send")}</span>
             {copied && (
               <span role="status" className="absolute right-14 top-2 whitespace-nowrap rounded-full bg-ivory px-3 py-1 text-xs text-ink">
-                Enlace copiado
+                {t("Enlace copiado", "Link copied")}
               </span>
             )}
           </button>
@@ -242,7 +244,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
           type="button"
           onClick={() => goTo(active - 1)}
           disabled={active === 0}
-          aria-label="Ritual anterior"
+          aria-label={t("Ritual anterior", "Previous ritual")}
           className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-ivory/15 text-ivory transition-opacity hover:bg-ivory/25 disabled:opacity-30"
         >
           <ChevronUp size={22} />
@@ -251,7 +253,7 @@ export function ReelViewer({ reels, start, onClose }: { reels: Reel[]; start: nu
           type="button"
           onClick={() => goTo(active + 1)}
           disabled={active === reels.length - 1}
-          aria-label="Ritual siguiente"
+          aria-label={t("Ritual siguiente", "Next ritual")}
           className="flex h-12 w-12 cursor-pointer items-center justify-center rounded-full bg-ivory/15 text-ivory transition-opacity hover:bg-ivory/25 disabled:opacity-30"
         >
           <ChevronDown size={22} />

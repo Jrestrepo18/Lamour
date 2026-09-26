@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { servicePath } from "./catalog";
+import { localePath, LOCALE_TAG, OG_LOCALE, translator, type Locale } from "@/i18n/config";
 
 /**
  * Single source of truth for SEO: canonical site URL, brand copy, and the
@@ -45,6 +46,19 @@ export const SITE = {
 
 export const absoluteUrl = (path = "/") => `${SITE.url}${path.startsWith("/") ? path : `/${path}`}`;
 
+export const siteDescription = (lang: Locale) =>
+  translator(lang)(
+    SITE.description,
+    "In-home massage spa in Medellín and the Aburrá Valley: relaxation, volcanic stones and couples massages by certified therapists. Book online.",
+  );
+
+/** hreflang pairs for a page, from its Spanish (unprefixed) path. */
+export const languageAlternates = (path: string) => ({
+  "es-CO": path,
+  en: localePath("en", path),
+  "x-default": path,
+});
+
 /**
  * Full metadata for an inner page. Next.js replaces nested objects like
  * `openGraph` wholesale instead of merging them with the root layout's, so each
@@ -54,25 +68,31 @@ export function pageMetadata({
   title,
   description,
   path,
+  lang,
   adult = false,
 }: {
   title: string;
   description: string;
+  /** The Spanish (unprefixed) path; the English one is derived from it. */
   path: string;
+  lang: Locale;
   /** Marks the page as sexually explicit for SafeSearch (`<meta name="rating" content="adult">`). */
   adult?: boolean;
 }): Metadata {
-  const image = { url: SITE.ogImage, width: 1200, height: 630, alt: "L'AMOUR — Spa y masajes a domicilio en Medellín" };
+  const alt = translator(lang)("L'AMOUR — Spa y masajes a domicilio en Medellín", "L'AMOUR — In-home spa and massage in Medellín");
+  const image = { url: SITE.ogImage, width: 1200, height: 630, alt };
+  const url = localePath(lang, path);
   return {
     title,
     description,
-    alternates: { canonical: path },
+    alternates: { canonical: url, languages: languageAlternates(path) },
     ...(adult ? { other: { rating: "adult" } } : {}),
     openGraph: {
       type: "website",
-      locale: SITE.locale,
+      locale: OG_LOCALE[lang],
+      alternateLocale: [OG_LOCALE[lang === "en" ? "es" : "en"]],
       siteName: SITE.name,
-      url: path,
+      url,
       title,
       description,
       images: [image],
@@ -84,14 +104,14 @@ export function pageMetadata({
 type Json = Record<string, unknown>;
 
 /** The business entity — one node for the whole service area (no per-city duplicates). */
-export function businessJsonLd(): Json {
+export function businessJsonLd(lang: Locale): Json {
   return {
     "@context": "https://schema.org",
     "@type": "HealthAndBeautyBusiness",
     "@id": absoluteUrl("/#business"),
     name: SITE.name,
     alternateName: SITE.shortName,
-    description: SITE.description,
+    description: siteDescription(lang),
     url: SITE.url,
     image: absoluteUrl(SITE.ogImage),
     logo: absoluteUrl(SITE.logo),
@@ -117,20 +137,20 @@ export function businessJsonLd(): Json {
   };
 }
 
-export function websiteJsonLd(): Json {
+export function websiteJsonLd(lang: Locale): Json {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": absoluteUrl("/#website"),
     name: SITE.name,
     url: SITE.url,
-    inLanguage: "es-CO",
+    inLanguage: LOCALE_TAG[lang],
     publisher: { "@id": absoluteUrl("/#business") },
   };
 }
 
-export function breadcrumbJsonLd(items: { name: string; path: string }[]): Json {
-  const all = [{ name: "Inicio", path: "/" }, ...items];
+export function breadcrumbJsonLd(items: { name: string; path: string }[], lang: Locale): Json {
+  const all = [{ name: translator(lang)("Inicio", "Home"), path: "/" }, ...items];
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -138,7 +158,7 @@ export function breadcrumbJsonLd(items: { name: string; path: string }[]): Json 
       "@type": "ListItem",
       position: i + 1,
       name: item.name,
-      item: absoluteUrl(item.path),
+      item: absoluteUrl(localePath(lang, item.path)),
     })),
   };
 }
@@ -160,16 +180,18 @@ export function catalogJsonLd({
   name,
   path,
   categories,
+  lang,
 }: {
   name: string;
   path: string;
+  lang: Locale;
   categories: { name: string; slug: string; services: { name: string; slug: string; shortDescription: string; price: number }[] }[];
 }): Json {
   return {
     "@context": "https://schema.org",
     "@type": "OfferCatalog",
     name,
-    url: absoluteUrl(path),
+    url: absoluteUrl(localePath(lang, path)),
     provider: { "@id": absoluteUrl("/#business") },
     itemListElement: categories.map((c) => ({
       "@type": "OfferCatalog",
@@ -178,12 +200,12 @@ export function catalogJsonLd({
         "@type": "Offer",
         price: s.price,
         priceCurrency: "COP",
-        url: absoluteUrl(servicePath(s, c.slug)),
+        url: absoluteUrl(localePath(lang, servicePath(s, c.slug))),
         itemOffered: {
           "@type": "Service",
           name: s.name,
           description: s.shortDescription,
-          areaServed: "Medellín y Valle de Aburrá",
+          areaServed: translator(lang)("Medellín y Valle de Aburrá", "Medellín and the Aburrá Valley"),
         },
       })),
     })),
@@ -198,7 +220,9 @@ export function serviceJsonLd({
   path,
   price,
   category,
+  lang,
 }: {
+  lang: Locale;
   name: string;
   slug: string;
   description: string;
@@ -206,7 +230,7 @@ export function serviceJsonLd({
   price: number;
   category: string;
 }): Json {
-  const url = absoluteUrl(path);
+  const url = absoluteUrl(localePath(lang, path));
   return {
     "@context": "https://schema.org",
     "@type": "Service",
@@ -221,7 +245,7 @@ export function serviceJsonLd({
       "@type": "Offer",
       price,
       priceCurrency: "COP",
-      url: absoluteUrl(`/reservar?service=${slug}`),
+      url: absoluteUrl(localePath(lang, `/reservar?service=${slug}`)),
     },
   };
 }

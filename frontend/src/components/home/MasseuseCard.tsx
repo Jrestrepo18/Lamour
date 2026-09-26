@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ArrowUpRight } from "lucide-react";
 import type { Masseuse } from "@/lib/types";
 import { MasseuseProfile } from "./MasseuseProfile";
+import { useI18n } from "@/i18n/I18nProvider";
 
 function initials(name: string) {
   return name.slice(0, 1).toUpperCase();
@@ -22,6 +23,7 @@ function Monogram({ name }: { name: string }) {
 }
 
 export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
+  const { t } = useI18n();
   const [open, setOpen] = useState(false);
   // An uploaded photo that fails to load falls back to the monogram instead of a broken-image icon.
   const [photoFailed, setPhotoFailed] = useState(false);
@@ -60,7 +62,7 @@ export function MasseuseCard({ masseuse }: { masseuse: Masseuse }) {
         </span>
         <div className="absolute inset-x-0 bottom-0 p-4 sm:p-6">
           <h3 className="font-serif text-lg font-semibold leading-tight text-ivory sm:text-2xl">{masseuse.stageName}</h3>
-          {masseuse.age != null && <p className="mt-0.5 text-xs text-ivory/80 sm:text-sm">{masseuse.age} años</p>}
+          {masseuse.age != null && <p className="mt-0.5 text-xs text-ivory/80 sm:text-sm">{masseuse.age} {t("años", "years old")}</p>}
           {masseuse.bio && (
             <p className="mt-2 hidden text-sm leading-relaxed text-ivory/80 sm:line-clamp-2">{masseuse.bio}</p>
           )}

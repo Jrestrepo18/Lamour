@@ -25,6 +25,7 @@ type ProfileForm = {
   stageName: string;
   age: string;
   bio: string;
+  bioEn: string;
   photos: string[];
   whatsAppNumber: string;
   displayOrder: number;
@@ -36,6 +37,7 @@ const EMPTY_FORM: ProfileForm = {
   stageName: "",
   age: "",
   bio: "",
+  bioEn: "",
   photos: [],
   whatsAppNumber: "",
   displayOrder: 0,
@@ -168,6 +170,7 @@ function ProfileSheet({
           stageName: masseuse.stageName,
           age: masseuse.age != null ? String(masseuse.age) : "",
           bio: masseuse.bio ?? "",
+          bioEn: masseuse.bioEn ?? "",
           photos: [masseuse.photoUrl, ...masseuse.photoGallery].filter(Boolean) as string[],
           whatsAppNumber: masseuse.whatsAppNumber,
           displayOrder: masseuse.displayOrder,
@@ -201,6 +204,7 @@ function ProfileSheet({
           stageName: form.stageName.trim(),
           age: form.age.trim() ? Number(form.age) : null,
           bio: form.bio.trim() || null,
+          bioEn: form.bioEn.trim() || null,
           photoUrl: form.photos[0] ?? null,
           photoGallery: form.photos.slice(1),
           whatsAppNumber: phoneDigits,
@@ -287,6 +291,17 @@ function ProfileSheet({
                 value={form.bio}
                 onChange={(e) => setForm((f) => ({ ...f, bio: e.target.value }))}
                 placeholder="Especialidades, estilo, lo que la hace única…"
+              />
+            </label>
+            <label className={labelClass}>
+              <span>
+                Biografía en inglés <span className="font-normal text-ink-soft">(opcional, para la página en inglés)</span>
+              </span>
+              <textarea
+                className={`${fieldClass} min-h-20 resize-none`}
+                value={form.bioEn}
+                onChange={(e) => setForm((f) => ({ ...f, bioEn: e.target.value }))}
+                placeholder="Specialities, style, what makes her unique…"
               />
             </label>
           </div>

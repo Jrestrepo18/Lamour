@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { getReviews, getServiceCategories } from "@/server/catalog";
-import { findService, servicePath } from "@/lib/catalog";
+import { findService, localizeCatalog, servicePath } from "@/lib/catalog";
+import { languageAlternates } from "@/lib/seo";
+import { getI18n } from "@/i18n/server";
 import { Hero } from "@/components/home/Hero";
 import { Manifesto } from "@/components/home/Manifesto";
 import { FeaturedServices } from "@/components/home/FeaturedServices";
@@ -16,7 +18,10 @@ import { ReviewsSection } from "@/components/reviews/ReviewsSection";
 /** Catalog pages regenerate at most once a minute (and right after an admin edit). */
 export const revalidate = 60;
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { href } = await getI18n();
+  return { alternates: { canonical: href("/"), languages: languageAlternates("/") } };
+}
 
 /**
  * Only general-section rituals on the home page: an adult ritual here would get the
@@ -27,7 +32,9 @@ export const metadata: Metadata = { alternates: { canonical: "/" } };
 const FEATURED_SLUGS = ["relajacion-clasica", "piedras-volcanicas", "experiencia-en-pareja"];
 
 export default async function HomePage() {
-  const [{ data: categories }, reviews] = await Promise.all([getServiceCategories(), getReviews()]);
+  const { lang } = await getI18n();
+  const [{ data }, reviews] = await Promise.all([getServiceCategories(), getReviews()]);
+  const categories = localizeCatalog(data, lang);
 
   const featured = FEATURED_SLUGS.map((slug) => findService(categories, slug))
     .filter((f) => f !== null)

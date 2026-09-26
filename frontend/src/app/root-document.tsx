@@ -1,10 +1,12 @@
-import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
+import type { Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { SiteGate } from "@/components/gate/SiteGate";
 import { LenisProvider } from "@/components/motion/LenisProvider";
 import { AGE_GATE_BOOT_SCRIPT } from "@/lib/age-gate";
-import { SITE } from "@/lib/seo";
+import { I18nProvider } from "@/i18n/I18nProvider";
+import { LOCALE_TAG, type Locale } from "@/i18n/config";
 
 /**
  * One family, used at contrasting weights (400 body / 700 display) instead
@@ -24,56 +26,30 @@ const generalSans = localFont({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  metadataBase: new URL(SITE.url),
-  title: {
-    default: "L'AMOUR | Spa y masajes a domicilio en Medellín",
-    template: "%s | L'AMOUR",
-  },
-  description: SITE.description,
-  applicationName: SITE.shortName,
-  authors: [{ name: SITE.name }],
-  creator: SITE.name,
-  category: "health & beauty",
-  openGraph: {
-    type: "website",
-    locale: SITE.locale,
-    url: "/",
-    siteName: SITE.name,
-    title: "L'AMOUR | Spa y masajes a domicilio en Medellín",
-    description: SITE.description,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "L'AMOUR | Spa y masajes a domicilio en Medellín",
-    description: SITE.description,
-  },
-  // No index/follow here: indexable is already the default, and declaring it at the root
-  // leaked "index, follow" into the 404 next to Next's own "noindex". Canonicals are set
-  // per page for the same reason (a root canonical made every page without one claim "/").
-  robots: { googleBot: { "max-image-preview": "large", "max-snippet": -1 } },
-  ...(SITE.googleVerification ? { verification: { google: SITE.googleVerification } } : {}),
-  formatDetection: { telephone: false },
-};
-
-export const viewport: Viewport = {
+export const rootViewport: Viewport = {
   themeColor: "#f5f1e8",
   colorScheme: "light",
   // Lets the sticky mobile booking bar pad itself above the iPhone home indicator.
   viewportFit: "cover",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+/**
+ * The <html> shell shared by the two root layouts — the public site ([lang]) and
+ * the admin panel — so fonts, the age-gate boot script and smooth scroll are identical.
+ */
+export function RootDocument({ lang, children }: { lang: Locale; children: ReactNode }) {
   return (
     // suppressHydrationWarning: the <head> boot script may add data-age-ok before React hydrates.
-    <html lang="es-CO" className={`${generalSans.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang={LOCALE_TAG[lang]} className={`${generalSans.variable} h-full antialiased`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: AGE_GATE_BOOT_SCRIPT }} />
       </head>
       <body className="flex min-h-full flex-col bg-ivory text-ink">
-        <LenisProvider>
-          <SiteGate>{children}</SiteGate>
-        </LenisProvider>
+        <I18nProvider lang={lang}>
+          <LenisProvider>
+            <SiteGate>{children}</SiteGate>
+          </LenisProvider>
+        </I18nProvider>
       </body>
     </html>
   );

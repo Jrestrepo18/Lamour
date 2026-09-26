@@ -6,6 +6,7 @@ import { ChevronLeft, ChevronRight, Heart, X } from "lucide-react";
 import { FavoriteButton } from "@/components/ui/FavoriteButton";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useLenisInstance } from "@/components/motion/LenisProvider";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -46,6 +47,7 @@ export function DetailModal({
   const previouslyFocused = useRef<HTMLElement | null>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const [activeSlide, setActiveSlide] = useState(0);
+  const { t } = useI18n();
   const lenis = useLenisInstance();
   const { add: addFavorite } = useFavorites();
   const [burst, setBurst] = useState(0);
@@ -158,7 +160,7 @@ export function DetailModal({
               ref={closeButtonRef}
               type="button"
               onClick={onClose}
-              aria-label="Cerrar"
+              aria-label={t("Cerrar", "Close")}
               className="absolute right-4 top-4 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md backdrop-blur transition-colors hover:bg-ivory"
             >
               <X size={18} />
@@ -209,7 +211,7 @@ export function DetailModal({
                     type="button"
                     onClick={() => goToSlide(activeSlide - 1)}
                     disabled={activeSlide === 0}
-                    aria-label="Foto anterior"
+                    aria-label={t("Foto anterior", "Previous photo")}
                     className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md backdrop-blur transition-opacity hover:bg-ivory disabled:pointer-events-none disabled:opacity-0"
                   >
                     <ChevronLeft size={18} />
@@ -218,7 +220,7 @@ export function DetailModal({
                     type="button"
                     onClick={() => goToSlide(activeSlide + 1)}
                     disabled={activeSlide === gallery.length - 1}
-                    aria-label="Foto siguiente"
+                    aria-label={t("Foto siguiente", "Next photo")}
                     className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-ivory/90 text-ink shadow-md backdrop-blur transition-opacity hover:bg-ivory disabled:pointer-events-none disabled:opacity-0"
                   >
                     <ChevronRight size={18} />
@@ -230,7 +232,7 @@ export function DetailModal({
                         key={src + i}
                         type="button"
                         onClick={() => goToSlide(i)}
-                        aria-label={`Ir a la foto ${i + 1} de ${gallery.length}`}
+                        aria-label={t(`Ir a la foto ${i + 1} de ${gallery.length}`, `Go to photo ${i + 1} of ${gallery.length}`)}
                         aria-current={activeSlide === i}
                         className={`relative h-1.5 rounded-full shadow transition-all before:absolute before:-inset-2 before:content-[''] ${
                           activeSlide === i ? "w-4 bg-ivory" : "w-1.5 bg-ivory/60 hover:bg-ivory/80"
@@ -251,7 +253,7 @@ export function DetailModal({
                 {favorite && <FavoriteButton slug={favorite.slug} name={favorite.name} tone="plain" className="-mr-2 shrink-0" />}
               </div>
               {favorite && (
-                <p className="mt-1 text-xs text-ink-soft">Toca dos veces la foto para guardarlo.</p>
+                <p className="mt-1 text-xs text-ink-soft">{t("Toca dos veces la foto para guardarlo.", "Double-tap the photo to save it.")}</p>
               )}
               <div className="mt-4 space-y-5">{children}</div>
             </div>

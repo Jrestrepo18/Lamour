@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import clsx from "clsx";
 import { X } from "lucide-react";
 import { useLenisInstance } from "@/components/motion/LenisProvider";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /** Open dialogs, innermost last — only the top one reacts to Escape / Tab (a confirm over a form). */
 const stack: symbol[] = [];
@@ -36,6 +37,7 @@ export function Modal({
   footer?: ReactNode;
   size?: "sm" | "md" | "lg";
 }) {
+  const { t } = useI18n();
   const lenis = useLenisInstance();
   const dialogRef = useRef<HTMLDivElement>(null);
   const onCloseRef = useRef(onClose);
@@ -135,7 +137,7 @@ export function Modal({
             <button
               type="button"
               onClick={onClose}
-              aria-label="Cerrar"
+              aria-label={t("Cerrar", "Close")}
               className="-mr-2 flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-soft transition-colors hover:bg-silk/70 hover:text-ink"
             >
               <X size={19} />

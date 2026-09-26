@@ -7,6 +7,8 @@ import clsx from "clsx";
 import { ArrowUpRight } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { SITE } from "@/lib/seo";
+import { stripLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /**
  * Phone-only floating action buttons (no bar behind them). Slide up once the visitor scrolls past the
@@ -15,10 +17,13 @@ import { SITE } from "@/lib/seo";
  * redundant, so the bar only offers WhatsApp help there.
  */
 export function MobileBookingBar() {
+  const { t, href } = useI18n();
   const pathname = usePathname();
-  const onBooking = pathname?.startsWith("/reservar") ?? false;
+  const onBooking = pathname ? stripLocale(pathname).startsWith("/reservar") : false;
   const whatsappHref = SITE.whatsapp
-    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, me gustaría más información sobre los servicios de L'AMOUR.")}`
+    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(
+        t("Hola, me gustaría más información sobre los servicios de L'AMOUR.", "Hi, I'd like more information about L'AMOUR's services."),
+      )}`
     : null;
 
   const [pastHero, setPastHero] = useState(false);
@@ -59,10 +64,10 @@ export function MobileBookingBar() {
     >
       <div className="mx-auto flex max-w-md items-center gap-3">
         <Link
-          href="/reservar"
+          href={href("/reservar")}
           className="pointer-events-auto flex min-h-13 flex-1 items-center justify-center gap-2 rounded-full bg-ink text-sm font-semibold text-ivory shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] ring-1 ring-gold/30 active:scale-[0.98]"
         >
-          Reservar ahora
+          {t("Reservar ahora", "Book now")}
           <ArrowUpRight size={16} aria-hidden />
         </Link>
         {whatsappHref && (
@@ -70,7 +75,7 @@ export function MobileBookingBar() {
             href={whatsappHref}
             target="_blank"
             rel="noopener noreferrer"
-            aria-label="Escríbenos por WhatsApp"
+            aria-label={t("Escríbenos por WhatsApp", "Message us on WhatsApp")}
             className="pointer-events-auto flex h-13 w-13 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_14px_34px_-10px_rgba(16,16,16,0.6)] active:scale-[0.98]"
           >
             <WhatsAppIcon size={24} />

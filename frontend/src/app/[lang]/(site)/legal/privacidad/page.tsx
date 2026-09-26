@@ -1,16 +1,35 @@
+import type { Metadata } from "next";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LegalArticle, LegalSection } from "@/components/legal/LegalArticle";
+import { languageAlternates } from "@/lib/seo";
+import { getI18n } from "@/i18n/server";
 
-export const metadata = {
-  title: "Política de Tratamiento de Datos",
-  alternates: { canonical: "/legal/privacidad" },
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const { t, href } = await getI18n();
+  return {
+    title: t("Política de Tratamiento de Datos", "Privacy Policy"),
+    alternates: { canonical: href("/legal/privacidad"), languages: languageAlternates("/legal/privacidad") },
+    robots: { index: false, follow: true },
+  };
+}
 
-export default function PrivacidadPage() {
+export default async function PrivacidadPage() {
+  const { t, lang } = await getI18n();
   return (
     <>
-      <PageHeader path="/legal/privacidad" eyebrow="Documento legal" title="Tratamiento de Datos" compact />
+      <PageHeader
+        path="/legal/privacidad"
+        eyebrow={t("Documento legal", "Legal document")}
+        title={t("Tratamiento de Datos", "Privacy Policy")}
+        compact
+      />
+      {lang === "en" ? <English /> : <Spanish />}
+    </>
+  );
+}
+
+function Spanish() {
+  return (
       <LegalArticle>
         <p className="eyebrow">
           Última actualización: [fecha de publicación]
@@ -150,6 +169,136 @@ export default function PrivacidadPage() {
           </p>
         </LegalSection>
       </LegalArticle>
-    </>
+  );
+}
+
+/** Courtesy translation for visitors; the Spanish text is the one that governs. */
+function English() {
+  return (
+      <LegalArticle>
+        <p className="eyebrow">Last updated: [publication date]</p>
+        <p className="mt-4 text-sm leading-relaxed text-ink-soft">
+          This is a courtesy English translation of our Personal Data Processing Policy and Privacy Notice. In case
+          of any difference, the Spanish version prevails. The policy is issued in compliance with Colombian Law
+          1581 of 2012, Decree 1074 of 2015 (which compiled Decree 1377 of 2013) and Law 1266 of 2008, which
+          regulate the constitutional right of Habeas Data and the processing of personal data.
+        </p>
+
+        <LegalSection title="1. Data controller">
+          <p>
+            <strong>Business name:</strong> L&apos;AMOUR — Estética y Sentidos.
+          </p>
+          <p>
+            <strong>Tax ID (NIT):</strong> [to be completed before publishing].
+          </p>
+          <p>
+            <strong>Address:</strong> Medellín, Antioquia, Colombia.
+          </p>
+          <p>
+            <strong>Email for data-protection requests:</strong> [data-protection contact email].
+          </p>
+          <p>
+            <strong>Contact phone / WhatsApp:</strong> [contact number].
+          </p>
+        </LegalSection>
+
+        <LegalSection title="2. Data we collect">
+          <p>To provide our in-home services, we collect the following data when you book through our website:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Identification data: full name.</li>
+            <li>Contact data: phone / WhatsApp number.</li>
+            <li>Location data: address, neighbourhood and city where the service will take place.</li>
+            <li>Booking data: chosen service, assigned therapist, date, time and payment method.</li>
+            <li>
+              Optional notes you choose to share with the therapist (for example, building or hotel access
+              instructions or health conditions relevant to the massage).
+            </li>
+          </ul>
+          <p>
+            Some of this data — in particular notes about health conditions and preferences related to sensory and
+            intimate services — may constitute <strong>sensitive data</strong> under article 5 of Law 1581 of 2012.
+            Providing it is voluntary and we only ask for it when needed to give you a safe and suitable experience;
+            you are not required to authorise its processing and doing so does not prevent the standard service.
+          </p>
+        </LegalSection>
+
+        <LegalSection title="3. Purpose of processing">
+          <p>Your personal data will be used to:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>Manage the booking, confirmation and delivery of the requested service.</li>
+            <li>Coordinate the therapist&apos;s assignment and travel to your address.</li>
+            <li>Contact you to confirm, reschedule or follow up on your appointment.</li>
+            <li>Handle requests, complaints and claims, and answer your questions.</li>
+            <li>Comply with legal, accounting and tax obligations that apply to the service.</li>
+            <li>
+              Send you promotions or news, only if you gave your express authorisation, and you may stop receiving
+              them at any time.
+            </li>
+          </ul>
+          <p>
+            We do not sell, rent or share your personal data with third parties for commercial purposes unrelated to
+            providing our services.
+          </p>
+        </LegalSection>
+
+        <LegalSection title="4. Your rights as data subject">
+          <p>As the owner of your personal data, Colombian law grants you the following rights:</p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>To know, update and correct your personal data.</li>
+            <li>To request proof of the authorisation you gave for processing your data.</li>
+            <li>To be informed, on request, of how your personal data has been used.</li>
+            <li>
+              To revoke your authorisation and/or request deletion of your data when constitutional and legal
+              principles, rights and guarantees are not respected.
+            </li>
+            <li>To access, free of charge, the personal data that has been processed.</li>
+            <li>
+              To file complaints with the <strong>Superintendencia de Industria y Comercio (SIC)</strong> for breaches
+              of data-protection rules, once you have completed the inquiry or claim process with us.
+            </li>
+          </ul>
+        </LegalSection>
+
+        <LegalSection title="5. How to exercise your rights">
+          <p>
+            You can exercise your rights by sending a request to the email or contact number in section 1, clearly
+            describing your request (inquiry, claim, update, correction, deletion or revocation).
+          </p>
+          <ul className="list-disc space-y-1 pl-5">
+            <li>
+              <strong>Inquiries:</strong> answered within ten (10) business days of receipt, extendable by five (5)
+              additional business days.
+            </li>
+            <li>
+              <strong>Claims:</strong> answered within fifteen (15) business days from the day after receipt,
+              extendable by eight (8) additional business days when it cannot be answered in that time.
+            </li>
+          </ul>
+        </LegalSection>
+
+        <LegalSection title="6. Information security">
+          <p>
+            We apply reasonable technical, human and administrative measures to protect your personal data against
+            unauthorised access, loss, alteration or misuse, including restricting access to booking information to
+            authorised administrative staff only.
+          </p>
+        </LegalSection>
+
+        <LegalSection title="7. Validity">
+          <p>
+            This policy applies from its publication date. Personal data is kept for as long as needed to fulfil the
+            purpose for which it was collected and, afterwards, for the periods required by applicable law
+            (including accounting and tax obligations).
+          </p>
+        </LegalSection>
+
+        <LegalSection title="8. Acceptance">
+          <p>
+            By entering your personal data in this website&apos;s booking form, you declare that you have read this
+            Policy and freely, previously, expressly and knowingly authorise the processing of your personal data as
+            described here.
+          </p>
+        </LegalSection>
+      </LegalArticle>
   );
 }

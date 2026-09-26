@@ -1,13 +1,16 @@
+"use client";
+
 import { AlertCircle, CalendarClock, CreditCard, MapPin, NotebookPen, User } from "lucide-react";
 import type { Masseuse, Service, ServiceCategory } from "@/lib/types";
 import { capitalize, formatCOP, formatDateLong, formatDuration, formatTime } from "@/lib/format";
 import type { ClientDetails } from "./types";
 import { ServiceThumb, StepHeading, StoryAvatar } from "./parts";
+import { useI18n } from "@/i18n/I18nProvider";
 
-const PAYMENT_LABELS: Record<string, string> = {
-  Cash: "Efectivo",
-  Transfer: "Transferencia",
-  Card: "Datáfono",
+const PAYMENT_LABELS: Record<string, { es: string; en: string }> = {
+  Cash: { es: "Efectivo", en: "Cash" },
+  Transfer: { es: "Transferencia", en: "Bank transfer" },
+  Card: { es: "Datáfono", en: "Card" },
 };
 
 /**
@@ -34,23 +37,24 @@ export function SummaryStep({
   error: string | null;
   onEdit: (step: number) => void;
 }) {
+  const { t, lang } = useI18n();
   const duration = service.durationMinutes + details.extraMinutes;
-  const team = secondary ? `${primary.stageName} y ${secondary.stageName}` : primary.stageName;
+  const team = secondary ? `${primary.stageName} ${t("y", "and")} ${secondary.stageName}` : primary.stageName;
 
   const rows = [
     {
       icon: CalendarClock,
-      label: "Cuándo",
+      label: t("Cuándo", "When"),
       value: (
         <>
-          {capitalize(formatDateLong(startsAt))} · {formatTime(startsAt)}
+          {capitalize(formatDateLong(startsAt, lang))} · {formatTime(startsAt, lang)}
         </>
       ),
       step: 3,
     },
     {
       icon: MapPin,
-      label: "Dónde",
+      label: t("Dónde", "Where"),
       value: (
         <>
           {details.address}
@@ -62,21 +66,24 @@ export function SummaryStep({
       ),
       step: 4,
     },
-    { icon: User, label: "A nombre de", value: `${details.clientName} · ${details.clientPhone}`, step: 4 },
+    { icon: User, label: t("A nombre de", "Booked for"), value: `${details.clientName} · ${details.clientPhone}`, step: 4 },
     {
       icon: CreditCard,
-      label: "Pago",
-      value: `${PAYMENT_LABELS[details.paymentMethod]}${
-        service.hasSensoryDressOption && details.sensoryDressRequested ? " · con vestidura sensorial" : ""
+      label: t("Pago", "Payment"),
+      value: `${PAYMENT_LABELS[details.paymentMethod][lang]}${
+        service.hasSensoryDressOption && details.sensoryDressRequested ? t(" · con vestidura sensorial", " · with sensory attire") : ""
       }`,
       step: 4,
     },
-    ...(details.notes ? [{ icon: NotebookPen, label: "Notas", value: details.notes, step: 4 }] : []),
+    ...(details.notes ? [{ icon: NotebookPen, label: t("Notas", "Notes"), value: details.notes, step: 4 }] : []),
   ];
 
   return (
     <div>
-      <StepHeading title="Así quedará tu cita" hint="Revísala con calma. Puedes cambiar cualquier dato antes de enviarla." />
+      <StepHeading
+        title={t("Así quedará tu cita", "Your appointment")}
+        hint={t("Revísala con calma. Puedes cambiar cualquier dato antes de enviarla.", "Take a moment to review it. You can change anything before sending.")}
+      />
 
       <article className="-mx-5 mt-7 overflow-hidden bg-marfil sm:mx-0 sm:rounded-[1.75rem] sm:shadow-[0_18px_40px_-32px_rgba(23,23,23,0.5)] sm:ring-1 sm:ring-ink/10">
         {/* Author row */}
@@ -87,14 +94,14 @@ export function SummaryStep({
           </span>
           <span className="min-w-0 flex-1 leading-tight">
             <span className="block truncate text-sm font-semibold text-ink">{team}</span>
-            <span className="block text-xs text-ink-soft">A domicilio · {details.city}</span>
+            <span className="block text-xs text-ink-soft">{t("A domicilio", "At your place")} · {details.city}</span>
           </span>
           <button
             type="button"
             onClick={() => onEdit(2)}
             className="min-h-11 cursor-pointer px-1 text-sm font-semibold text-bronze"
           >
-            Cambiar
+            {t("Cambiar", "Change")}
           </button>
         </div>
 
@@ -114,7 +121,7 @@ export function SummaryStep({
               <p className="font-serif text-2xl font-semibold leading-tight">{service.name}</p>
               <p className="mt-1 text-sm text-ivory/80">
                 {formatDuration(duration)}
-                {details.extraMinutes > 0 && ` · incluye +${details.extraMinutes} min`}
+                {details.extraMinutes > 0 && t(` · incluye +${details.extraMinutes} min`, ` · includes +${details.extraMinutes} min`)}
               </p>
             </div>
             <button
@@ -122,7 +129,7 @@ export function SummaryStep({
               onClick={() => onEdit(1)}
               className="min-h-11 shrink-0 cursor-pointer rounded-full bg-ivory/15 px-4 text-sm font-semibold text-ivory"
             >
-              Cambiar
+              {t("Cambiar", "Change")}
             </button>
           </div>
         </div>
@@ -139,10 +146,10 @@ export function SummaryStep({
               <button
                 type="button"
                 onClick={() => onEdit(row.step)}
-                aria-label={`Cambiar ${row.label.toLowerCase()}`}
+                aria-label={`${t("Cambiar", "Change")} ${row.label.toLowerCase()}`}
                 className="-mr-1 min-h-11 shrink-0 cursor-pointer px-1 text-sm font-semibold text-bronze"
               >
-                Cambiar
+                {t("Cambiar", "Change")}
               </button>
             </div>
           ))}
@@ -150,7 +157,7 @@ export function SummaryStep({
 
         <div className="flex items-baseline justify-between border-t border-ink/10 px-5 py-4">
           <span className="text-sm text-ink-soft">Total</span>
-          <span className="font-serif text-2xl font-semibold text-ink">{formatCOP(service.price)}</span>
+          <span className="font-serif text-2xl font-semibold text-ink">{formatCOP(service.price, lang)}</span>
         </div>
       </article>
 
@@ -162,8 +169,12 @@ export function SummaryStep({
       )}
 
       <p className="mt-5 text-xs leading-relaxed text-ink-soft">
-        Al enviarla, tu cita queda <strong className="text-ink">pendiente</strong> hasta que nuestro equipo la valide y
-        te escriba para confirmar los detalles finales.
+        {t("Al enviarla, tu cita queda", "Once sent, your appointment stays")}{" "}
+        <strong className="text-ink">{t("pendiente", "pending")}</strong>{" "}
+        {t(
+          "hasta que nuestro equipo la valide y te escriba para confirmar los detalles finales.",
+          "until our team reviews it and messages you to confirm the final details.",
+        )}
       </p>
     </div>
   );

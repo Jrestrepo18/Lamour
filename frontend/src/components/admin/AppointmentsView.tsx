@@ -38,6 +38,23 @@ function clientConfirmation(a: Appointment) {
   const place = [[a.address, a.addressDetails].filter(Boolean).join(", "), [a.neighborhood, a.city].filter(Boolean).join(", ")]
     .filter(Boolean)
     .join(" · ");
+  if (a.language === "en") {
+    const teamEn = a.secondMasseuseName ? `${a.masseuseName} and ${a.secondMasseuseName}` : a.masseuseName;
+    const PAYMENT_EN: Record<string, string> = { Cash: "Cash", Transfer: "Bank transfer", Card: "Card" };
+    const en = [
+      `Hi ${firstName}, this is L'AMOUR ✨`,
+      "",
+      "Your appointment is confirmed:",
+      `• ${a.serviceName} · ${a.durationMinutes} min`,
+      `• ${capitalize(formatDateLong(a.startsAt, "en"))} at ${formatTime(a.startsAt, "en")}`,
+      teamEn ? `• With ${teamEn}` : null,
+      place ? `• At ${place}` : null,
+      `• Price: ${formatCOP(a.totalPrice, "en")} · Payment: ${PAYMENT_EN[a.paymentMethod] ?? a.paymentMethod}`,
+      "",
+      "If you need to change anything, just reply here.",
+    ].filter((l) => l !== null);
+    return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(en.join("\n"))}`;
+  }
   const lines = [
     `Hola ${firstName}, te escribimos de L'AMOUR ✨`,
     "",
@@ -56,15 +73,27 @@ function clientConfirmation(a: Appointment) {
 /** Only asks for the review: a thank-you and the client's personal link — nothing about the booking itself. */
 function reviewRequest(a: Appointment) {
   const firstName = a.clientName.trim().split(/\s+/)[0] ?? "";
-  const text = [
-    `Hola ${firstName} 🌿`,
-    "",
-    "En L'AMOUR agradecemos mucho tu opinión. ¿Nos regalas un minuto para calificar tu experiencia?",
-    "",
-    a.reviewUrl,
-    "",
-    "¡Gracias por elegirnos!",
-  ].join("\n");
+  const text = (
+    a.language === "en"
+      ? [
+          `Hi ${firstName} 🌿`,
+          "",
+          "At L'AMOUR we'd really value your opinion. Could you spare a minute to rate your experience?",
+          "",
+          a.reviewUrl,
+          "",
+          "Thank you for choosing us!",
+        ]
+      : [
+          `Hola ${firstName} 🌿`,
+          "",
+          "En L'AMOUR agradecemos mucho tu opinión. ¿Nos regalas un minuto para calificar tu experiencia?",
+          "",
+          a.reviewUrl,
+          "",
+          "¡Gracias por elegirnos!",
+        ]
+  ).join("\n");
   return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(text)}`;
 }
 
@@ -254,6 +283,11 @@ export function AppointmentsView({ token }: { token: string }) {
                   <p className="flex items-center justify-between gap-3">
                     <span className="min-w-0 truncate text-ink">
                       <span className="font-semibold">{a.clientName}</span> · {a.clientPhone}
+                      {a.language === "en" && (
+                        <span className="ml-2 rounded-full bg-gold/15 px-2 py-0.5 text-[0.7rem] font-semibold uppercase tracking-wide text-bronze">
+                          Inglés
+                        </span>
+                      )}
                     </span>
                     <a
                       href={clientWhatsApp(a.clientPhone)}

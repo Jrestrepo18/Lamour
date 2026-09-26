@@ -18,6 +18,7 @@ import { EMPTY_CLIENT_DETAILS, type ClientDetails } from "./types";
 import { findMunicipio } from "@/lib/coverage";
 import { formatCOP } from "@/lib/format";
 import { SITE } from "@/lib/seo";
+import { useI18n } from "@/i18n/I18nProvider";
 
 export function BookingFlow({
   categories,
@@ -26,6 +27,7 @@ export function BookingFlow({
   categories: ServiceCategory[];
   masseuses: Masseuse[];
 }) {
+  const { t, lang } = useI18n();
   const searchParams = useSearchParams();
   const allServices = useMemo(() => categories.flatMap((c) => c.services), [categories]);
 
@@ -78,18 +80,18 @@ export function BookingFlow({
   }, [step]);
 
   function validationMessage() {
-    if (step === 1) return service ? null : "Elige un servicio para continuar.";
+    if (step === 1) return service ? null : t("Elige un servicio para continuar.", "Choose a service to continue.");
     if (step === 2) {
-      if (!primary) return "Elige tu masajista para continuar.";
-      if (service?.requiresTwoTherapists && !secondary) return "Elige también la segunda masajista.";
+      if (!primary) return t("Elige tu masajista para continuar.", "Choose your therapist to continue.");
+      if (service?.requiresTwoTherapists && !secondary) return t("Elige también la segunda masajista.", "Choose the second therapist too.");
       return null;
     }
-    if (step === 3) return slot ? null : "Elige un horario disponible para continuar.";
+    if (step === 3) return slot ? null : t("Elige un horario disponible para continuar.", "Choose an available time to continue.");
     if (step === 4) {
-      if (details.clientName.trim().length <= 1) return "Ingresa tu nombre completo.";
-      if (details.clientPhone.trim().length <= 6) return "Ingresa un teléfono válido.";
-      if (details.address.trim().length <= 3) return "Ingresa tu dirección.";
-      if (details.neighborhood.trim().length <= 1) return "Ingresa tu barrio.";
+      if (details.clientName.trim().length <= 1) return t("Ingresa tu nombre completo.", "Enter your full name.");
+      if (details.clientPhone.trim().length <= 6) return t("Ingresa un teléfono válido.", "Enter a valid phone number.");
+      if (details.address.trim().length <= 3) return t("Ingresa tu dirección.", "Enter your address.");
+      if (details.neighborhood.trim().length <= 1) return t("Ingresa tu barrio.", "Enter your neighbourhood or hotel.");
       return null;
     }
     return null;
@@ -137,11 +139,15 @@ export function BookingFlow({
         notes: details.notes.trim() || undefined,
         paymentMethod: details.paymentMethod,
         acceptsMarketing: details.acceptsMarketing,
+        language: lang,
       });
       setConfirmedAt(appointment.startsAt);
     } catch {
       setError(
-        "No pudimos enviar tu solicitud en este momento. Inténtalo de nuevo en unos segundos, o escríbenos directamente por WhatsApp para confirmar tu cita.",
+        t(
+          "No pudimos enviar tu solicitud en este momento. Inténtalo de nuevo en unos segundos, o escríbenos directamente por WhatsApp para confirmar tu cita.",
+          "We couldn't send your request right now. Try again in a few seconds, or message us directly on WhatsApp to confirm your appointment.",
+        ),
       );
     } finally {
       setSubmitting(false);
@@ -170,7 +176,7 @@ export function BookingFlow({
 
   const message = attemptedAdvance ? validationMessage() : null;
   const whatsappHref = SITE.whatsapp
-    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent("Hola, tengo una duda sobre mi reserva en L'AMOUR.")}`
+    ? `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(t("Hola, tengo una duda sobre mi reserva en L'AMOUR.", "Hi, I have a question about my booking at L'AMOUR."))}`
     : null;
 
   function advance() {
@@ -240,7 +246,7 @@ export function BookingFlow({
 
       {whatsappHref && (
         <p className="mt-10 text-center text-sm text-ink-soft">
-          ¿Dudas?{" "}
+          {t("¿Dudas?", "Questions?")}{" "}
           <a
             href={whatsappHref}
             target="_blank"
@@ -248,7 +254,7 @@ export function BookingFlow({
             className="inline-flex items-center gap-1.5 font-semibold text-ink underline decoration-gold/60 underline-offset-4"
           >
             <WhatsAppIcon size={15} className="text-[#25D366]" />
-            Escríbenos
+            {t("Escríbenos", "Message us")}
           </a>
         </p>
       )}
@@ -270,7 +276,7 @@ export function BookingFlow({
             <button
               type="button"
               onClick={() => setStep((s) => Math.max(1, s - 1))}
-              aria-label="Paso anterior"
+              aria-label={t("Paso anterior", "Previous step")}
               className="pointer-events-auto flex h-13 w-13 shrink-0 cursor-pointer items-center justify-center rounded-full bg-marfil text-ink shadow-[0_14px_34px_-12px_rgba(16,16,16,0.45)] ring-1 ring-ink/10 transition-transform active:scale-95"
             >
               <ChevronLeft size={20} aria-hidden />
@@ -286,17 +292,17 @@ export function BookingFlow({
               {submitting ? (
                 <>
                   <Loader2 size={16} className="animate-spin" aria-hidden />
-                  Enviando…
+                  {t("Enviando…", "Sending…")}
                 </>
               ) : step < 5 ? (
-                "Continuar"
+                t("Continuar", "Continue")
               ) : (
-                "Enviar solicitud"
+                t("Enviar solicitud", "Send request")
               )}
             </span>
             {service ? (
               <span className="rounded-full bg-ivory/10 px-3.5 py-2 text-sm font-semibold text-champagne">
-                {formatCOP(service.price)}
+                {formatCOP(service.price, lang)}
               </span>
             ) : (
               <span className="flex h-10 w-10 items-center justify-center rounded-full bg-ivory/10">

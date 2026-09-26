@@ -6,6 +6,7 @@ import { ArrowUpRight, BadgeCheck, ChevronLeft, ChevronRight, Grid3x3, X } from 
 import type { Masseuse } from "@/lib/types";
 import { LinkButton } from "@/components/ui/Button";
 import { useLenisInstance } from "@/components/motion/LenisProvider";
+import { useI18n } from "@/i18n/I18nProvider";
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -29,6 +30,7 @@ export function MasseuseProfile({
   photos: string[];
   onClose: () => void;
 }) {
+  const { t, href } = useI18n();
   const [viewing, setViewing] = useState<number | null>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
@@ -84,7 +86,7 @@ export function MasseuseProfile({
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={`Perfil de ${masseuse.stageName}`}
+        aria-label={t(`Perfil de ${masseuse.stageName}`, `${masseuse.stageName}'s profile`)}
         className="relative flex max-h-[92dvh] w-full max-w-lg animate-rise flex-col overflow-hidden rounded-t-[2rem] bg-ivory shadow-2xl sm:rounded-[2rem]"
       >
         {/* Sheet handle + close */}
@@ -94,7 +96,7 @@ export function MasseuseProfile({
             ref={closeRef}
             type="button"
             onClick={onClose}
-            aria-label="Cerrar perfil"
+            aria-label={t("Cerrar perfil", "Close profile")}
             className="absolute right-3 top-2 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-ink transition-colors hover:bg-silk/60"
           >
             <X size={20} />
@@ -119,15 +121,15 @@ export function MasseuseProfile({
 
             <dl className="grid flex-1 grid-cols-2 text-center">
               <div>
-                <dt className="sr-only">Fotos</dt>
+                <dt className="sr-only">{t("Fotos", "Photos")}</dt>
                 <dd className="font-serif text-xl font-semibold text-ink">{photos.length}</dd>
-                <dd aria-hidden className="text-xs text-ink-soft">fotos</dd>
+                <dd aria-hidden className="text-xs text-ink-soft">{t("fotos", "photos")}</dd>
               </div>
               {masseuse.age != null && (
                 <div>
-                  <dt className="sr-only">Edad</dt>
+                  <dt className="sr-only">{t("Edad", "Age")}</dt>
                   <dd className="font-serif text-xl font-semibold text-ink">{masseuse.age}</dd>
-                  <dd aria-hidden className="text-xs text-ink-soft">años</dd>
+                  <dd aria-hidden className="text-xs text-ink-soft">{t("años", "years")}</dd>
                 </div>
               )}
             </dl>
@@ -136,14 +138,14 @@ export function MasseuseProfile({
           <div className="px-5 pt-4 sm:px-7">
             <h2 className="flex items-center gap-1.5 font-serif text-2xl font-semibold text-ink">
               {masseuse.stageName}
-              <BadgeCheck size={20} className="fill-gold text-ivory" aria-label="Terapeuta verificada" />
+              <BadgeCheck size={20} className="fill-gold text-ivory" aria-label={t("Terapeuta verificada", "Verified therapist")} />
             </h2>
-            <p className="text-xs font-medium uppercase tracking-[0.2em] text-bronze">Terapeuta L&apos;AMOUR</p>
+            <p className="text-xs font-medium uppercase tracking-[0.2em] text-bronze">{t("Terapeuta L'AMOUR", "L'AMOUR therapist")}</p>
             <p className="mt-3 text-[0.95rem] leading-relaxed text-ink-soft">
-              {masseuse.bio ?? "Terapeuta certificada del equipo L'AMOUR."}
+              {masseuse.bio ?? t("Terapeuta certificada del equipo L'AMOUR.", "Certified therapist on the L'AMOUR team.")}
             </p>
-            <LinkButton href={`/reservar?masseuse=${masseuse.id}`} className="mt-5 w-full">
-              Reservar con {masseuse.stageName}
+            <LinkButton href={href(`/reservar?masseuse=${masseuse.id}`)} className="mt-5 w-full">
+              {t("Reservar con", "Book with")} {masseuse.stageName}
               <ArrowUpRight size={16} aria-hidden />
             </LinkButton>
           </div>
@@ -160,7 +162,7 @@ export function MasseuseProfile({
                     <button
                       type="button"
                       onClick={() => setViewing(i)}
-                      aria-label={`Ver foto ${i + 1} de ${photos.length}`}
+                      aria-label={t(`Ver foto ${i + 1} de ${photos.length}`, `View photo ${i + 1} of ${photos.length}`)}
                       className="group relative block aspect-square w-full cursor-zoom-in overflow-hidden bg-silk"
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host */}
@@ -184,7 +186,7 @@ export function MasseuseProfile({
               </div>
             )}
             {photos.length === 0 && (
-              <p className="px-5 pt-4 text-center text-sm text-ink-soft">Pronto compartirá más fotos.</p>
+              <p className="px-5 pt-4 text-center text-sm text-ink-soft">{t("Pronto compartirá más fotos.", "More photos coming soon.")}</p>
             )}
           </div>
         </div>
@@ -195,13 +197,13 @@ export function MasseuseProfile({
             {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host */}
             <img
               src={photos[viewing]}
-              alt={`${masseuse.stageName} — foto ${viewing + 1} de ${photos.length}`}
+              alt={`${masseuse.stageName} — ${t("foto", "photo")} ${viewing + 1} ${t("de", "of")} ${photos.length}`}
               className="max-h-full max-w-full object-contain"
             />
             <button
               type="button"
               onClick={() => setViewing(null)}
-              aria-label="Volver al perfil"
+              aria-label={t("Volver al perfil", "Back to profile")}
               className="absolute right-3 top-3 flex h-10 w-10 cursor-pointer items-center justify-center rounded-full bg-ivory/15 text-ivory backdrop-blur"
             >
               <X size={20} />
@@ -212,7 +214,7 @@ export function MasseuseProfile({
                   type="button"
                   onClick={() => setViewing((v) => (v === null ? v : Math.max(0, v - 1)))}
                   disabled={viewing === 0}
-                  aria-label="Foto anterior"
+                  aria-label={t("Foto anterior", "Previous photo")}
                   className="absolute left-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ivory/15 text-ivory backdrop-blur disabled:opacity-0"
                 >
                   <ChevronLeft size={20} />
@@ -221,7 +223,7 @@ export function MasseuseProfile({
                   type="button"
                   onClick={() => setViewing((v) => (v === null ? v : Math.min(photos.length - 1, v + 1)))}
                   disabled={viewing === photos.length - 1}
-                  aria-label="Foto siguiente"
+                  aria-label={t("Foto siguiente", "Next photo")}
                   className="absolute right-3 top-1/2 flex h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-ivory/15 text-ivory backdrop-blur disabled:opacity-0"
                 >
                   <ChevronRight size={20} />

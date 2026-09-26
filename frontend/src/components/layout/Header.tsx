@@ -8,17 +8,21 @@ import { Menu, X } from "lucide-react";
 import clsx from "clsx";
 import { LinkButton } from "@/components/ui/Button";
 import { useLenisInstance } from "@/components/motion/LenisProvider";
-
-const NAV_LINKS = [
-  { href: "/", label: "Inicio" },
-  { href: "/servicios", label: "Servicios" },
-  { href: "/masajistas", label: "Masajistas" },
-  { href: "/#como-funciona", label: "Cómo funciona" },
-  { href: "/#faq", label: "FAQ" },
-];
+import { stripLocale } from "@/i18n/config";
+import { useI18n } from "@/i18n/I18nProvider";
+import { LanguageSwitch } from "./LanguageSwitch";
 
 export function Header() {
-  const pathname = usePathname();
+  const { t, href } = useI18n();
+  const NAV_LINKS = [
+    { href: "/", label: t("Inicio", "Home") },
+    { href: "/servicios", label: t("Servicios", "Services") },
+    { href: "/masajistas", label: t("Masajistas", "Therapists") },
+    { href: "/#como-funciona", label: t("Cómo funciona", "How it works") },
+    { href: "/#faq", label: "FAQ" },
+  ];
+  const fullPath = usePathname();
+  const pathname = fullPath ? stripLocale(fullPath) : fullPath;
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const lenis = useLenisInstance();
@@ -28,7 +32,7 @@ export function Header() {
     if (pathname !== "/") return;
     e.preventDefault();
     setMenuOpen(false);
-    if (window.location.hash) history.replaceState(null, "", "/");
+    if (window.location.hash) history.replaceState(null, "", href("/"));
     if (lenis) lenis.scrollTo(0);
     else window.scrollTo({ top: 0, behavior: "smooth" });
   }
@@ -76,13 +80,13 @@ export function Header() {
             : "max-w-none rounded-none border-transparent bg-transparent px-6 py-6 sm:px-10",
         )}
       >
-        <Link href="/" onClick={handleLogoClick} aria-label="L'AMOUR — Inicio" className="flex flex-col leading-none">
+        <Link href={href("/")} onClick={handleLogoClick} aria-label={t("L'AMOUR — Inicio", "L'AMOUR — Home")} className="flex flex-col leading-none">
           <span className="font-serif text-xl font-bold tracking-wide text-ink">
             L&apos;AMOUR
           </span>
           {!scrolled && (
             <span className="mt-0.5 text-[0.55rem] font-medium uppercase tracking-[0.35em] text-bronze">
-              Estética y Sentidos
+              {t("Estética y Sentidos", "Aesthetics & Senses")}
             </span>
           )}
         </Link>
@@ -93,7 +97,7 @@ export function Header() {
             return (
               <Link
                 key={link.href}
-                href={link.href}
+                href={href(link.href)}
                 aria-current={active ? "page" : undefined}
                 className={clsx("group relative text-sm transition-colors", active ? "text-ink" : "text-ink-soft hover:text-ink")}
               >
@@ -114,15 +118,18 @@ export function Header() {
           })}
         </nav>
 
-        <div className="hidden md:block">
-          <LinkButton href="/reservar" size="sm" className="px-5">
-            Reservar
+        <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitch />
+          <LinkButton href={href("/reservar")} size="sm" className="px-5">
+            {t("Reservar", "Book")}
           </LinkButton>
         </div>
 
+        <div className="flex items-center gap-3 md:hidden">
+        <LanguageSwitch />
         <button
           type="button"
-          aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+          aria-label={menuOpen ? t("Cerrar menú", "Close menu") : t("Abrir menú", "Open menu")}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           className="-m-2.5 flex items-center justify-center p-2.5 text-ink md:hidden"
@@ -130,6 +137,7 @@ export function Header() {
         >
           {menuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
+        </div>
       </div>
 
       <div
@@ -144,14 +152,14 @@ export function Header() {
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={href(link.href)}
               className="rounded-xl px-3 py-3 text-base text-ink-soft hover:bg-silk/60 hover:text-ink"
             >
               {link.label}
             </Link>
           ))}
-          <LinkButton href="/reservar" size="md" className="mt-2 justify-center">
-            Reservar Ahora
+          <LinkButton href={href("/reservar")} size="md" className="mt-2 justify-center">
+            {t("Reservar Ahora", "Book Now")}
           </LinkButton>
         </div>
       </div>

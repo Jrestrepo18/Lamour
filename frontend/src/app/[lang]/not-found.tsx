@@ -4,19 +4,20 @@ import { Footer } from "@/components/layout/Footer";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
 import { LinkButton } from "@/components/ui/Button";
-
-const WAYS_BACK = [
-  { href: "/servicios", label: "Servicios y precios" },
-  { href: "/masajistas", label: "Nuestras masajistas" },
-  { href: "/#faq", label: "Preguntas frecuentes" },
-];
+import { getI18n } from "@/i18n/server";
 
 /**
  * Brand 404 for any unmatched URL (and for notFound() calls). Next already marks it
  * noindex and answers with a 404 status; this replaces the default English page with
  * the site's own calm register and routes the visitor back to the pages that matter.
  */
-export default function NotFound() {
+export default async function NotFound() {
+  const { t, href } = await getI18n();
+  const WAYS_BACK = [
+    { href: "/servicios", label: t("Servicios y precios", "Services & prices") },
+    { href: "/masajistas", label: t("Nuestras masajistas", "Our therapists") },
+    { href: "/#faq", label: t("Preguntas frecuentes", "FAQ") },
+  ];
   return (
     <>
       <Header />
@@ -27,20 +28,22 @@ export default function NotFound() {
           <Container className="relative z-10 max-w-2xl text-center">
             <p className="eyebrow justify-center">Error 404</p>
             <h1 className="mt-5 font-serif text-5xl font-semibold leading-[0.95] tracking-tight text-ink text-balance sm:text-7xl">
-              Esta página no existe
+              {t("Esta página no existe", "This page doesn't exist")}
             </h1>
             <p className="mx-auto mt-6 max-w-md text-base leading-relaxed text-ink-soft sm:text-lg">
-              Puede que el enlace haya cambiado o que la dirección tenga un error. Respira: tu pausa sigue a un par de
-              clics.
+              {t(
+                "Puede que el enlace haya cambiado o que la dirección tenga un error. Respira: tu pausa sigue a un par de clics.",
+                "The link may have changed or the address may have a typo. Breathe: your pause is still just a couple of clicks away.",
+              )}
             </p>
             <div className="mt-10 flex justify-center">
-              <LinkButton href="/">Volver al inicio</LinkButton>
+              <LinkButton href={href("/")}>{t("Volver al inicio", "Back to home")}</LinkButton>
             </div>
             <ul className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm">
               {WAYS_BACK.map((l) => (
                 <li key={l.href}>
                   <Link
-                    href={l.href}
+                    href={href(l.href)}
                     className="font-medium text-ink underline decoration-gold/60 underline-offset-4 hover:decoration-ink"
                   >
                     {l.label}

@@ -1,5 +1,10 @@
-export function formatCOP(value: number): string {
-  return new Intl.NumberFormat("es-CO", {
+import type { Locale } from "@/i18n/config";
+
+const TAG = { es: "es-CO", en: "en-US" } as const;
+
+/** "$ 180.000" in Spanish; "COP 180,000" in English, so visitors don't read it as dollars. */
+export function formatCOP(value: number, lang: Locale = "es"): string {
+  return new Intl.NumberFormat(TAG[lang], {
     style: "currency",
     currency: "COP",
     maximumFractionDigits: 0,
@@ -13,14 +18,14 @@ export function formatDuration(minutes: number): string {
   return rest === 0 ? `${hours} h` : `${hours} h ${rest} min`;
 }
 
-export function formatTime(iso: string): string {
-  return new Intl.DateTimeFormat("es-CO", { hour: "numeric", minute: "2-digit", hour12: true }).format(
+export function formatTime(iso: string, lang: Locale = "es"): string {
+  return new Intl.DateTimeFormat(TAG[lang], { hour: "numeric", minute: "2-digit", hour12: true }).format(
     new Date(iso),
   );
 }
 
-export function formatDateLong(iso: string): string {
-  return new Intl.DateTimeFormat("es-CO", {
+export function formatDateLong(iso: string, lang: Locale = "es"): string {
+  return new Intl.DateTimeFormat(TAG[lang], {
     weekday: "long",
     day: "numeric",
     month: "long",

@@ -8,13 +8,15 @@ import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PHOTOS } from "@/lib/photos";
 import { InstagramPost, type PostSlide } from "./InstagramPost";
+import type { Translate } from "@/i18n/config";
+import { useI18n } from "@/i18n/I18nProvider";
 
-const SENSES: PostSlide[] = [
-  { title: "Aroma", caption: "Incienso, velas y aceites esenciales preparan tu espacio antes del primer contacto.", photo: PHOTOS.incense, tags: ["aroma", "ritual", "medellín"] },
-  { title: "Calor", caption: "Aceites tibios y piedras calientes que sueltan, una a una, cada tensión.", photo: PHOTOS.oilHand, tags: ["calor", "aceitestibios", "bienestar"] },
-  { title: "Tacto", caption: "Manos expertas y presión consciente, siempre a tu ritmo.", photo: PHOTOS.herbal, tags: ["tacto", "masajeadomicilio"] },
-  { title: "Calma", caption: "Penumbra, silencio y un tiempo que es solo tuyo.", photo: PHOTOS.oilBowl, tags: ["calma", "pausa", "autocuidado"] },
-  { title: "En pareja", caption: "Rituales para compartir la experiencia, en la intimidad de tu hogar.", photo: PHOTOS.bathTray, tags: ["enpareja", "ritual", "lamour"] },
+const senses = (t: Translate): PostSlide[] => [
+  { title: t("Aroma", "Scent"), caption: t("Incienso, velas y aceites esenciales preparan tu espacio antes del primer contacto.", "Incense, candles and essential oils prepare your space before the first touch."), photo: PHOTOS.incense, tags: t(["aroma", "ritual", "medellín"], ["scent", "ritual", "medellin"]) },
+  { title: t("Calor", "Warmth"), caption: t("Aceites tibios y piedras calientes que sueltan, una a una, cada tensión.", "Warm oils and hot stones that release every tension, one by one."), photo: PHOTOS.oilHand, tags: t(["calor", "aceitestibios", "bienestar"], ["warmth", "warmoils", "wellbeing"]) },
+  { title: t("Tacto", "Touch"), caption: t("Manos expertas y presión consciente, siempre a tu ritmo.", "Expert hands and mindful pressure, always at your pace."), photo: PHOTOS.herbal, tags: t(["tacto", "masajeadomicilio"], ["touch", "inhomemassage"]) },
+  { title: t("Calma", "Calm"), caption: t("Penumbra, silencio y un tiempo que es solo tuyo.", "Soft light, silence and time that is yours alone."), photo: PHOTOS.oilBowl, tags: t(["calma", "pausa", "autocuidado"], ["calm", "pause", "selfcare"]) },
+  { title: t("En pareja", "For two"), caption: t("Rituales para compartir la experiencia, en la intimidad de tu hogar.", "Rituals to share the experience, in the intimacy of your home."), photo: PHOTOS.bathTray, tags: t(["enpareja", "ritual", "lamour"], ["couples", "ritual", "lamour"]) },
 ];
 
 /**
@@ -24,6 +26,8 @@ const SENSES: PostSlide[] = [
  * the post to each photo.
  */
 export function SensesSection() {
+  const { t, href } = useI18n();
+  const SENSES = senses(t);
   const [active, setActive] = useState(0);
 
   return (
@@ -33,9 +37,12 @@ export function SensesSection() {
           <div>
             <Reveal>
               <SectionHeading
-                eyebrow="La experiencia"
-                title={<span id="sentidos-title">Un ritual para cada sentido</span>}
-                description="Cada detalle está pensado para que el cuerpo suelte y la mente descanse. Desliza la publicación."
+                eyebrow={t("La experiencia", "The experience")}
+                title={<span id="sentidos-title">{t("Un ritual para cada sentido", "A ritual for every sense")}</span>}
+                description={t(
+                  "Cada detalle está pensado para que el cuerpo suelte y la mente descanse. Desliza la publicación.",
+                  "Every detail is designed so the body lets go and the mind rests. Swipe through the post.",
+                )}
               />
             </Reveal>
 
@@ -64,8 +71,8 @@ export function SensesSection() {
             </ol>
 
             <Reveal className="mt-10 hidden lg:block">
-              <LinkButton href="/reservar" size="lg">
-                Reservar mi ritual
+              <LinkButton href={href("/reservar")} size="lg">
+                {t("Reservar mi ritual", "Book my ritual")}
               </LinkButton>
             </Reveal>
           </div>
@@ -76,8 +83,8 @@ export function SensesSection() {
           </Reveal>
 
           <Reveal className="lg:hidden">
-            <LinkButton href="/reservar" size="lg" className="w-full sm:w-auto">
-              Reservar mi ritual
+            <LinkButton href={href("/reservar")} size="lg" className="w-full sm:w-auto">
+              {t("Reservar mi ritual", "Book my ritual")}
             </LinkButton>
           </Reveal>
         </div>

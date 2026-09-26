@@ -1,9 +1,7 @@
 import type { AppointmentStatus } from "@/lib/types";
 import { fail, idParam, ok, readJson, requireAdmin, route } from "@/server/http";
-import { setAppointmentStatus } from "@/server/repo";
+import { reviewLink, setAppointmentStatus } from "@/server/repo";
 import { assignmentLink } from "@/server/whatsapp";
-import { reviewToken } from "@/server/auth";
-import { absoluteUrl } from "@/lib/seo";
 
 const STATUSES: AppointmentStatus[] = ["Pending", "Confirmed", "Completed", "Cancelled", "NoShow"];
 type Ctx = { params: Promise<{ id: string }> };
@@ -24,7 +22,7 @@ export const PUT = route(async (request: Request, { params }: Ctx) => {
   const appointment = {
     ...base,
     reviewed: false,
-    reviewUrl: status === "Completed" ? absoluteUrl(`/opinion/${encodeURIComponent(id)}?t=${reviewToken(id)}`) : null,
+    reviewUrl: status === "Completed" ? reviewLink(id, base.language) : null,
   };
 
   const confirmed = status === "Confirmed";

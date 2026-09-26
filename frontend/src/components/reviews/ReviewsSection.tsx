@@ -6,14 +6,17 @@ import { BadgeCheck, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import type { Review, ReviewSummary } from "@/lib/types";
 import { Container } from "@/components/ui/Container";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
+import type { Locale } from "@/i18n/config";
+import { useI18n } from "@/i18n/I18nProvider";
 
 /** Real reviews show from the first one; with none, the section stays hidden (nothing is invented). */
 const MIN_TO_SHOW = 1;
 const ROTATE_MS = 7000;
 
 function Stars({ value, size = 15 }: { value: number; size?: number }) {
+  const { t } = useI18n();
   return (
-    <span className="inline-flex gap-0.5" aria-label={`${value} de 5 estrellas`}>
+    <span className="inline-flex gap-0.5" aria-label={t(`${value} de 5 estrellas`, `${value} out of 5 stars`)}>
       {[1, 2, 3, 4, 5].map((n) => (
         <Star key={n} size={size} aria-hidden className={n <= Math.round(value) ? "fill-gold text-gold" : "text-ink/15"} />
       ))}
@@ -21,13 +24,14 @@ function Stars({ value, size = 15 }: { value: number; size?: number }) {
   );
 }
 
-function monthYear(date: string) {
+function monthYear(date: string, lang: Locale) {
   if (!/^\d{4}-\d{2}/.test(date)) return "";
   const d = new Date(`${date.slice(0, 7)}-15T12:00:00`);
-  return d.toLocaleDateString("es-CO", { month: "short", year: "numeric" });
+  return d.toLocaleDateString(lang === "en" ? "en-US" : "es-CO", { month: "short", year: "numeric" });
 }
 
 function ReviewCard({ r }: { r: Review }) {
+  const { t, lang } = useI18n();
   return (
     <figure className="flex h-full flex-col rounded-[1.5rem] bg-marfil p-6 ring-1 ring-ink/[0.07]">
       <Stars value={r.rating} />
@@ -46,11 +50,11 @@ function ReviewCard({ r }: { r: Review }) {
         {r.verified && (
           <span className="inline-flex items-center gap-1 text-xs font-semibold text-bronze">
             <BadgeCheck size={14} className="fill-gold text-ivory" aria-hidden />
-            Cita verificada
+            {t("Cita verificada", "Verified booking")}
           </span>
         )}
         <span className="w-full text-xs text-ink-soft">
-          {[r.serviceName, monthYear(r.date)].filter(Boolean).join(" · ")}
+          {[r.serviceName, monthYear(r.date, lang)].filter(Boolean).join(" · ")}
         </span>
       </figcaption>
     </figure>
@@ -66,13 +70,15 @@ function ReviewCard({ r }: { r: Review }) {
 export function ReviewsSection({
   summary: initial,
   compact = false,
-  title = "Lo que cuentan de L'AMOUR",
+  title: titleProp,
 }: {
   summary: ReviewSummary;
   /** Tighter spacing and a smaller heading, for pages whose main job is something else (booking). */
   compact?: boolean;
   title?: string;
 }) {
+  const { t, lang } = useI18n();
+  const title = titleProp ?? t("Lo que cuentan de L'AMOUR", "What clients say about L'AMOUR");
   // Starts with what the page was built with, then keeps itself current while it's open.
   const [summary, setSummary] = useState<ReviewSummary>(initial);
   const [order, setOrder] = useState<Review[]>(initial.reviews);
@@ -136,7 +142,7 @@ export function ReviewsSection({
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <p className="eyebrow">Opiniones reales</p>
+            <p className="eyebrow">{t("Opiniones reales", "Real reviews")}</p>
             <h2
               id="opiniones-title"
               className={clsx(
@@ -152,11 +158,15 @@ export function ReviewsSection({
             <span className="grid gap-1">
               <Stars value={summary.average} size={17} />
               <span className="text-sm text-ink-soft">
-                {summary.count} {summary.count === 1 ? "opinión" : "opiniones"} de clientas
+                {summary.count}{" "}
+                {t(summary.count === 1 ? "opinión de clientas" : "opiniones de clientas", summary.count === 1 ? "client review" : "client reviews")}
               </span>
             </span>
           </div>
         </div>
+        {lang === "en" && (
+          <p className="mt-4 text-sm text-ink-soft">Reviews are shown as clients wrote them, in Spanish.</p>
+        )}
 
         <div
           className="mt-10"
@@ -184,7 +194,7 @@ export function ReviewsSection({
 
           {pages > 1 && (
             <div className="mt-6 flex items-center gap-4">
-              <button type="button" onClick={() => go(-1)} aria-label="Opiniones anteriores" className={arrow}>
+              <button type="button" onClick={() => go(-1)} aria-label={t("Opiniones anteriores", "Previous reviews")} className={arrow}>
                 <ChevronLeft size={18} aria-hidden />
               </button>
               <div className="h-[3px] flex-1 overflow-hidden rounded-full bg-ink/10" aria-hidden>
@@ -197,7 +207,7 @@ export function ReviewsSection({
               <span className="text-xs tabular-nums text-ink-soft">
                 {current + 1}/{pages}
               </span>
-              <button type="button" onClick={() => go(1)} aria-label="Más opiniones" className={arrow}>
+              <button type="button" onClick={() => go(1)} aria-label={t("Más opiniones", "More reviews")} className={arrow}>
                 <ChevronRight size={18} aria-hidden />
               </button>
             </div>
@@ -213,6 +223,7 @@ const arrow =
 
 /** One quiet line — stars, average, count — that jumps to the reviews further down the page. */
 export function ReviewsBadge({ summary }: { summary: ReviewSummary }) {
+  const { t } = useI18n();
   if (summary.count < MIN_TO_SHOW) return null;
   return (
     <a
@@ -222,9 +233,10 @@ export function ReviewsBadge({ summary }: { summary: ReviewSummary }) {
       <Stars value={summary.average} size={15} />
       <span>
         <span className="font-semibold text-ink">{summary.average.toFixed(1).replace(".", ",")}</span> ·{" "}
-        {summary.count} {summary.count === 1 ? "opinión" : "opiniones"} de clientas
+        {summary.count}{" "}
+        {t(summary.count === 1 ? "opinión de clientas" : "opiniones de clientas", summary.count === 1 ? "client review" : "client reviews")}
       </span>
-      <span className="underline decoration-gold/60 underline-offset-4">Ver</span>
+      <span className="underline decoration-gold/60 underline-offset-4">{t("Ver", "See")}</span>
     </a>
   );
 }

@@ -31,6 +31,10 @@ type FormState = {
   isCoupleExperience: boolean;
   displayOrder: number;
   isActive: boolean;
+  nameEn: string;
+  shortEn: string;
+  longEn: string;
+  highlightsEn: string;
 };
 
 const DURATIONS = [30, 45, 60, 75, 90, 120];
@@ -110,7 +114,7 @@ export function ServicesView({ token }: { token: string }) {
               onClick={() => setFilter(c.id)}
               className={clsx(chipClass(filter === c.id), "min-h-10 shrink-0 whitespace-nowrap")}
             >
-              {CATEGORY_SHORT[c.slug] ?? c.name}
+              {CATEGORY_SHORT.es[c.slug] ?? c.name}
             </button>
           ))}
         </div>
@@ -219,6 +223,10 @@ function ServiceSheet({
           isCoupleExperience: service.isCoupleExperience,
           displayOrder: service.displayOrder,
           isActive: service.isActive,
+          nameEn: service.en?.name ?? "",
+          shortEn: service.en?.shortDescription ?? "",
+          longEn: service.en?.longDescription ?? "",
+          highlightsEn: (service.en?.highlights ?? []).join("\n"),
         }
       : {
           serviceCategoryId: defaultCategory,
@@ -236,8 +244,13 @@ function ServiceSheet({
           isCoupleExperience: false,
           displayOrder: 99,
           isActive: true,
+          nameEn: "",
+          shortEn: "",
+          longEn: "",
+          highlightsEn: "",
         },
   );
+  const [showEnglish, setShowEnglish] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -284,6 +297,12 @@ function ServiceSheet({
           isCoupleExperience: form.isCoupleExperience,
           displayOrder: form.displayOrder,
           isActive: form.isActive,
+          en: {
+            name: form.nameEn.trim(),
+            shortDescription: form.shortEn.trim(),
+            longDescription: form.longEn.trim() || null,
+            highlights: form.highlightsEn.split(/\n|;/).map((h) => h.trim()).filter(Boolean),
+          },
         },
         token,
         service?.id,
@@ -439,6 +458,50 @@ function ServiceSheet({
                   value={form.highlights}
                   onChange={(e) => set("highlights", e.target.value)}
                   placeholder={"Aceites tibios\nMúsica y aromas"}
+                />
+              </label>
+            </div>
+          )}
+
+          <button
+            type="button"
+            onClick={() => setShowEnglish((v) => !v)}
+            aria-expanded={showEnglish}
+            className="flex min-h-11 w-full cursor-pointer items-center justify-between text-sm font-semibold text-ink"
+          >
+            <span>
+              Versión en inglés{" "}
+              <span className="font-normal text-ink-soft">
+                {form.nameEn.trim() ? "· lista" : "· vacía (se muestra en español)"}
+              </span>
+            </span>
+            <ChevronDown size={18} className={clsx("transition-transform", showEnglish && "rotate-180")} aria-hidden />
+          </button>
+          {showEnglish && (
+            <div className="-mt-2 animate-fade-in space-y-4">
+              <p className="text-xs text-ink-soft">
+                Lo que ven los visitantes en la página en inglés (/en). Lo que dejes vacío se muestra en español.
+              </p>
+              <label className={labelClass}>
+                Nombre en inglés
+                <input className={fieldClass} value={form.nameEn} onChange={(e) => set("nameEn", e.target.value)} placeholder="Classic Relaxation Massage" />
+              </label>
+              <label className={labelClass}>
+                Descripción corta en inglés
+                <input className={fieldClass} value={form.shortEn} onChange={(e) => set("shortEn", e.target.value)} />
+              </label>
+              <label className={labelClass}>
+                Descripción larga en inglés
+                <textarea className={`${fieldClass} min-h-28 resize-none`} value={form.longEn} onChange={(e) => set("longEn", e.target.value)} />
+              </label>
+              <label className={labelClass}>
+                <span>
+                  Lo que incluye en inglés <span className="font-normal text-ink-soft">(uno por línea)</span>
+                </span>
+                <textarea
+                  className={`${fieldClass} min-h-24 resize-none`}
+                  value={form.highlightsEn}
+                  onChange={(e) => set("highlightsEn", e.target.value)}
                 />
               </label>
             </div>

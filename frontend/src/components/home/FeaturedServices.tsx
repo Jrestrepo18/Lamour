@@ -11,6 +11,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { PHOTOS } from "@/lib/photos";
 import { formatCOP } from "@/lib/format";
 import { ReelViewer, type Reel } from "./ReelViewer";
+import { useI18n } from "@/i18n/I18nProvider";
 
 // The hero already uses the oil-pour photo, so the signature ritual leads with a different frame.
 const VISUALS = [PHOTOS.thumbsBack, PHOTOS.hotStone, PHOTOS.candles];
@@ -24,6 +25,7 @@ const VISUALS = [PHOTOS.thumbsBack, PHOTOS.hotStone, PHOTOS.candles];
  * crawlers and modified clicks); a plain tap opens the viewer instead.
  */
 export function FeaturedServices({ services }: { services: (Service & { href: string })[] }) {
+  const { t, href, lang } = useI18n();
   const [open, setOpen] = useState<number | null>(null);
   if (services.length === 0) return null;
 
@@ -35,24 +37,24 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
         <div className="flex flex-wrap items-end justify-between gap-6">
           <Reveal>
             <SectionHeading
-              eyebrow="Lo más pedido"
-              title="Rituales destacados"
-              description="Nuestras experiencias favoritas. Toca un reel para verlo completo."
+              eyebrow={t("Lo más pedido", "Most booked")}
+              title={t("Rituales destacados", "Featured rituals")}
+              description={t("Nuestras experiencias favoritas. Toca un reel para verlo completo.", "Our favourite experiences. Tap a reel to see it in full.")}
             />
           </Reveal>
           <Reveal delay={0.1} className="flex flex-wrap gap-x-6 gap-y-3">
             <Link
-              href="/servicios"
+              href={href("/servicios")}
               className="group inline-flex items-center gap-1.5 text-sm font-medium text-ink underline decoration-gold/60 underline-offset-8 transition-colors hover:decoration-ink"
             >
-              Ver catálogo completo
+              {t("Ver catálogo completo", "See the full menu")}
               <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
             <Link
-              href="/masajes-tantricos"
+              href={href("/masajes-tantricos")}
               className="group inline-flex items-center gap-1.5 text-sm font-medium text-bronze underline decoration-gold/60 underline-offset-8 transition-colors hover:text-ink hover:decoration-ink"
             >
-              Rituales tántricos (+18)
+              {t("Rituales tántricos (+18)", "Tantric rituals (18+)")}
               <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
@@ -65,14 +67,14 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
             <li key={service.id} className="w-[62%] max-w-[16rem] shrink-0 snap-start md:w-auto md:max-w-none">
               <Reveal delay={0.08 * i}>
                 <Link
-                  href={services[i].href}
+                  href={href(services[i].href)}
                   onClick={(e) => {
                     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button !== 0) return;
                     e.preventDefault();
                     setOpen(i);
                   }}
                   aria-haspopup="dialog"
-                  aria-label={`Ver reel: ${service.name}, ${formatCOP(service.price)}`}
+                  aria-label={`${t("Ver reel", "View reel")}: ${service.name}, ${formatCOP(service.price, lang)}`}
                   className="group relative block aspect-[9/16] w-full cursor-pointer overflow-hidden rounded-[1.25rem] bg-silk text-left shadow-[0_24px_50px_-30px_rgba(23,23,23,0.6)] md:rounded-[1.5rem]"
                 >
                   <span className="absolute inset-0 animate-kenburns" style={{ animationDelay: `-${i * 5}s` }}>
@@ -80,7 +82,7 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
                       // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
                       <img src={service.imageUrl} alt={service.name} loading="lazy" className="h-full w-full object-cover" />
                     ) : (
-                      <Image src={photo.src} alt={photo.alt} fill sizes="(min-width: 768px) 30vw, 62vw" className="object-cover" />
+                      <Image src={photo.src} alt={lang === "en" ? photo.altEn : photo.alt} fill sizes="(min-width: 768px) 30vw, 62vw" className="object-cover" />
                     )}
                   </span>
                   <span className="pointer-events-none absolute inset-0 bg-gradient-to-b from-espresso/35 via-transparent to-espresso/85" />
@@ -93,7 +95,7 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
                     <span className="block font-serif text-lg font-semibold leading-tight text-ivory md:text-2xl">
                       {service.name}
                     </span>
-                    <span className="mt-1 block text-sm font-medium text-champagne">{formatCOP(service.price)}</span>
+                    <span className="mt-1 block text-sm font-medium text-champagne">{formatCOP(service.price, lang)}</span>
                   </span>
 
                   {/* Play affordance on hover (desktop) */}
