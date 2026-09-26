@@ -48,6 +48,20 @@ function signingKey(): Buffer {
   return createHash("sha256").update(`lamour-session:${secret}`).digest();
 }
 
+/**
+ * Short signature for a booking's personal review link: only whoever received the link
+ * can review that booking, and codes can't be guessed or enumerated.
+ */
+export function reviewToken(appointmentId: string): string {
+  return createHmac("sha256", signingKey()).update(`review:${appointmentId}`).digest("base64url").slice(0, 22);
+}
+
+export function isValidReviewToken(appointmentId: string, token: string): boolean {
+  const expected = Buffer.from(reviewToken(appointmentId));
+  const given = Buffer.from(token);
+  return given.length === expected.length && timingSafeEqual(given, expected);
+}
+
 const b64url = (input: Buffer | string) => Buffer.from(input).toString("base64url");
 
 export type AdminClaims = { sub: string; name: string; role: string; exp: number };

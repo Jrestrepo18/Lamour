@@ -1,8 +1,9 @@
 import "server-only";
 import { MOCK_CATEGORIES, MOCK_MASSEUSES } from "@/lib/mock-data";
-import type { Masseuse, ServiceCategory } from "@/lib/types";
+import type { Masseuse, ReviewSummary, ServiceCategory } from "@/lib/types";
 import { isDatabaseConfigured } from "./db";
 import { listCategories, listMasseuses } from "./repo";
+import { publishedReviews } from "./reviews";
 
 /**
  * Catalog for server-rendered pages, read straight from the database (no HTTP
@@ -18,4 +19,10 @@ export async function getServiceCategories(): Promise<{ data: ServiceCategory[];
 export async function getMasseuses(): Promise<{ data: Masseuse[]; isDemo: boolean }> {
   if (!isDatabaseConfigured()) return { data: MOCK_MASSEUSES, isDemo: true };
   return { data: await listMasseuses(true), isDemo: false };
+}
+
+/** Published reviews for the public pages. Without a database there are none — nothing is invented. */
+export async function getReviews(): Promise<ReviewSummary> {
+  if (!isDatabaseConfigured()) return { count: 0, average: 0, reviews: [] };
+  return publishedReviews();
 }

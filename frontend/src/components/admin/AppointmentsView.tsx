@@ -52,6 +52,13 @@ function clientConfirmation(a: Appointment) {
   return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(lines.join("\n"))}`;
 }
 
+/** The client's personal review link, sent from the admin's WhatsApp once the session is completed. */
+function reviewRequest(a: Appointment) {
+  const firstName = a.clientName.trim().split(/\s+/)[0] ?? "";
+  const text = `Hola ${firstName} 🌿 Gracias por dejarnos cuidarte. ¿Nos cuentas cómo te fue con tu ${a.serviceName}? Toma menos de un minuto: ${a.reviewUrl}`;
+  return `${clientWhatsApp(a.clientPhone)}?text=${encodeURIComponent(text)}`;
+}
+
 function dayLabel(iso: string) {
   const day = iso.slice(0, 10);
   const today = new Date().toLocaleDateString("en-CA");
@@ -255,7 +262,7 @@ export function AppointmentsView({ token }: { token: string }) {
                   )}
                 </div>
 
-                {(a.status === "Pending" || a.status === "Confirmed" || whatsappLinks?.id === a.id) && (
+                {(a.status === "Pending" || a.status === "Confirmed" || a.status === "Completed" || whatsappLinks?.id === a.id) && (
                   <div className="mt-4 flex flex-wrap items-center gap-2">
                     {a.status === "Pending" && a.clientPhone && (
                       <button
@@ -290,6 +297,20 @@ export function AppointmentsView({ token }: { token: string }) {
                       >
                         Marcar completada
                       </button>
+                    )}
+                    {a.status === "Completed" && a.reviewUrl && !a.reviewed && a.clientPhone && (
+                      <a
+                        href={reviewRequest(a)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full border border-[#25D366] bg-ivory px-5 text-sm font-semibold text-[#128C4B] sm:flex-none"
+                      >
+                        <WhatsAppIcon size={17} />
+                        Pedir opinión
+                      </a>
+                    )}
+                    {a.status === "Completed" && a.reviewed && (
+                      <span className="inline-flex min-h-11 items-center gap-1.5 px-2 text-sm font-semibold text-bronze">★ Opinión recibida</span>
                     )}
                     {a.status === "Confirmed" && whatsappLinks?.id !== a.id && (
                       <button

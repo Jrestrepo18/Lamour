@@ -8,6 +8,8 @@ import type {
   Masseuse,
   MasseuseAdmin,
   MasseuseSchedule,
+  ReviewAdmin,
+  ReviewStatus,
   Service,
   ServiceCategory,
 } from "./types";
@@ -167,6 +169,38 @@ export async function adminChangePassword(currentPassword: string, newPassword: 
     { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) },
     token,
   );
+}
+
+// ---------- Reviews ----------
+
+export async function submitReview(payload: {
+  appointmentId: string;
+  token: string;
+  rating: number;
+  text: string;
+  displayName: string;
+  consent: boolean;
+}) {
+  return request<{ ok: true }>("/reviews", { method: "POST", body: JSON.stringify(payload) });
+}
+
+export async function adminGetReviews(token: string) {
+  return request<ReviewAdmin[]>("/admin/reviews", {}, token);
+}
+
+export async function adminCreateReview(
+  payload: { displayName: string; city: string | null; serviceName: string | null; rating: number; text: string; date: string; source: "whatsapp" | "google"; consent: boolean },
+  token: string,
+) {
+  return request<ReviewAdmin>("/admin/reviews", { method: "POST", body: JSON.stringify(payload) }, token);
+}
+
+export async function adminUpdateReview(id: string, change: { status?: ReviewStatus; reply?: string | null }, token: string) {
+  return request<ReviewAdmin>(`/admin/reviews/${encodeURIComponent(id)}`, { method: "PUT", body: JSON.stringify(change) }, token);
+}
+
+export async function adminDeleteReview(id: string, token: string) {
+  return request<void>(`/admin/reviews/${encodeURIComponent(id)}`, { method: "DELETE" }, token);
 }
 
 export async function adminGetMasseuses(token: string) {

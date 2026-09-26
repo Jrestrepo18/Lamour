@@ -12,7 +12,9 @@ import type {
 } from "@/lib/types";
 import { busyOf, loadAgenda, slotFits } from "./availability";
 import { COL, db } from "./db";
-import { hashAdminPassword } from "./auth";
+import { hashAdminPassword, reviewToken } from "./auth";
+import { reviewedAppointmentIds } from "./reviews";
+import { absoluteUrl } from "@/lib/seo";
 import { dateToLocal, formatHm, localToDate } from "./time";
 
 /*
@@ -503,13 +505,15 @@ export async function getAppointment(id: string): Promise<Joined | null> {
   );
 }
 
+/** Admin list. Completed bookings carry the client's personal review link. */
 export async function listAppointments(): Promise<Appointment[]> {
-  const [citas, sessions, therapists, services, clients] = await Promise.all([
+  const [citas, sessions, therapists, services, clients, reviewed] = await Promise.all([
     col(COL.citas).get(),
     col(COL.citaTerapeutas).get(),
     col(COL.terapeutas).get(),
     col(COL.servicios).get(),
     col(COL.clientes).get(),
+    reviewedAppointmentIds(),
   ]);
   const byCita = new Map<string, DocumentData[]>();
   sessions.docs.forEach((s) => byCita.set(s.get("citaId"), [...(byCita.get(s.get("citaId")) ?? []), s.data()]));
@@ -521,7 +525,12 @@ export async function listAppointments(): Promise<Appointment[]> {
     .map((c) => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars -- therapists' phones stay server-side
       const { masseuseWhatsApp, secondMasseuseWhatsApp, ...a } = joinAppointment(c.id, c.data(), byCita.get(c.id) ?? [], t, sv, cl);
-      return a;
+      const completed = a.status === "Completed";
+      return {
+        ...a,
+        reviewed: reviewed.has(c.id),
+        reviewUrl: completed ? absoluteUrl(`/opinion/${encodeURIComponent(c.id)}?t=${reviewToken(c.id)}`) : null,
+      };
     })
     .sort((a, b) => a.startsAt.localeCompare(b.startsAt));
 }

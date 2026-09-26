@@ -124,10 +124,47 @@ export interface Appointment {
   status: AppointmentStatus;
   createdAt: string;
   confirmedAt: string | null;
+  /** Admin only: the client's personal review link, once the booking is completed. */
+  reviewUrl?: string | null;
+  /** Admin only: the client already left a review for this booking. */
+  reviewed?: boolean;
 }
 
 export interface AppointmentConfirmationResult {
   appointment: Appointment;
   whatsAppLink: string;
   secondWhatsAppLink: string | null;
+}
+
+export type ReviewStatus = "Pending" | "Published" | "Hidden";
+export type ReviewSource = "appointment" | "whatsapp" | "google";
+
+/** A client's review. Only real clients: from a completed booking's link, or copied from a real message with consent. */
+export interface Review {
+  id: string;
+  /** How the client chose to appear, e.g. "María G." */
+  displayName: string;
+  city: string | null;
+  serviceName: string | null;
+  rating: number;
+  text: string;
+  /** "YYYY-MM-DD" */
+  date: string;
+  source: ReviewSource;
+  /** Tied to a completed booking (the client reviewed through their own link). */
+  verified: boolean;
+  /** Public reply from L'AMOUR, shown under the review. */
+  reply: string | null;
+}
+
+export interface ReviewAdmin extends Review {
+  status: ReviewStatus;
+  appointmentId: string | null;
+  createdAt: string;
+}
+
+export interface ReviewSummary {
+  count: number;
+  average: number;
+  reviews: Review[];
 }
