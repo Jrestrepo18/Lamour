@@ -182,6 +182,10 @@ export async function adminUpdateClient(phone: string, change: { name?: string; 
   return request<Client>(`/admin/clients/${encodeURIComponent(phone)}`, { method: "PUT", body: JSON.stringify(change) }, token);
 }
 
+export async function adminMarkClientsExported(phones: string[], token: string) {
+  return request<{ marked: number }>("/admin/clients/exported", { method: "POST", body: JSON.stringify({ phones }) }, token);
+}
+
 // ---------- Reviews ----------
 
 export async function submitReview(payload: {

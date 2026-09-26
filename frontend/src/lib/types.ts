@@ -189,6 +189,8 @@ export interface Client {
   /** Agreed to receive promotions by WhatsApp (booking checkbox or told the team). */
   acceptsMarketing: boolean;
   consentAt: string | null;
+  /** Last time this contact was downloaded for a WhatsApp broadcast list. */
+  exportedAt: string | null;
   createdAt: string | null;
   bookings: number;
   completed: number;

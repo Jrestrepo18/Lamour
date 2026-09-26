@@ -30,6 +30,7 @@ export async function listClients(): Promise<Client[]> {
     notes: "",
     acceptsMarketing: false,
     consentAt: null,
+    exportedAt: null,
     createdAt: null,
     bookings: 0,
     completed: 0,
@@ -45,6 +46,7 @@ export async function listClients(): Promise<Client[]> {
       notes: d.notasInternas ?? "",
       acceptsMarketing: d.aceptaMarketing === true,
       consentAt: iso(d.fechaConsentimiento),
+      exportedAt: iso(d.exportadoEn),
       createdAt: iso(d.creadoEn),
     });
   }
@@ -97,4 +99,29 @@ export async function updateClient(phone: string, change: { name?: string; notes
     patch.fechaConsentimiento ??= null;
   }
   await ref.set(patch, { merge: true });
+}
+
+/**
+ * Stamps the clients just downloaded for a WhatsApp broadcast list, so the next
+ * export can offer only the new ones. Only clients with a record are stamped.
+ */
+export async function markExported(phones: string[]) {
+  const store = db();
+  const now = FieldValue.serverTimestamp();
+  let marked = 0;
+  // Firestore batches take at most 500 writes.
+  for (let i = 0; i < phones.length; i += 400) {
+    const refs = phones.slice(i, i + 400).map((p) => store.collection(COL.clientes).doc(p));
+    const snaps = await store.getAll(...refs);
+    const batch = store.batch();
+    let n = 0;
+    for (const snap of snaps) {
+      if (!snap.exists) continue;
+      batch.update(snap.ref, { exportadoEn: now });
+      n++;
+    }
+    if (n) await batch.commit();
+    marked += n;
+  }
+  return marked;
 }
