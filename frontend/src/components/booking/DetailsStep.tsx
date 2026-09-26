@@ -192,6 +192,22 @@ export function DetailsStep({
             })}
           </div>
         </div>
+
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ink-soft">
+          <input
+            type="checkbox"
+            checked={details.acceptsMarketing}
+            onChange={(e) => set("acceptsMarketing", e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-ink"
+          />
+          <span>
+            Quiero recibir promociones de L&apos;AMOUR por WhatsApp <span className="text-ink-soft/80">(opcional)</span>. Puedes
+            darte de baja cuando quieras respondiendo “NO”.{" "}
+            <a href="/legal/privacidad" target="_blank" className="underline decoration-gold/60 underline-offset-4 hover:text-ink">
+              Privacidad
+            </a>
+          </span>
+        </label>
       </fieldset>
     </div>
   );

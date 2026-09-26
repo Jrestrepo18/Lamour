@@ -136,6 +136,7 @@ export function BookingFlow({
         city: details.city.trim(),
         notes: details.notes.trim() || undefined,
         paymentMethod: details.paymentMethod,
+        acceptsMarketing: details.acceptsMarketing,
       });
       setConfirmedAt(appointment.startsAt);
     } catch {

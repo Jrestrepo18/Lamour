@@ -343,6 +343,7 @@ export type AppointmentInput = {
   startsAt: string;
   durationMinutes: number;
   totalPrice: number;
+  acceptsMarketing: boolean;
 };
 
 /** Colombian numbers are typed without the country code; clientes are keyed by E.164 ("+573001234567"). */
@@ -384,12 +385,15 @@ export async function createAppointmentIfFree(a: AppointmentInput): Promise<Appo
         telefono: clientRef.id,
         email: null,
         notasInternas: "",
-        aceptaMarketing: false,
-        fechaConsentimiento: null,
+        aceptaMarketing: a.acceptsMarketing,
+        fechaConsentimiento: a.acceptsMarketing ? now : null,
         origen: "WEB",
         refCampana: null,
         creadoEn: now,
       });
+    } else if (a.acceptsMarketing && client.get("aceptaMarketing") !== true) {
+      // Opting in again on a later booking; never switches an existing consent off.
+      tx.update(clientRef, { aceptaMarketing: true, fechaConsentimiento: now });
     }
     tx.create(store.collection(COL.citas).doc(code), {
       codigo: code,

@@ -11,6 +11,7 @@ export interface ClientDetails {
   paymentMethod: PaymentMethod;
   sensoryDressRequested: boolean;
   extraMinutes: number;
+  acceptsMarketing: boolean;
 }
 
 export const EMPTY_CLIENT_DETAILS: ClientDetails = {
@@ -24,4 +25,5 @@ export const EMPTY_CLIENT_DETAILS: ClientDetails = {
   paymentMethod: "Cash",
   sensoryDressRequested: false,
   extraMinutes: 0,
+  acceptsMarketing: false,
 };

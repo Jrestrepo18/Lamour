@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-import { CalendarDays, ExternalLink, KeyRound, LogOut, Menu, Sparkles, Star, Users, X } from "lucide-react";
+import { CalendarDays, ExternalLink, KeyRound, LogOut, Menu, Contact, Sparkles, Star, Users, X } from "lucide-react";
 import { clearAdminSession } from "@/lib/admin-auth";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
@@ -12,6 +12,7 @@ const LINKS = [
   { href: "/admin/dashboard/citas", label: "Citas", icon: CalendarDays },
   { href: "/admin/dashboard/masajistas", label: "Masajistas", icon: Users },
   { href: "/admin/dashboard/servicios", label: "Servicios", icon: Sparkles },
+  { href: "/admin/dashboard/clientes", label: "Clientes", icon: Contact },
   { href: "/admin/dashboard/resenas", label: "Reseñas", icon: Star },
 ];
 
@@ -127,7 +128,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
         aria-label="Secciones del panel"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-ivory pb-[env(safe-area-inset-bottom)] lg:hidden"
       >
-        <ul className="grid grid-cols-4">
+        <ul className="grid grid-cols-5">
           {LINKS.map((link) => {
             const active = pathname.startsWith(link.href);
             return (

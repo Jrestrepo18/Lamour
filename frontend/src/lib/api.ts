@@ -1,6 +1,7 @@
 import { MOCK_CATEGORIES, MOCK_MASSEUSES } from "./mock-data";
 import { clearAdminSession } from "./admin-auth";
 import type {
+  Client,
   Appointment,
   AppointmentConfirmationResult,
   AppointmentCreatePayload,
@@ -169,6 +170,16 @@ export async function adminChangePassword(currentPassword: string, newPassword: 
     { method: "POST", body: JSON.stringify({ currentPassword, newPassword }) },
     token,
   );
+}
+
+// ---------- Clients ----------
+
+export async function adminGetClients(token: string) {
+  return request<Client[]>("/admin/clients", {}, token);
+}
+
+export async function adminUpdateClient(phone: string, change: { name?: string; notes?: string; acceptsMarketing?: boolean }, token: string) {
+  return request<Client>(`/admin/clients/${encodeURIComponent(phone)}`, { method: "PUT", body: JSON.stringify(change) }, token);
 }
 
 // ---------- Reviews ----------

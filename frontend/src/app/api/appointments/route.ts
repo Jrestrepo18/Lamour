@@ -58,6 +58,7 @@ export const POST = route(async (request: Request) => {
     startsAt,
     durationMinutes: duration,
     totalPrice: service.price,
+    acceptsMarketing: bool(b.acceptsMarketing),
   });
   if ("takenBy" in result) {
     return fail(

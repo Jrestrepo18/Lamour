@@ -96,6 +96,8 @@ export interface AppointmentCreatePayload {
   city: string;
   notes?: string;
   paymentMethod: PaymentMethod;
+  /** Opted in to promotions by WhatsApp (unchecked by default). */
+  acceptsMarketing?: boolean;
 }
 
 export interface Appointment {
@@ -167,4 +169,20 @@ export interface ReviewSummary {
   count: number;
   average: number;
   reviews: Review[];
+}
+
+/** Admin: one client, with totals from their bookings. `phone` is E.164 (+573001234567) and is the id. */
+export interface Client {
+  phone: string;
+  name: string;
+  notes: string;
+  /** Agreed to receive promotions by WhatsApp (booking checkbox or told the team). */
+  acceptsMarketing: boolean;
+  consentAt: string | null;
+  createdAt: string | null;
+  bookings: number;
+  completed: number;
+  totalSpent: number;
+  lastVisit: string | null;
+  lastService: string | null;
 }
