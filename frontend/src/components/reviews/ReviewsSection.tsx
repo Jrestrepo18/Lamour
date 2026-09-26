@@ -62,7 +62,16 @@ function ReviewCard({ r }: { r: Review }) {
  * random order on each visit, with a story-style progress line. Pauses while
  * touched, hovered or focused, and doesn't rotate for reduced-motion users.
  */
-export function ReviewsSection({ summary }: { summary: ReviewSummary }) {
+export function ReviewsSection({
+  summary,
+  compact = false,
+  title = "Lo que cuentan de L'AMOUR",
+}: {
+  summary: ReviewSummary;
+  /** Tighter spacing and a smaller heading, for pages whose main job is something else (booking). */
+  compact?: boolean;
+  title?: string;
+}) {
   const [order, setOrder] = useState<Review[]>(summary.reviews);
   const [page, setPage] = useState(0);
   const [perPage, setPerPage] = useState(1);
@@ -113,13 +122,19 @@ export function ReviewsSection({ summary }: { summary: ReviewSummary }) {
   const go = (delta: number) => setPage((p) => (p + delta + pages) % pages);
 
   return (
-    <section aria-labelledby="opiniones-title" className="py-20 sm:py-28">
+    <section id="opiniones" aria-labelledby="opiniones-title" className={clsx("scroll-mt-24", compact ? "py-14 sm:py-20" : "py-20 sm:py-28")}>
       <Container>
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <p className="eyebrow">Opiniones reales</p>
-            <h2 id="opiniones-title" className="mt-4 font-serif text-[clamp(2rem,6vw,3rem)] font-semibold leading-[1.05] tracking-tight text-ink">
-              Lo que cuentan de L&apos;AMOUR
+            <h2
+              id="opiniones-title"
+              className={clsx(
+                "mt-4 font-serif font-semibold leading-[1.05] tracking-tight text-ink",
+                compact ? "text-[clamp(1.6rem,5vw,2.25rem)]" : "text-[clamp(2rem,6vw,3rem)]",
+              )}
+            >
+              {title}
             </h2>
           </div>
           <div className="flex items-center gap-4">
@@ -185,3 +200,21 @@ export function ReviewsSection({ summary }: { summary: ReviewSummary }) {
 
 const arrow =
   "flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-ink/10 bg-marfil text-ink transition-colors hover:border-gold/60";
+
+/** One quiet line — stars, average, count — that jumps to the reviews further down the page. */
+export function ReviewsBadge({ summary }: { summary: ReviewSummary }) {
+  if (summary.count < MIN_TO_SHOW) return null;
+  return (
+    <a
+      href="#opiniones"
+      className="inline-flex min-h-11 items-center gap-2 text-sm text-ink-soft transition-colors hover:text-ink"
+    >
+      <Stars value={summary.average} size={15} />
+      <span>
+        <span className="font-semibold text-ink">{summary.average.toFixed(1).replace(".", ",")}</span> ·{" "}
+        {summary.count} {summary.count === 1 ? "opinión" : "opiniones"} de clientas
+      </span>
+      <span className="underline decoration-gold/60 underline-offset-4">Ver</span>
+    </a>
+  );
+}
