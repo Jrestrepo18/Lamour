@@ -498,6 +498,15 @@ function joinAppointment(
     city: c.ciudad ?? "",
     notes: c.notas || null,
     language: c.idioma === "en" ? "en" : "es",
+    payment: c.pago
+      ? {
+          method: PAYMENT_FROM_DB[c.pago.metodo] ?? "Cash",
+          currency: c.pago.moneda === "USD" ? "USD" : "COP",
+          amount: Number(c.pago.monto) || 0,
+          note: c.pago.nota || null,
+          recordedAt: c.pago.registradoEn?.toDate?.().toISOString() ?? null,
+        }
+      : null,
     sensoryDressRequested: c.vestiduraSensorial === true,
     extraMinutes: Number(c.minutosExtra) || 0,
     paymentMethod: PAYMENT_FROM_DB[c.metodoPago] ?? "Cash",
@@ -588,6 +597,23 @@ export async function setAppointmentStatus(id: string, status: AppointmentStatus
     sessions.docs.forEach((s) => batch.update(s.ref, { activo: false }));
   }
   await batch.commit();
+  return getAppointment(id);
+}
+
+/**
+ * Records what the client actually paid (citas.pago): method, currency (pesos or
+ * dollars — cash is sometimes paid in USD) and the amount in that currency.
+ */
+export async function recordPayment(
+  id: string,
+  p: { method: PaymentMethod; currency: "COP" | "USD"; amount: number; note: string | null },
+) {
+  const ref = col(COL.citas).doc(id);
+  if (!(await ref.get()).exists) return null;
+  await ref.update({
+    pago: { metodo: PAYMENT_TO_DB[p.method], moneda: p.currency, monto: p.amount, nota: p.note ?? "", registradoEn: FieldValue.serverTimestamp() },
+    actualizadoEn: FieldValue.serverTimestamp(),
+  });
   return getAppointment(id);
 }
 

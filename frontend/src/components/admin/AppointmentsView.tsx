@@ -5,7 +5,7 @@ import clsx from "clsx";
 import { Clock3, MapPin, NotebookPen, RefreshCw, Users } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { useAutoRefresh } from "@/hooks/useAutoRefresh";
-import { adminGetAppointments, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
+import { adminGetAppointments, adminRecordPayment, adminUpdateAppointmentStatus, ApiError } from "@/lib/api";
 import { capitalize, formatCOP, formatDateLong, formatTime } from "@/lib/format";
 import type { Appointment, AppointmentStatus } from "@/lib/types";
 import { chipClass } from "@/lib/ui";
@@ -13,6 +13,7 @@ import { wrapRailClass } from "@/components/booking/parts";
 import { StatusBadge } from "./StatusBadge";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { ConfirmDialog, ErrorBanner, LoadingBlock } from "./kit";
+import { formatMoney, METHOD_LABEL, PaymentDialog } from "./PaymentDialog";
 
 const TABS: { value: AppointmentStatus | "All"; label: string }[] = [
   { value: "Pending", label: "Pendientes" },
@@ -116,6 +117,8 @@ export function AppointmentsView({ token }: { token: string }) {
   const [refreshing, setRefreshing] = useState(false);
   /** The booking just acted on stays in view (with its next step) even after it changes tab. */
   const [justChanged, setJustChanged] = useState<string | null>(null);
+  /** Completing a booking asks what was actually paid; "edit" corrects it afterwards. */
+  const [paying, setPaying] = useState<{ appointment: Appointment; complete: boolean } | null>(null);
 
   /** `silent`: background refresh — no spinner, and a failed attempt keeps what's on screen. */
   async function load(silent = false) {
@@ -141,7 +144,7 @@ export function AppointmentsView({ token }: { token: string }) {
   }
 
   // New bookings and changes made from another device show up on their own.
-  useAutoRefresh(() => load(true), 20_000);
+  useAutoRefresh(() => load(true), 20_000, paying === null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount, not a render loop
@@ -308,9 +311,26 @@ export function AppointmentsView({ token }: { token: string }) {
                     </span>
                   </p>
                   <p className="text-ink-soft">
-                    Pago: {PAYMENT[a.paymentMethod] ?? a.paymentMethod}
+                    {a.payment ? (
+                      <>
+                        Pagó: <span className="font-semibold text-ink">{formatMoney(a.payment.amount, a.payment.currency)}</span> ·{" "}
+                        {METHOD_LABEL[a.payment.method]}
+                        {a.payment.note && ` · ${a.payment.note}`}
+                      </>
+                    ) : (
+                      <>Pago: {PAYMENT[a.paymentMethod] ?? a.paymentMethod}</>
+                    )}
                     {a.sensoryDressRequested && " · Vestidura sensorial"}
                     {a.extraMinutes > 0 && ` · +${a.extraMinutes} min`}
+                    {a.status === "Completed" && (
+                      <button
+                        type="button"
+                        onClick={() => setPaying({ appointment: a, complete: false })}
+                        className="ml-2 cursor-pointer font-semibold text-bronze underline underline-offset-4"
+                      >
+                        {a.payment ? "Editar pago" : "Registrar pago"}
+                      </button>
+                    )}
                   </p>
                   {a.notes && (
                     <p className="flex items-start gap-2 rounded-xl bg-ivory p-3 text-ink-soft">
@@ -350,7 +370,7 @@ export function AppointmentsView({ token }: { token: string }) {
                       <button
                         type="button"
                         disabled={busyId === a.id}
-                        onClick={() => updateStatus(a.id, "Completed")}
+                        onClick={() => setPaying({ appointment: a, complete: true })}
                         className="min-h-11 flex-1 cursor-pointer rounded-full border border-ink/15 bg-ivory px-5 text-sm font-semibold text-ink disabled:opacity-50 sm:flex-none"
                       >
                         Marcar completada
@@ -410,6 +430,22 @@ export function AppointmentsView({ token }: { token: string }) {
           </ul>
         </section>
       ))}
+
+      {paying && (
+        <PaymentDialog
+          appointment={paying.appointment}
+          title={paying.complete ? "Completar cita" : "Pago recibido"}
+          confirmLabel={paying.complete ? "Completar y guardar pago" : "Guardar pago"}
+          onClose={() => setPaying(null)}
+          onSave={async (payment) => {
+            const id = paying.appointment.id;
+            if (paying.complete && !(await updateStatus(id, "Completed"))) throw new Error("status");
+            const saved = await adminRecordPayment(id, payment, token);
+            setAppointments((prev) => prev?.map((x) => (x.id === id ? { ...x, payment: saved.payment } : x)) ?? null);
+            setPaying(null);
+          }}
+        />
+      )}
 
       {cancelling && (
         <ConfirmDialog

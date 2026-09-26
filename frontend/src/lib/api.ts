@@ -164,6 +164,14 @@ export async function adminUpdateAppointmentStatus(id: string, status: string, t
   );
 }
 
+export async function adminRecordPayment(
+  id: string,
+  payment: { method: string; currency: "COP" | "USD"; amount: number; note?: string | null },
+  token: string,
+) {
+  return request<Appointment>(`/appointments/${encodeURIComponent(id)}/payment`, { method: "PUT", body: JSON.stringify(payment) }, token);
+}
+
 export async function adminChangePassword(currentPassword: string, newPassword: string, token: string) {
   return request<{ ok: true }>(
     "/admin/password",

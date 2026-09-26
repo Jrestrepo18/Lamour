@@ -78,6 +78,17 @@ export interface MasseuseSchedule {
 }
 
 export type PaymentMethod = "Cash" | "Transfer" | "Card";
+export type PaymentCurrency = "COP" | "USD";
+
+/** What the client actually paid, recorded when the appointment is completed. */
+export interface PaymentRecord {
+  method: PaymentMethod;
+  currency: PaymentCurrency;
+  /** In the payment's own currency (pesos or dollars). */
+  amount: number;
+  note: string | null;
+  recordedAt: string | null;
+}
 
 export type AppointmentStatus = "Pending" | "Confirmed" | "Completed" | "Cancelled" | "NoShow";
 
@@ -140,6 +151,8 @@ export interface Appointment {
   language?: "es" | "en";
   /** Admin only: the client already left a review for this booking. */
   reviewed?: boolean;
+  /** Admin only: the payment actually received (null until it's recorded). */
+  payment?: PaymentRecord | null;
 }
 
 export interface AppointmentConfirmationResult {

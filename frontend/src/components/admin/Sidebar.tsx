@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import clsx from "clsx";
-import { CalendarDays, ExternalLink, KeyRound, LogOut, Menu, Contact, Sparkles, Star, Users, X } from "lucide-react";
+import { CalendarDays, ExternalLink, KeyRound, LogOut, Menu, Contact, Sparkles, Star, Users, Wallet, X } from "lucide-react";
 import { clearAdminSession } from "@/lib/admin-auth";
 import { ChangePasswordDialog } from "./ChangePasswordDialog";
 
 const LINKS = [
   { href: "/admin/dashboard/citas", label: "Citas", icon: CalendarDays },
+  { href: "/admin/dashboard/facturacion", label: "Facturación", icon: Wallet },
   { href: "/admin/dashboard/masajistas", label: "Masajistas", icon: Users },
   { href: "/admin/dashboard/servicios", label: "Servicios", icon: Sparkles },
   { href: "/admin/dashboard/clientes", label: "Clientes", icon: Contact },
@@ -128,7 +129,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
         aria-label="Secciones del panel"
         className="fixed inset-x-0 bottom-0 z-40 border-t border-ink/10 bg-ivory pb-[env(safe-area-inset-bottom)] lg:hidden"
       >
-        <ul className="grid grid-cols-5">
+        <ul className="grid grid-cols-6">
           {LINKS.map((link) => {
             const active = pathname.startsWith(link.href);
             return (
@@ -137,7 +138,7 @@ export function Sidebar({ fullName }: { fullName: string | null }) {
                   href={link.href}
                   aria-current={active ? "page" : undefined}
                   className={clsx(
-                    "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[0.7rem] font-semibold transition-colors",
+                    "flex min-h-14 flex-col items-center justify-center gap-0.5 text-[0.62rem] font-semibold tracking-tight transition-colors",
                     active ? "text-ink" : "text-ink-soft",
                   )}
                 >
