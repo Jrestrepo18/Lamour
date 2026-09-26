@@ -2,6 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { WhatsAppButton } from "@/components/layout/WhatsAppButton";
 import { MobileBookingBar } from "@/components/layout/MobileBookingBar";
+import { LiveRefresh } from "@/components/layout/LiveRefresh";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { businessJsonLd, websiteJsonLd } from "@/lib/seo";
 import { getI18n } from "@/i18n/server";
@@ -25,6 +26,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <Footer />
       <WhatsAppButton />
       <MobileBookingBar />
+      <LiveRefresh />
     </>
   );
 }

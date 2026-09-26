@@ -20,6 +20,7 @@ import { AdminPageHeader } from "./AdminPageHeader";
 import { PhotosField } from "./PhotosField";
 import { ScheduleEditor, scheduleProblem } from "./ScheduleEditor";
 import { ConfirmDialog, ErrorBanner, LoadingBlock, SheetActions, SwitchRow } from "./kit";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 
 type ProfileForm = {
   stageName: string;
@@ -56,14 +57,17 @@ export function MasseusesView({ token }: { token: string }) {
   const [profileOf, setProfileOf] = useState<MasseuseAdmin | "new" | null>(null);
   const [scheduleOf, setScheduleOf] = useState<MasseuseAdmin | null>(null);
 
-  async function load() {
-    setError(null);
+  async function load(silent = false) {
+    if (!silent) setError(null);
     try {
       setItems(await adminGetMasseuses(token));
     } catch (err) {
-      setError(apiMessage(err, "No se pudo cargar el equipo."));
+      if (!silent) setError(apiMessage(err, "No se pudo cargar el equipo."));
     }
   }
+
+  // Changes made from another device show up on their own; paused while a form is open.
+  useAutoRefresh(() => load(true), 30_000, profileOf === null && scheduleOf === null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount, not a render loop

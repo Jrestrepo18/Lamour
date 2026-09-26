@@ -49,6 +49,8 @@ export function idParam(value: string): string | null {
 /** Admin edits show on the public pages right away instead of waiting for the next revalidation. */
 export function refreshPublicPages() {
   revalidatePath("/", "layout");
+  // The public site lives under the [lang] root layout (/servicios is /es/servicios inside).
+  revalidatePath("/[lang]", "layout");
 }
 
 export const str = (v: unknown) => (typeof v === "string" ? v.trim() : "");

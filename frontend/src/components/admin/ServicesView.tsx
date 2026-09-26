@@ -14,6 +14,7 @@ import { chipClass, fieldClass, labelClass } from "@/lib/ui";
 import { AdminPageHeader } from "./AdminPageHeader";
 import { PhotosField } from "./PhotosField";
 import { ConfirmDialog, ErrorBanner, LoadingBlock, SheetActions, SwitchRow } from "./kit";
+import { useAutoRefresh } from "@/hooks/useAutoRefresh";
 
 type FormState = {
   serviceCategoryId: string;
@@ -61,16 +62,19 @@ export function ServicesView({ token }: { token: string }) {
   const [filter, setFilter] = useState<string | "all">("all");
   const [editing, setEditing] = useState<Service | "new" | null>(null);
 
-  async function load() {
-    setError(null);
+  async function load(silent = false) {
+    if (!silent) setError(null);
     try {
       const [cats, svcs] = await Promise.all([getServiceCategories(), adminGetServices(token)]);
       setCategories(cats.data);
       setServices(svcs);
     } catch (err) {
-      setError(apiMessage(err, "No se pudieron cargar los servicios."));
+      if (!silent) setError(apiMessage(err, "No se pudieron cargar los servicios."));
     }
   }
+
+  // Changes made from another device show up on their own; paused while a form is open.
+  useAutoRefresh(() => load(true), 30_000, editing === null);
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- initial fetch on mount, not a render loop
