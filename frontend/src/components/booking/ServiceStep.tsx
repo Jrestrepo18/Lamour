@@ -5,12 +5,18 @@ import clsx from "clsx";
 import { Check, Heart, Sparkles, Users } from "lucide-react";
 import { useFavorites } from "@/hooks/useFavorites";
 import type { Service, ServiceCategory } from "@/lib/types";
-import { CATEGORY_SHORT } from "@/lib/catalog";
+import { CATEGORY_SHORT, isAdultService } from "@/lib/catalog";
 import { formatCOP, formatDuration } from "@/lib/format";
 import { chipClass } from "@/lib/ui";
 import { ServiceThumb, StepHeading, wrapRailClass } from "./parts";
 
 const SAVED_ID = "__guardados";
+
+/** Share of a category's services that belong to the +18 section (0 = pure wellness, 1 = adult only). */
+function adultShare(c: ServiceCategory) {
+  if (c.services.length === 0) return 0;
+  return c.services.filter((s) => isAdultService(s, c.slug)).length / c.services.length;
+}
 
 /**
  * Categories as a one-line chip rail (not five stacked rows on a phone) and
@@ -26,8 +32,11 @@ export function ServiceStep({
   selected: Service | null;
   onSelect: (service: Service) => void;
 }) {
+  // Wellness first, adult (+18) rituals last: the step opens on a plain relaxation category, which is
+  // what people arriving from Google or Instagram expect (and what those platforms' policies allow).
+  const ordered = [...categories].sort((a, b) => adultShare(a) - adultShare(b));
   const [activeCategory, setActiveCategory] = useState(
-    () => selected?.serviceCategoryId ?? categories[0]?.id ?? "",
+    () => selected?.serviceCategoryId ?? ordered[0]?.id ?? "",
   );
   const { favorites } = useFavorites();
 
@@ -37,8 +46,8 @@ export function ServiceStep({
     savedServices.length > 0
       ? { id: SAVED_ID, name: "Guardados", slug: "guardados", description: null, highlight: null, displayOrder: -1, isActive: true, services: savedServices }
       : null;
-  const tabs = savedCategory ? [savedCategory, ...categories] : categories;
-  const category = tabs.find((c) => c.id === activeCategory) ?? categories[0];
+  const tabs = savedCategory ? [savedCategory, ...ordered] : ordered;
+  const category = tabs.find((c) => c.id === activeCategory) ?? ordered[0];
 
   return (
     <div>
