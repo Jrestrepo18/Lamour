@@ -18,7 +18,7 @@ const HIGHLIGHTS: Highlight[] = [
     title: "Terapeutas certificadas",
     text: "Técnica, presencia y trato profesional en cada ritual. Cada terapeuta es seleccionada por su formación y su discreción.",
     icon: Sparkles,
-    photo: PHOTOS.handsBack,
+    photo: PHOTOS.oiledBack,
   },
   {
     label: "Discreción",
@@ -32,7 +32,7 @@ const HIGHLIGHTS: Highlight[] = [
     title: "Reserva en tiempo real",
     text: "Elige tu servicio, tu terapeuta y un horario disponible en minutos, sin llamadas ni esperas. Te confirmamos por WhatsApp.",
     icon: CalendarCheck,
-    photo: PHOTOS.suite,
+    photo: PHOTOS.suitePhone,
   },
   {
     label: "A domicilio",

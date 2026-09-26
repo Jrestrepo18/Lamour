@@ -25,7 +25,7 @@ export default async function MasajistasPage() {
         eyebrow="Masajistas a domicilio en Medellín"
         title="Masajistas"
         description="Terapeutas certificadas, seleccionadas por su técnica, presencia y absoluta discreción. Elige con quién vivir tu experiencia."
-        photo={PHOTOS.handsBack}
+        photo={PHOTOS.shoulders}
       />
       <MasseusesSection masseuses={masseuses} />
       <FinalCta />

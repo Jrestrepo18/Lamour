@@ -40,7 +40,7 @@ export default async function MasajesTantricosPage() {
         eyebrow="Masajes tántricos a domicilio en Medellín"
         title="Rituales tántricos"
         description="Nuestras experiencias más íntimas, exclusivas para mayores de 18 años, en la privacidad de tu espacio y con absoluta discreción."
-        photo={PHOTOS.candles}
+        photo={PHOTOS.candlesGlow}
       />
       <CategoryNav categories={categories} extra={{ href: "/servicios", label: "Relajación y spa" }} />
       {sections}

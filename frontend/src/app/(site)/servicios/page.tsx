@@ -34,7 +34,7 @@ export default async function ServiciosPage() {
         eyebrow="Masajes a domicilio en Medellín"
         title="Servicios"
         description="Terapias con calor, experiencias en pareja y masajes de relajación y recuperación muscular, llevados hasta tu espacio."
-        photo={PHOTOS.oilBowl}
+        photo={PHOTOS.backFlowers}
       />
       <CategoryNav categories={categories} extra={{ href: "/masajes-tantricos", label: "Tántricos +18" }} />
       <AdultSectionDoor />

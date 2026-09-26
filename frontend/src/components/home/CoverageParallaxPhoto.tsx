@@ -63,8 +63,8 @@ export function CoverageParallaxPhoto() {
         <div className="absolute inset-[9%] overflow-hidden rounded-full border border-gold/25 shadow-xl">
           <div ref={imgRef} className="absolute inset-[-10%]">
             <FadeInImage
-              src={PHOTOS.suite.src}
-              alt={PHOTOS.suite.alt}
+              src={PHOTOS.herbalFlatlay.src}
+              alt={PHOTOS.herbalFlatlay.alt}
               fill
               sizes="(min-width: 1024px) 26rem, 82vw"
               className="object-cover"

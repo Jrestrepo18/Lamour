@@ -8,7 +8,7 @@ import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
 import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
 
-const HERO = PHOTOS.oilBack;
+const HERO = PHOTOS.aromaTowels;
 
 /**
  * Photographic hero, designed mobile-first (the main acquisition channel).

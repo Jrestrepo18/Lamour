@@ -13,7 +13,7 @@ import { formatCOP } from "@/lib/format";
 import { ReelViewer, type Reel } from "./ReelViewer";
 
 // The hero already uses the oil-pour photo, so the signature ritual leads with a different frame.
-const VISUALS = [PHOTOS.handsBack, PHOTOS.hotStone, PHOTOS.candles];
+const VISUALS = [PHOTOS.thumbsBack, PHOTOS.hotStone, PHOTOS.candles];
 
 /**
  * "Rituales destacados" as a Reels shelf: tall 9:16 thumbnails (slow drift,
