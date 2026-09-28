@@ -9,19 +9,22 @@ import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
 import { getI18n } from "@/i18n/server";
 
-const HERO = PHOTOS.heroWarm;
+const HERO = PHOTOS.heroStones;
+/** The photo's own backdrop (sampled from its edges), so the desktop crop blends into it seamlessly. */
+const PHOTO_BG = "#bcb2a6";
 
 /**
  * Photographic hero, designed mobile-first (the main acquisition channel).
  *
- * Phone: the photo runs full-bleed across the top ~60% of the screen and the
- * copy rises over it as an ivory sheet, with a full-width CTA in thumb reach.
- * Desktop: editorial split — copy on the warm gradient, the photo as a tall
- * rounded frame on the right with a small glass "discretion" note.
+ * The photo is a full-screen backdrop *under* the copy, fixed in place: when
+ * the visitor scrolls, the headline and everything after it rise over the
+ * photo and cover it, like a sheet sliding over a still image. Phones: stones
+ * in the upper half, copy at the bottom over a soft ivory fade. Desktop: the
+ * stones sit on the right, the copy on the left over the same warm beige.
  *
  * Server component with CSS-only entrance animations: nothing here waits for
  * JavaScript, so the photo and headline paint (and count as LCP) immediately.
- * The 3D statue now lives in the Manifesto section.
+ * HeroMotion only hides the fixed photo once the page has covered it.
  */
 export async function Hero() {
   const { t, href, lang } = await getI18n();
@@ -32,55 +35,43 @@ export async function Hero() {
     : null;
 
   return (
-    <section data-hero className="relative overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk">
+    <section data-hero className="relative">
       <HeroMotion />
-      <div className="pointer-events-none absolute -left-32 top-1/3 hidden h-[28rem] w-[28rem] rounded-full bg-gold/20 blur-[140px] lg:block" />
-      <Grain />
+
+      {/* Fixed backdrop: stays still while the page scrolls up over it. */}
+      <div data-hero-bg className="fixed inset-x-0 top-0 z-0 h-[100lvh] overflow-hidden" style={{ backgroundColor: PHOTO_BG }}>
+        <div className="absolute inset-0 lg:left-[36%]">
+          <Image
+            src={HERO.src}
+            alt={lang === "en" ? HERO.altEn : HERO.alt}
+            fill
+            priority
+            fetchPriority="high"
+            sizes="(min-width: 1024px) 64vw, 100vw"
+            className="animate-hero-settle object-cover object-[50%_38%]"
+          />
+          {/* Desktop: the photo's left edge melts into its own backdrop colour */}
+          <div
+            className="pointer-events-none absolute inset-y-0 left-0 hidden w-1/3 lg:block"
+            style={{ background: `linear-gradient(to right, ${PHOTO_BG}, transparent)` }}
+          />
+        </div>
+        {/* Legibility: a soft wash under the header, an ivory fade under the copy */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-ivory/70 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[64%] bg-gradient-to-t from-ivory via-ivory/85 to-transparent lg:hidden" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 hidden w-[62%] bg-gradient-to-r from-ivory/90 via-ivory/55 to-transparent lg:block" />
+        <Grain />
+      </div>
 
       {/* Phones: the hero fills the *whole* screen, including the strip behind the browser
-          bars (100lvh) — iOS Safari's floating toolbar is translucent, so with 100svh the next
-          section showed through underneath it on first load. The photo flexes to fill whatever
-          the copy leaves; the copy's bottom padding (below) lifts the hours line clear of the
-          bars, so the hero ends at the hours line and nothing from the next section peeks in. */}
-      <Container className="relative flex min-h-[100lvh] flex-col lg:grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
-        {/* Photo — first on phones (full-bleed), right column on desktop */}
-        <div className="relative -mx-5 min-h-56 flex-1 overflow-hidden sm:-mx-8 lg:order-last lg:flex-none lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(23,23,23,0.55)]">
-          <div data-hero-media className="absolute inset-0 will-change-transform">
-            <Image
-              src={HERO.src}
-              alt={lang === "en" ? HERO.altEn : HERO.alt}
-              fill
-              priority
-              fetchPriority="high"
-              sizes="(min-width: 1024px) 46vw, 100vw"
-              className="animate-hero-settle object-cover object-[50%_40%]"
-            />
-          </div>
-          {/* Warm veil that settles over the photo as the hero scrolls away (HeroMotion). */}
-          <div data-hero-veil className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
-          {/* Phone: soft wash under the transparent header + fade into the text sheet */}
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-espresso/25 to-transparent lg:hidden" />
+          bars (100lvh); the copy's bottom padding lifts the hours line clear of them. */}
+      <Container className="relative z-10 flex min-h-[100lvh] flex-col justify-end pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-28 lg:justify-center lg:pb-16">
+        <p className="mb-auto inline-flex w-fit animate-rise items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] lg:hidden">
+          <MapPin size={12} className="text-bronze" aria-hidden />
+          {t("Medellín · a domicilio", "Medellín · at your place")}
+        </p>
 
-          <p className="absolute left-5 top-[5.5rem] inline-flex animate-rise items-center gap-1.5 rounded-full bg-ivory/95 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] sm:left-8 lg:hidden">
-            <MapPin size={12} className="text-bronze" aria-hidden />
-            {t("Medellín · a domicilio", "Medellín · at your place")}
-          </p>
-
-          {/* Desktop: glass note on the photo */}
-          <div className="absolute bottom-6 left-6 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/30 bg-ivory/95 p-4 shadow-lg [animation-delay:700ms] lg:block">
-            <p className="flex items-center gap-2 text-sm font-semibold text-ink">
-              <ShieldCheck size={16} className="text-bronze" aria-hidden />
-              {t("Discreción total", "Complete discretion")}
-            </p>
-            <p className="mt-1 text-xs leading-relaxed text-ink-soft">
-              {t("Sin señalética ni uniformes. Solo tu experiencia, en tu espacio.", "No signage, no uniforms. Just your experience, in your space.")}
-            </p>
-          </div>
-        </div>
-
-        {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
-        <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
+        <div className="max-w-xl">
           <h1 className="eyebrow animate-rise">{t("Spa de masajes a domicilio en Medellín", "In-home massage spa in Medellín")}</h1>
           <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
             <span className="block text-ink-soft">{t("Estética", "Aesthetics")}</span>
@@ -136,6 +127,17 @@ export async function Hero() {
                 </Link>
               </>
             )}
+          </p>
+        </div>
+
+        {/* Desktop: glass note over the photo */}
+        <div className="absolute bottom-10 right-8 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/40 bg-ivory/85 p-4 shadow-lg backdrop-blur-sm [animation-delay:700ms] lg:block">
+          <p className="flex items-center gap-2 text-sm font-semibold text-ink">
+            <ShieldCheck size={16} className="text-bronze" aria-hidden />
+            {t("Discreción total", "Complete discretion")}
+          </p>
+          <p className="mt-1 text-xs leading-relaxed text-ink-soft">
+            {t("Sin señalética ni uniformes. Solo tu experiencia, en tu espacio.", "No signage, no uniforms. Just your experience, in your space.")}
           </p>
         </div>
 

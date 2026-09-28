@@ -38,9 +38,9 @@ export function ScrollTint({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <div ref={wrapperRef} className="relative">
-      <div aria-hidden className="absolute inset-0 -z-10 bg-ivory" />
-      <div ref={tintRef} aria-hidden className="absolute inset-0 -z-10 bg-beige opacity-0 will-change-[opacity]" />
+    <div ref={wrapperRef} className="relative z-10">
+      <div aria-hidden className="absolute inset-0 -z-10 rounded-t-[2rem] bg-ivory shadow-[0_-24px_48px_-28px_rgba(23,23,23,0.35)]" />
+      <div ref={tintRef} aria-hidden className="absolute inset-0 -z-10 rounded-t-[2rem] bg-beige opacity-0 will-change-[opacity]" />
       {children}
     </div>
   );

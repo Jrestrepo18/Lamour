@@ -17,8 +17,8 @@ export const PHOTOS = {
   oilBottle: { src: "/images/essential-oil-bottle.jpg", alt: "Aceite esencial en un frasco de vidrio ámbar", altEn: "Essential oil in an amber glass bottle", w: 1333, h: 2000 },
   herbal: { src: "/images/herbal-compress-massage.jpg", alt: "Masaje con compresas herbales tibias", altEn: "Massage with warm herbal compresses", w: 1333, h: 2000 },
   bathTray: { src: "/images/spa-bath-tray.jpg", alt: "Ritual de baño con velas, sales y aceites", altEn: "Bath ritual with candles, salts and oils", w: 1333, h: 2000 },
-  // Hero — Unsplash ("Massage a Domicile"), free under the Unsplash License.
-  heroWarm: { src: "/images/hero-warm-back-massage.jpg", alt: "Manos de terapeuta masajeando con aceite una espalda en luz cálida", altEn: "A therapist's hands massaging an oiled back in warm light", w: 2000, h: 3000 },
+  // Hero — Unsplash (Content Pixie), free under the Unsplash License.
+  heroStones: { src: "/images/hero-white-stones.jpg", alt: "Piedras blancas apiladas en equilibrio sobre un fondo beige", altEn: "White stones balanced in a stack on a beige background", w: 2400, h: 3600 },
   backFlowers: { src: "/images/back-frangipani-flowers.jpg", alt: "Espalda en reposo con flores de frangipani", altEn: "A resting back with frangipani flowers", w: 1333, h: 2000 },
   candlesGlow: { src: "/images/candles-glow.jpg", alt: "Velas encendidas en penumbra", altEn: "Candles glowing in the half-light", w: 1238, h: 1152 },
   oiledBack: { src: "/images/massage-oiled-back.jpg", alt: "Masaje con aceite sobre la espalda", altEn: "Oil massage on the back", w: 1440, h: 1920 },
