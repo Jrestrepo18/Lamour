@@ -115,8 +115,6 @@ export interface AppointmentCreatePayload {
   paymentMethod: PaymentMethod;
   /** Opted in to promotions by WhatsApp (unchecked by default). */
   acceptsMarketing?: boolean;
-  /** Express authorisation of the data policy (sensitive data included); bookings without it are rejected. */
-  acceptsDataPolicy: boolean;
   /** Language the client booked in, so the team replies in it. */
   language?: "es" | "en";
 }

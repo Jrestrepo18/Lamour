@@ -15,7 +15,6 @@ import { COL, db } from "./db";
 import { hashAdminPassword, reviewToken } from "./auth";
 import { reviewedAppointmentIds } from "./reviews";
 import { absoluteUrl } from "@/lib/seo";
-import { LEGAL } from "@/lib/legal";
 import { dateToLocal, formatHm, localToDate } from "./time";
 
 /*
@@ -403,8 +402,6 @@ export async function createAppointmentIfFree(a: AppointmentInput): Promise<Appo
     const next = (Number(counter.get("citas")) || 0) + 1;
     const code = `LA-${String(next).padStart(4, "0")}`;
     const now = FieldValue.serverTimestamp();
-    // Proof of the authorisation (Decreto 1074 de 2015, art. 2.2.2.25.2.5): which policy text, and when.
-    const dataAuthorization = { versionPolitica: LEGAL.policyVersion, incluyeSensibles: true, fecha: now, canal: "WEB" };
 
     tx.set(counterRef, { citas: next }, { merge: true });
     if (!client.exists) {
@@ -417,15 +414,11 @@ export async function createAppointmentIfFree(a: AppointmentInput): Promise<Appo
         fechaConsentimiento: a.acceptsMarketing ? now : null,
         origen: "WEB",
         refCampana: null,
-        autorizacionDatos: dataAuthorization,
         creadoEn: now,
       });
-    } else {
-      // Every booking renews the authorisation; opting in to promotions never switches an existing consent off.
-      tx.update(clientRef, {
-        autorizacionDatos: dataAuthorization,
-        ...(a.acceptsMarketing && client.get("aceptaMarketing") !== true ? { aceptaMarketing: true, fechaConsentimiento: now } : {}),
-      });
+    } else if (a.acceptsMarketing && client.get("aceptaMarketing") !== true) {
+      // Opting in again on a later booking; never switches an existing consent off.
+      tx.update(clientRef, { aceptaMarketing: true, fechaConsentimiento: now });
     }
     tx.create(store.collection(COL.citas).doc(code), {
       codigo: code,
@@ -447,7 +440,6 @@ export async function createAppointmentIfFree(a: AppointmentInput): Promise<Appo
       vestiduraSensorial: a.sensoryDressRequested,
       notas: a.notes ?? "",
       idioma: a.language,
-      autorizacionDatos: dataAuthorization,
       checkInAt: null,
       checkOutAt: null,
       confirmadaEn: null,

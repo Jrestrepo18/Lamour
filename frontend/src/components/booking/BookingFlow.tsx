@@ -92,7 +92,6 @@ export function BookingFlow({
       if (details.clientPhone.trim().length <= 6) return t("Ingresa un teléfono válido.", "Enter a valid phone number.");
       if (details.address.trim().length <= 3) return t("Ingresa tu dirección.", "Enter your address.");
       if (details.neighborhood.trim().length <= 1) return t("Ingresa tu barrio.", "Enter your neighbourhood or hotel.");
-      if (!details.acceptsDataPolicy) return t("Necesitamos tu autorización para tratar tus datos y poder agendar la cita.", "We need your authorisation to process your data before we can book.");
       return null;
     }
     return null;
@@ -113,8 +112,7 @@ export function BookingFlow({
         details.clientName.trim().length > 1 &&
         details.clientPhone.trim().length > 6 &&
         details.address.trim().length > 3 &&
-        details.neighborhood.trim().length > 1 &&
-        details.acceptsDataPolicy
+        details.neighborhood.trim().length > 1
       );
     }
     return true;
@@ -141,7 +139,6 @@ export function BookingFlow({
         notes: details.notes.trim() || undefined,
         paymentMethod: details.paymentMethod,
         acceptsMarketing: details.acceptsMarketing,
-        acceptsDataPolicy: details.acceptsDataPolicy,
         language: lang,
       });
       setConfirmedAt(appointment.startsAt);
