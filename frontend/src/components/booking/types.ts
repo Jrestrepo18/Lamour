@@ -12,6 +12,8 @@ export interface ClientDetails {
   sensoryDressRequested: boolean;
   extraMinutes: number;
   acceptsMarketing: boolean;
+  /** Authorisation of the data policy, sensitive data included — required to book. */
+  acceptsDataPolicy: boolean;
 }
 
 export const EMPTY_CLIENT_DETAILS: ClientDetails = {
@@ -26,4 +28,5 @@ export const EMPTY_CLIENT_DETAILS: ClientDetails = {
   sensoryDressRequested: false,
   extraMinutes: 0,
   acceptsMarketing: false,
+  acceptsDataPolicy: false,
 };

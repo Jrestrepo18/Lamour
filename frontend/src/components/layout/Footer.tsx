@@ -3,6 +3,7 @@ import { Clock3, MapPin, ShieldCheck } from "lucide-react";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
 import { Container } from "@/components/ui/Container";
 import { SITE } from "@/lib/seo";
+import { LEGAL } from "@/lib/legal";
 import { CITIES, cityPath } from "@/lib/cities";
 import { getI18n } from "@/i18n/server";
 import { LanguageSwitch } from "./LanguageSwitch";
@@ -128,6 +129,11 @@ export async function Footer() {
         <Container className="flex flex-col items-center justify-between gap-3 text-xs text-ivory/65 sm:flex-row">
           <p>
             © {new Date().getFullYear()} L&apos;AMOUR — {t("Estética y Sentidos", "Aesthetics & Senses")} · Medellín, Colombia
+            {LEGAL.legalName && LEGAL.nit && (
+              <span className="block sm:inline">
+                {" "}· {LEGAL.legalName} · NIT {LEGAL.nit}
+              </span>
+            )}
           </p>
           <div className="flex items-center gap-5">
             <Link href={href("/legal/privacidad")} className="transition-colors hover:text-gold">

@@ -66,7 +66,7 @@ export function AgeGate({ onConfirm }: { onConfirm: () => void }) {
               )}
             </p>
             <p className="mt-3 text-xs leading-relaxed text-ink-soft">
-              {t("Al continuar aceptas nuestra", "By continuing you accept our")}{" "}
+              {t("Al continuar declaras que eres mayor de edad. Puedes consultar nuestra", "By continuing you confirm you are of legal age. You can read our")}{" "}
               <Link href={href("/legal/privacidad")} className="text-bronze underline underline-offset-2 hover:text-ink">
                 {t("Política de Tratamiento de Datos", "Privacy Policy")}
               </Link>{" "}

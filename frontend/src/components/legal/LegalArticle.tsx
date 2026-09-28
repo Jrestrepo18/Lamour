@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/ui/Reveal";
+import { PENDING } from "@/lib/legal";
 
 export function LegalArticle({ children }: { children: ReactNode }) {
   return (
@@ -12,6 +13,11 @@ export function LegalArticle({ children }: { children: ReactNode }) {
       </Container>
     </section>
   );
+}
+
+/** A business datum from LEGAL, or a visible marker while it hasn't been filled in. */
+export function LegalValue({ value }: { value: string | null }) {
+  return value ? <>{value}</> : <mark className="rounded bg-gold/25 px-1 text-ink">{PENDING}</mark>;
 }
 
 export function LegalSection({ title, children }: { title: string; children: ReactNode }) {

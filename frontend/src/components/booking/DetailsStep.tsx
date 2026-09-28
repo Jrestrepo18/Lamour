@@ -205,6 +205,31 @@ export function DetailsStep({
           </div>
         </div>
 
+        {/* Ley 1581 de 2012 + Decreto 1074 de 2015: prior, express and informed authorisation, naming the sensitive data. */}
+        <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ink-soft">
+          <input
+            type="checkbox"
+            required
+            checked={details.acceptsDataPolicy}
+            onChange={(e) => set("acceptsDataPolicy", e.target.checked)}
+            className="mt-0.5 h-5 w-5 shrink-0 cursor-pointer accent-ink"
+          />
+          <span>
+            {t(
+              "Autorizo a L'AMOUR a tratar mis datos personales para gestionar esta reserva, incluidos los datos sensibles: el tipo de servicio elegido (que puede revelar aspectos de mi vida íntima) y la información de salud que yo escriba en las notas. Sé que no estoy obligado a entregar datos sensibles y que puedo consultar, corregir o pedir que se borren mis datos, según la",
+              "I authorise L'AMOUR to process my personal data to manage this booking, including sensitive data: the type of service chosen (which may reveal aspects of my intimate life) and any health information I write in the notes. I know I'm not required to provide sensitive data and that I can access, correct or ask for deletion of my data, under the",
+            )}{" "}
+            <a href={href("/legal/privacidad")} target="_blank" className="underline decoration-gold/60 underline-offset-4 hover:text-ink">
+              {t("Política de Tratamiento de Datos", "Privacy Policy")}
+            </a>{" "}
+            {t("y acepto los", "and I accept the")}{" "}
+            <a href={href("/legal/terminos")} target="_blank" className="underline decoration-gold/60 underline-offset-4 hover:text-ink">
+              {t("Términos y Condiciones", "Terms & Conditions")}
+            </a>
+            . <span className="text-ink-soft/80">{t("(obligatorio)", "(required)")}</span>
+          </span>
+        </label>
+
         <label className="flex cursor-pointer items-start gap-3 text-sm leading-relaxed text-ink-soft">
           <input
             type="checkbox"
@@ -215,10 +240,7 @@ export function DetailsStep({
           <span>
             {t("Quiero recibir promociones de L'AMOUR por WhatsApp", "I'd like to receive L'AMOUR promotions on WhatsApp")}{" "}
             <span className="text-ink-soft/80">{t("(opcional)", "(optional)")}</span>.{" "}
-            {t("Puedes darte de baja cuando quieras respondiendo “NO”.", "You can opt out any time by replying “NO”.")}{" "}
-            <a href={href("/legal/privacidad")} target="_blank" className="underline decoration-gold/60 underline-offset-4 hover:text-ink">
-              {t("Privacidad", "Privacy")}
-            </a>
+            {t("Puedes darte de baja cuando quieras respondiendo “NO”.", "You can opt out any time by replying “NO”.")}
           </span>
         </label>
       </fieldset>

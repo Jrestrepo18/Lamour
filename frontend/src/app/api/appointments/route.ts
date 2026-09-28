@@ -19,6 +19,8 @@ export const POST = route(async (request: Request) => {
     return fail("Faltan datos de contacto o de dirección.");
   }
   if (Number.isNaN(parseLocal(startsAt))) return fail("Horario no válido.");
+  // Ley 1581 de 2012: no booking is stored without the client's prior, express authorisation.
+  if (b.acceptsDataPolicy !== true) return fail("Debes autorizar el tratamiento de tus datos personales para reservar.");
   const paymentMethod = PAYMENTS.includes(b.paymentMethod as PaymentMethod) ? (b.paymentMethod as PaymentMethod) : "Cash";
 
   const serviceId = id(b.serviceId);
