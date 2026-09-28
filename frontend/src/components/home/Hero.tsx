@@ -4,12 +4,12 @@ import { MapPin, ShieldCheck } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Grain } from "@/components/ui/Grain";
 import { WhatsAppIcon } from "@/components/ui/WhatsAppIcon";
-import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
+import { HeroMotion } from "./HeroMotion";
 import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
 import { getI18n } from "@/i18n/server";
 
-const HERO = PHOTOS.aromaTowels;
+const HERO = PHOTOS.heroOil;
 
 /**
  * Photographic hero, designed mobile-first (the main acquisition channel).
@@ -32,7 +32,8 @@ export async function Hero() {
     : null;
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk">
+    <section data-hero className="relative overflow-hidden bg-gradient-to-br from-ivory via-champagne/35 to-silk">
+      <HeroMotion />
       <div className="pointer-events-none absolute -left-32 top-1/3 hidden h-[28rem] w-[28rem] rounded-full bg-gold/20 blur-[140px] lg:block" />
       <Grain />
 
@@ -44,7 +45,7 @@ export async function Hero() {
       <Container className="relative flex min-h-[100lvh] flex-col lg:grid lg:min-h-dvh lg:grid-cols-[1fr_0.95fr] lg:items-center lg:gap-16 lg:pb-12 lg:pt-28">
         {/* Photo — first on phones (full-bleed), right column on desktop */}
         <div className="relative -mx-5 min-h-56 flex-1 overflow-hidden sm:-mx-8 lg:order-last lg:flex-none lg:mx-0 lg:h-[min(80dvh,46rem)] lg:rounded-[2.5rem] lg:shadow-[0_40px_80px_-40px_rgba(23,23,23,0.55)]">
-          <ParallaxMedia>
+          <div data-hero-media className="absolute inset-0 will-change-transform">
             <Image
               src={HERO.src}
               alt={lang === "en" ? HERO.altEn : HERO.alt}
@@ -52,9 +53,11 @@ export async function Hero() {
               priority
               fetchPriority="high"
               sizes="(min-width: 1024px) 46vw, 100vw"
-              className="animate-hero-settle object-cover object-[50%_35%]"
+              className="animate-hero-settle object-cover object-[64%_40%] lg:object-[58%_45%]"
             />
-          </ParallaxMedia>
+          </div>
+          {/* Warm veil that settles over the photo as the hero scrolls away (HeroMotion). */}
+          <div data-hero-veil className="pointer-events-none absolute inset-0 bg-espresso opacity-0" />
           {/* Phone: soft wash under the transparent header + fade into the text sheet */}
           <div className="pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-ivory/80 to-transparent lg:hidden" />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-espresso/25 to-transparent lg:hidden" />
@@ -77,7 +80,7 @@ export async function Hero() {
         </div>
 
         {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
-        <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
+        <div data-hero-copy className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
           <h1 className="eyebrow animate-rise">{t("Spa de masajes a domicilio en Medellín", "In-home massage spa in Medellín")}</h1>
           <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
             <span className="block text-ink-soft">{t("Estética", "Aesthetics")}</span>
@@ -134,6 +137,14 @@ export async function Hero() {
               </>
             )}
           </p>
+        </div>
+
+        {/* Desktop scroll cue: a slow line inviting the first scroll; fades as soon as it starts. */}
+        <div data-hero-cue aria-hidden className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 flex-col items-center gap-2 lg:flex">
+          <span className="text-[0.6rem] font-semibold uppercase tracking-[0.35em] text-ink-soft">{t("Desliza", "Scroll")}</span>
+          <span className="relative h-10 w-px overflow-hidden bg-ink/15">
+            <span className="absolute inset-x-0 top-0 h-1/2 animate-scroll-cue bg-bronze" />
+          </span>
         </div>
       </Container>
     </section>

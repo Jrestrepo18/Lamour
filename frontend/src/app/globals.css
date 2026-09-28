@@ -81,6 +81,7 @@
   --animate-kenburns: kenburns 16s ease-in-out infinite alternate;
   --animate-shimmer: shimmer 2.5s linear infinite;
   --animate-radar-pulse: radar-pulse 3s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  --animate-scroll-cue: scroll-cue 2.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 
   @keyframes fade-up {
     from {
@@ -158,6 +159,14 @@
     }
   }
 
+  @keyframes scroll-cue {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(200%);
+    }
+  }
   @keyframes kenburns {
     from {
       transform: scale(1) translate3d(0, 0, 0);
