@@ -55,7 +55,7 @@ export default async function ServiciosPage() {
         )}
         photo={PHOTOS.backFlowers}
       />
-      <CategoryNav categories={categories} extra={{ href: "/masajes-tantricos", label: t("Tántricos +18", "Tantric 18+") }} />
+      <CategoryNav categories={categories} extra={{ href: "/masajes-tantricos", label: t("Solo adultos +18", "Adults only 18+") }} />
       <AdultSectionDoor />
       {sections}
       <FinalCta className={lastBackground} />

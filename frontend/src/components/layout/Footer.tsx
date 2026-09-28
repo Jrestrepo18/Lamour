@@ -26,7 +26,7 @@ export async function Footer() {
   const EXPLORE = [
     { href: "/", label: t("Inicio", "Home") },
     { href: "/servicios", label: t("Servicios", "Services") },
-    { href: "/masajes-tantricos", label: t("Masajes tántricos", "Tantric massages") },
+    { href: "/masajes-tantricos", label: t("Rituales para adultos (+18)", "Adults-only rituals (18+)") },
     { href: "/servicios#pareja", label: t("Experiencias en pareja", "Couples experiences") },
     { href: "/masajistas", label: t("Nuestro equipo", "Our team") },
     { href: "/masajes-a-domicilio", label: t("Zonas de cobertura", "Service areas") },

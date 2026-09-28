@@ -187,8 +187,8 @@ export default async function MunicipioPage({ params }: Props) {
             >
               <ShieldCheck size={15} aria-hidden />
               {t(
-                `También en ${city.name}: rituales tántricos (solo mayores de 18)`,
-                `Also in ${city.name}: tantric rituals (adults only, 18+)`,
+                `También en ${city.name}: rituales exclusivos para adultos (+18)`,
+                `Also in ${city.name}: adults-only rituals (18+)`,
               )}
             </Link>
           </div>

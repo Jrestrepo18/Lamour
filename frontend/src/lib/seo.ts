@@ -37,7 +37,7 @@ export const SITE = {
   shortName: "L'AMOUR",
   locale: "es_CO",
   description:
-    "Masajes a domicilio en Medellín y el Valle de Aburrá: relajación, piedras volcánicas, masajes en pareja y tántricos. Discreción total. Reserva en línea.",
+    "Masajes a domicilio en Medellín y el Valle de Aburrá: relajación, piedras volcánicas y masajes en pareja con terapeutas certificadas. Discreción total. Reserva en línea.",
   areaServed: ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"],
   openingHours: { opens: "09:00", closes: "21:00" },
   /** Business WhatsApp with country code (57 = Colombia); overridable per environment. */
@@ -55,7 +55,7 @@ export const absoluteUrl = (path = "/") => `${SITE.url}${path.startsWith("/") ? 
 export const siteDescription = (lang: Locale) =>
   translator(lang)(
     SITE.description,
-    "In-home massage in Medellín and the Aburrá Valley: relaxation, volcanic stones, couples and tantric massages. Complete discretion. Book online.",
+    "In-home massage in Medellín and the Aburrá Valley: relaxation, volcanic stones and couples massages by certified therapists. Complete discretion. Book online.",
   );
 
 /** hreflang pairs for a page, from its Spanish (unprefixed) path. */

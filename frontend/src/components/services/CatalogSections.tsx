@@ -113,7 +113,7 @@ export async function AdultSectionDoor() {
                 <ShieldCheck size={14} aria-hidden /> {t("Solo mayores de 18", "Adults only (18+)")}
               </p>
               <h2 className="mt-4 font-serif text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-                {t("Masajes tántricos y rituales sensoriales", "Tantric massages and sensory rituals")}
+                {t("Rituales exclusivos para adultos", "Adults-only rituals")}
               </h2>
               <p className="mt-3 text-base leading-relaxed text-ink-soft">
                 {t(
@@ -123,7 +123,7 @@ export async function AdultSectionDoor() {
               </p>
             </div>
             <span className="inline-flex min-h-12 shrink-0 items-center gap-2 self-start rounded-full bg-ink px-6 text-sm font-semibold text-ivory sm:self-center">
-              {t("Ver rituales tántricos", "See tantric rituals")}
+              {t("Ver rituales +18", "See 18+ rituals")}
               <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </span>
           </Link>

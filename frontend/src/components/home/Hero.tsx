@@ -80,8 +80,8 @@ export async function Hero() {
 
           <p className="mt-4 max-w-md animate-rise text-base leading-relaxed text-ink-soft [animation-delay:160ms] sm:text-lg lg:mt-8 [@media(max-height:520px)]:hidden">
             {t(
-              "Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu espacio. Una pausa para respirar.",
-              "Tantric, relaxation and couples massage rituals, brought to the privacy of your own space. A pause to breathe.",
+              "Rituales de masaje, relajación y terapias en pareja, llevados hasta la privacidad de tu espacio. Una pausa para respirar.",
+              "Massage, relaxation and couples rituals, brought to the privacy of your own space. A pause to breathe.",
             )}
           </p>
 

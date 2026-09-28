@@ -54,7 +54,7 @@ export function FeaturedServices({ services }: { services: (Service & { href: st
               href={href("/masajes-tantricos")}
               className="group inline-flex items-center gap-1.5 text-sm font-medium text-bronze underline decoration-gold/60 underline-offset-8 transition-colors hover:text-ink hover:decoration-ink"
             >
-              {t("Rituales tántricos (+18)", "Tantric rituals (18+)")}
+              {t("Rituales para adultos (+18)", "Adults-only rituals (18+)")}
               <ArrowUpRight size={16} className="transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </Link>
           </Reveal>
