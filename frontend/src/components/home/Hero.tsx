@@ -65,20 +65,20 @@ export async function Hero() {
 
       {/* Phones: the hero fills the *whole* screen, including the strip behind the browser
           bars (100lvh); the copy's bottom padding lifts the hours line clear of them. */}
-      <Container className="relative z-10 flex min-h-[100lvh] flex-col justify-end pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-28 lg:justify-center lg:pb-16">
-        <p className="mb-auto inline-flex w-fit animate-rise items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] lg:hidden">
+      <Container className="relative z-10 flex min-h-[100lvh] flex-col justify-end pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-28 lg:justify-center lg:pb-16 [@media(max-height:520px)]:pb-6 [@media(max-height:520px)]:pt-20">
+        <p className="mb-auto inline-flex w-fit [@media(max-height:520px)]:hidden animate-rise items-center gap-1.5 rounded-full bg-ivory/90 px-3 py-1.5 text-xs font-medium text-ink shadow-sm [animation-delay:500ms] lg:hidden">
           <MapPin size={12} className="text-bronze" aria-hidden />
           {t("Medellín · a domicilio", "Medellín · at your place")}
         </p>
 
         <div className="max-w-xl">
           <h1 className="eyebrow animate-rise">{t("Spa de masajes a domicilio en Medellín", "In-home massage spa in Medellín")}</h1>
-          <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
-            <span className="block text-ink-soft">{t("Estética", "Aesthetics")}</span>
-            <span className="block text-ink">{t("y Sentidos", "& Senses")}</span>
+          <p className="mt-4 animate-rise font-serif text-[clamp(2.25rem,min(12.5vw,8.5svh),4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
+            <span className="block whitespace-nowrap text-ink-soft">{t("Estética", "Aesthetics")}</span>
+            <span className="block whitespace-nowrap text-ink">{t("y Sentidos", "& Senses")}</span>
           </p>
 
-          <p className="mt-4 max-w-md animate-rise text-base leading-relaxed text-ink-soft [animation-delay:160ms] sm:text-lg lg:mt-8">
+          <p className="mt-4 max-w-md animate-rise text-base leading-relaxed text-ink-soft [animation-delay:160ms] sm:text-lg lg:mt-8 [@media(max-height:520px)]:hidden">
             {t(
               "Rituales de masaje tántrico, relajación y terapia de pareja, llevados hasta la privacidad de tu espacio. Una pausa para respirar.",
               "Tantric, relaxation and couples massage rituals, brought to the privacy of your own space. A pause to breathe.",
@@ -86,7 +86,7 @@ export async function Hero() {
           </p>
 
           {/* Instagram business-profile action row: two twin buttons, then a quiet status line. */}
-          <div className="mt-7 grid max-w-md animate-rise grid-cols-2 gap-2 [animation-delay:240ms] lg:mt-10">
+          <div className="mt-7 grid max-w-md animate-rise grid-cols-2 gap-2 [animation-delay:240ms] lg:mt-10 [@media(max-height:520px)]:mt-4">
             <Link
               href={href("/reservar")}
               className="inline-flex min-h-12 items-center justify-center rounded-xl bg-ink px-4 text-[0.95rem] font-semibold text-ivory shadow-[0_12px_28px_-16px_rgba(23,23,23,0.8)] transition-colors duration-200 hover:bg-espresso active:scale-[0.98]"
@@ -131,7 +131,7 @@ export async function Hero() {
         </div>
 
         {/* Desktop: glass note over the photo */}
-        <div className="absolute bottom-10 right-8 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/40 bg-ivory/85 p-4 shadow-lg backdrop-blur-sm [animation-delay:700ms] lg:block">
+        <div className="absolute bottom-10 right-28 hidden max-w-[16rem] animate-rise rounded-2xl border border-ivory/40 bg-ivory/85 p-4 shadow-lg backdrop-blur-sm [animation-delay:700ms] lg:block">
           <p className="flex items-center gap-2 text-sm font-semibold text-ink">
             <ShieldCheck size={16} className="text-bronze" aria-hidden />
             {t("Discreción total", "Complete discretion")}
