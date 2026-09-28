@@ -12,68 +12,9 @@ import { Reveal } from "@/components/ui/Reveal";
 import { JsonLd } from "@/components/seo/JsonLd";
 import { faqJsonLd, SITE } from "@/lib/seo";
 import { PHOTOS, photoAlt } from "@/lib/photos";
-import type { Locale } from "@/i18n/config";
+import { FAQS as ALL_FAQS, faqText } from "@/lib/faq";
+import { FaqExplorer } from "./FaqExplorer";
 import { useI18n } from "@/i18n/I18nProvider";
-
-const FAQS_ES = [
-  {
-    q: "¿Cómo reservo una cita?",
-    a: "Elige tu ritual, tu masajista y un horario disponible en nuestro sistema de reservas en tiempo real, confirma tus datos y listo — te contactamos por WhatsApp para coordinar la llegada.",
-  },
-  {
-    q: "¿Puedo elegir a mi masajista?",
-    a: "Sí. Conoce a nuestro equipo, revisa sus perfiles y elige con quién quieres vivir la experiencia antes de reservar.",
-  },
-  {
-    q: "¿El servicio es discreto?",
-    a: "Absolutamente. Nuestras terapeutas llegan sin nada que revele el tipo de servicio, y toda la comunicación se maneja con total confidencialidad.",
-  },
-  {
-    q: "¿Qué zonas cubren?",
-    a: "Atendemos Medellín y todo el Valle de Aburrá (Envigado, Sabaneta, Itagüí, Bello, La Estrella y Caldas), y también Rionegro, en el Oriente antioqueño.",
-  },
-  {
-    q: "¿Qué métodos de pago aceptan?",
-    a: "Efectivo, transferencia y tarjeta. Eliges el método que prefieras al momento de reservar.",
-  },
-  {
-    q: "¿Puedo reservar una experiencia en pareja?",
-    a: "Sí, tenemos rituales diseñados especialmente para vivir en pareja, incluyendo experiencias donde cada quien tiene su propio terapeuta al mismo tiempo.",
-  },
-];
-
-const FAQS_EN = [
-  {
-    q: "How do I book an appointment?",
-    a: "Choose your ritual, your therapist and an open time in our real-time booking system, confirm your details and you're done — we'll message you on WhatsApp to arrange the visit.",
-  },
-  {
-    q: "Can I choose my therapist?",
-    a: "Yes. Meet our team, look through their profiles and choose who you'd like to share the experience with before you book.",
-  },
-  {
-    q: "Is the service discreet?",
-    a: "Completely. Our therapists arrive with nothing that reveals the type of service, and every conversation is handled in full confidence.",
-  },
-  {
-    q: "Which areas do you cover?",
-    a: "Medellín and the whole Aburrá Valley (Envigado, Sabaneta, Itagüí, Bello, La Estrella and Caldas), plus Rionegro in eastern Antioquia. Homes, apartments and hotels.",
-  },
-  {
-    q: "Which payment methods do you accept?",
-    a: "Cash, bank transfer and card. You choose the method you prefer when you book. Prices are in Colombian pesos (COP).",
-  },
-  {
-    q: "Can I book a couples experience?",
-    a: "Yes, we have rituals designed for couples, including experiences where each of you has your own therapist at the same time.",
-  },
-  {
-    q: "Do your therapists speak English?",
-    a: "Tell us in the booking notes or on WhatsApp that you'd prefer English and we'll do our best to match you with a therapist who can communicate comfortably with you.",
-  },
-];
-
-export const faqsFor = (lang: Locale) => (lang === "en" ? FAQS_EN : FAQS_ES);
 
 type Message = { id: number; from: "brand" | "client"; text: string };
 
@@ -84,15 +25,16 @@ const GREETING = {
 const TYPING_MS = 900;
 
 /**
- * FAQ as a direct-message conversation: the visitor taps a suggested question,
- * it lands as their bubble, L'AMOUR "is typing…", and the answer arrives as a
- * gold bubble with "Visto". Same questions and FAQPage structured data as
- * before (every answer stays in the JSON-LD for search engines); the first
- * exchange is server-rendered so the pattern is visible immediately.
+ * FAQ in two layers. On top, a short direct-message conversation with the four
+ * most common questions: the visitor taps one, it lands as their bubble,
+ * L'AMOUR "is typing…", and the answer arrives with "Visto" — the warm, human
+ * part. Below it, every question grouped by topic with search (FaqExplorer),
+ * so nothing has to be tapped one by one to be found. The FAQPage data lists
+ * them all, from the same source (lib/faq.ts).
  */
 export function FaqSection() {
   const { t, href, lang } = useI18n();
-  const FAQS = faqsFor(lang);
+  const FAQS = ALL_FAQS.filter((f) => f.quick).map((f) => ({ q: f.q[lang], a: f.a[lang] }));
   const [thread, setThread] = useState<Message[]>([
     { id: 0, from: "brand", text: GREETING[lang] },
     { id: 1, from: "client", text: FAQS[0].q },
@@ -135,7 +77,7 @@ export function FaqSection() {
 
   return (
     <section id="faq" className="py-16 sm:py-32">
-      <JsonLd data={faqJsonLd(FAQS)} />
+      <JsonLd data={faqJsonLd(faqText(lang))} />
       <Container>
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
           <div>
@@ -144,8 +86,8 @@ export function FaqSection() {
                 eyebrow={t("Preguntas frecuentes", "Frequently asked questions")}
                 title={t("Resolvemos tus dudas", "We answer your questions")}
                 description={t(
-                  "Pregúntanos lo que quieras: toca una pregunta y te respondemos al instante.",
-                  "Ask us anything: tap a question and we'll answer right away.",
+                  "Toca una pregunta en el chat o busca la tuya en la lista completa, más abajo.",
+                  "Tap a question in the chat, or find yours in the full list below.",
                 )}
               />
             </Reveal>
@@ -262,6 +204,8 @@ export function FaqSection() {
             </div>
           </Reveal>
         </div>
+
+        <FaqExplorer />
       </Container>
     </section>
   );
