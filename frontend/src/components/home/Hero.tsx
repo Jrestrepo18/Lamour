@@ -9,7 +9,7 @@ import { PHOTOS } from "@/lib/photos";
 import { SITE } from "@/lib/seo";
 import { getI18n } from "@/i18n/server";
 
-const HERO = PHOTOS.heroOil;
+const HERO = PHOTOS.heroWarm;
 
 /**
  * Photographic hero, designed mobile-first (the main acquisition channel).
@@ -53,7 +53,7 @@ export async function Hero() {
               priority
               fetchPriority="high"
               sizes="(min-width: 1024px) 46vw, 100vw"
-              className="animate-hero-settle object-cover object-[64%_40%] lg:object-[58%_45%]"
+              className="animate-hero-settle object-cover object-[50%_40%]"
             />
           </div>
           {/* Warm veil that settles over the photo as the hero scrolls away (HeroMotion). */}
@@ -80,7 +80,7 @@ export async function Hero() {
         </div>
 
         {/* Copy — an ivory sheet rising over the photo on phones, plain column on desktop */}
-        <div data-hero-copy className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
+        <div className="relative -mx-5 -mt-8 shrink-0 rounded-t-[2rem] bg-ivory px-5 pb-[max(4.5rem,calc(100lvh-100svh+env(safe-area-inset-bottom)+1.75rem))] pt-7 sm:-mx-8 sm:px-8 lg:mx-0 lg:mt-0 lg:rounded-none lg:bg-transparent lg:p-0">
           <h1 className="eyebrow animate-rise">{t("Spa de masajes a domicilio en Medellín", "In-home massage spa in Medellín")}</h1>
           <p className="mt-4 animate-rise font-serif text-[clamp(2.75rem,12.5vw,4.25rem)] font-bold leading-[0.92] tracking-tight [animation-delay:80ms] lg:text-display">
             <span className="block text-ink-soft">{t("Estética", "Aesthetics")}</span>
