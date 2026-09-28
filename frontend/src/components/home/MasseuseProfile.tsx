@@ -111,7 +111,7 @@ export function MasseuseProfile({
                 <span className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-gradient-to-br from-champagne via-silk to-champagne/60">
                   {avatar ? (
                     // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
-                    <img src={avatar} alt="" className="h-full w-full object-cover" />
+                    <img src={avatar} alt={masseuse.stageName} className="h-full w-full object-cover" />
                   ) : (
                     <span className="font-serif text-3xl font-semibold text-bronze">{initial(masseuse.stageName)}</span>
                   )}
@@ -168,7 +168,7 @@ export function MasseuseProfile({
                       {/* eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host */}
                       <img
                         src={src}
-                        alt=""
+                        alt={t(`${masseuse.stageName}, masajista de L'AMOUR — foto ${i + 1}`, `${masseuse.stageName}, L'AMOUR therapist — photo ${i + 1}`)}
                         loading="lazy"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />

@@ -66,7 +66,7 @@ const STORY_SECONDS = 6;
  * gesture every visitor already knows, instead of a plain feature list.
  */
 export function TrustHighlights() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const HIGHLIGHTS = highlights(t);
   const [open, setOpen] = useState<number | null>(null);
   const [seen, setSeen] = useState<Set<number>>(new Set());
@@ -101,7 +101,7 @@ export function TrustHighlights() {
                     <span className="relative block h-16 w-16 overflow-hidden rounded-full sm:h-20 sm:w-20">
                       <Image
                         src={h.photo.src}
-                        alt=""
+                        alt={lang === "en" ? h.photo.altEn : h.photo.alt}
                         fill
                         sizes="80px"
                         className="object-cover transition-transform duration-700 ease-out group-hover:scale-110"

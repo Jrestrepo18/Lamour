@@ -8,11 +8,17 @@ import { localePath, LOCALE_TAG, OG_LOCALE, translator, type Locale } from "@/i1
  * strings, so titles/descriptions/structured data never drift apart.
  */
 
+/** The public domain. Canonicals, sitemap and Open Graph must always point here, never at a *.vercel.app alias. */
+const PRODUCTION_URL = "https://www.lamour.style";
+
 function resolveSiteUrl() {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/$/, "");
-  // Vercel exposes the production domain at build time.
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+  // On Vercel, VERCEL_PROJECT_PRODUCTION_URL can be the project's vercel.app alias rather than the
+  // custom domain — which made every page canonicalise to lamour-32ry.vercel.app. Production uses
+  // the real domain; preview deployments keep their own URL (they're noindex anyway).
+  if (process.env.VERCEL_ENV === "production") return PRODUCTION_URL;
+  const vercel = process.env.VERCEL_URL;
   if (vercel) return `https://${vercel}`;
   // A production server without a known domain would publish canonicals, the sitemap and
   // Open Graph URLs pointing at localhost — fail loudly instead of deploying that silently.
@@ -31,7 +37,7 @@ export const SITE = {
   shortName: "L'AMOUR",
   locale: "es_CO",
   description:
-    "Spa de masajes a domicilio en Medellín y el Valle de Aburrá: relajación, piedras volcánicas y masajes en pareja con terapeutas certificadas. Reserva en línea.",
+    "Masajes a domicilio en Medellín y el Valle de Aburrá: relajación, piedras volcánicas, masajes en pareja y tántricos. Discreción total. Reserva en línea.",
   areaServed: ["Medellín", "Envigado", "Sabaneta", "Itagüí", "Bello", "La Estrella", "Caldas", "Rionegro"],
   openingHours: { opens: "09:00", closes: "21:00" },
   /** Business WhatsApp with country code (57 = Colombia); overridable per environment. */
@@ -49,7 +55,7 @@ export const absoluteUrl = (path = "/") => `${SITE.url}${path.startsWith("/") ? 
 export const siteDescription = (lang: Locale) =>
   translator(lang)(
     SITE.description,
-    "In-home massage spa in Medellín and the Aburrá Valley: relaxation, volcanic stones and couples massages by certified therapists. Book online.",
+    "In-home massage in Medellín and the Aburrá Valley: relaxation, volcanic stones, couples and tantric massages. Complete discretion. Book online.",
   );
 
 /** hreflang pairs for a page, from its Spanish (unprefixed) path. */

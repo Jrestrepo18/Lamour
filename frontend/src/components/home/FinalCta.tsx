@@ -5,7 +5,7 @@ import { Container } from "@/components/ui/Container";
 import { LinkButton } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
 import { ParallaxMedia } from "@/components/motion/ParallaxMedia";
-import { PHOTOS } from "@/lib/photos";
+import { PHOTOS, photoAlt } from "@/lib/photos";
 import { getI18n } from "@/i18n/server";
 
 /**
@@ -15,7 +15,7 @@ import { getI18n } from "@/i18n/server";
  * background precedes it, so there is never a hard seam above this section.
  */
 export async function FinalCta({ className }: { className?: string }) {
-  const { t, href } = await getI18n();
+  const { t, href, lang } = await getI18n();
   // `className` lets a page paint the same background as the section above (e.g. a tinted
   // catalog section), so the photo's fade starts from exactly that colour.
   return (
@@ -35,7 +35,7 @@ export async function FinalCta({ className }: { className?: string }) {
       >
         <div className="absolute inset-0 overflow-hidden">
           <ParallaxMedia mode="through" distance={10}>
-            <Image src={PHOTOS.footBw.src} alt="" fill sizes="100vw" className="object-cover object-[50%_35%]" />
+            <Image src={PHOTOS.footBw.src} alt={photoAlt(PHOTOS.footBw, lang)} fill sizes="100vw" className="object-cover object-[50%_35%]" />
           </ParallaxMedia>
         </div>
         <div

@@ -74,7 +74,7 @@ export async function HowItWorksSection() {
                         {whatsapp ? (
                           <WhatsAppIcon size={23} />
                         ) : (
-                          <Image src="/icon.svg" alt="" width={40} height={40} className="h-10 w-10" />
+                          <Image src="/icon.svg" alt="L'AMOUR" width={40} height={40} className="h-10 w-10" />
                         )}
                       </span>
 

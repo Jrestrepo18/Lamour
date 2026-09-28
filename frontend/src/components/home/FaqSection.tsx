@@ -170,7 +170,7 @@ export function FaqSection() {
               {/* Chat header */}
               <div className="flex items-center gap-3 border-b border-ink/10 px-5 py-4">
                 <span className="relative">
-                  <Image src="/icon.svg" alt="" width={40} height={40} className="h-10 w-10 rounded-full" />
+                  <Image src="/icon.svg" alt="L'AMOUR" width={40} height={40} className="h-10 w-10 rounded-full" />
                   <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-white bg-emerald-500" />
                 </span>
                 <div className="leading-tight">

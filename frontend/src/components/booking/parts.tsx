@@ -28,9 +28,9 @@ export function ServiceThumb({
     <div className={clsx("relative overflow-hidden bg-silk", className)}>
       {service.imageUrl ? (
         // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
-        <img src={service.imageUrl} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" />
+        <img src={service.imageUrl} alt={service.name} loading="lazy" decoding="async" className="h-full w-full object-cover" />
       ) : (
-        <Image src={stand.src} alt="" fill sizes={sizes} className="object-cover" />
+        <Image src={stand.src} alt={service.name} fill sizes={sizes} className="object-cover" />
       )}
     </div>
   );
@@ -66,7 +66,7 @@ export function StoryAvatar({
         >
           {masseuse.photoUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- admin-uploaded image served by the API host
-            <img src={masseuse.photoUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+            <img src={masseuse.photoUrl} alt={masseuse.stageName} loading="lazy" className="h-full w-full object-cover" />
           ) : (
             <span className="font-serif font-semibold text-bronze" style={{ fontSize: size * 0.38 }}>
               {masseuse.stageName.slice(0, 1).toUpperCase()}
