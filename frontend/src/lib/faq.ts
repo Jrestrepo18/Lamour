@@ -5,8 +5,8 @@ import type { Locale } from "@/i18n/config";
  * the chat (the `quick` ones), the full list and the FAQPage structured data.
  *
  * Only facts the business already states elsewhere (catalog, booking flow,
- * Términos y Condiciones, Política de Datos). Questions whose answer the owner
- * hasn't confirmed yet — whether the therapist brings a table, minimum notice,
+ * Términos y Condiciones, Política de Datos) or the owner confirmed (hotels,
+ * the therapist brings the table). Questions still unconfirmed — minimum notice,
  * travel surcharges — are deliberately left out rather than guessed.
  */
 export type FaqCategory = "booking" | "payment" | "service" | "privacy";
@@ -133,10 +133,10 @@ export const FAQS: Faq[] = [
   {
     id: "prepare",
     category: "service",
-    q: { es: "¿Qué necesito tener listo?", en: "What do I need to have ready?" },
+    q: { es: "¿Qué necesito tener listo? ¿Llevan camilla?", en: "What do I need to have ready? Do you bring a massage table?" },
     a: {
-      es: "Solo un espacio privado, tranquilo y cómodo donde la sesión no tenga interrupciones. Si hay algo que tu terapeuta deba saber para llegar (portería, torre, habitación), escríbelo en las notas al reservar.",
-      en: "Just a private, quiet and comfortable space where the session won't be interrupted. If there's anything your therapist needs to know to get in (front desk, building, room), add it to the notes when you book.",
+      es: "La terapeuta lleva la camilla. Tú solo necesitas un espacio privado y tranquilo donde ponerla y donde la sesión no tenga interrupciones. Si hay algo que deba saber para llegar (portería, torre, habitación del hotel), escríbelo en las notas al reservar.",
+      en: "Your therapist brings the massage table. You just need a private, quiet space to set it up where the session won't be interrupted. If there's anything she needs to know to get in (front desk, building, hotel room), add it to the notes when you book.",
     },
   },
   {
